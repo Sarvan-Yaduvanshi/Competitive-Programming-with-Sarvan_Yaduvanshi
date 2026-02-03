@@ -192,15 +192,15 @@ void solve() {
         cin >> l >> r;   // l and r are 1-based
 
         // Validity check (optional but safe)
-        if (l >= 1 && r <= n && l <= r) {
-            i64 currSum = prefixSum[r] - prefixSum[l - 1]; // 1 based index formula
-            cout << currSum << nl;
-        }
-        // if use 0 based index than formula :- currSum = pref[r + 1] - pref[l];
-        // if (l >= 0 && r < n && l <= r){
-        //     i64 currSum = prefixSum[r + 1] - prefixSum[l];
+        // if (l >= 1 && r <= n && l <= r) {
+        //     i64 currSum = prefixSum[r] - prefixSum[l - 1]; // 1 based index formula
         //     cout << currSum << nl;
         // }
+        // if use 0 based index than formula :- currSum = pref[r + 1] - pref[l];
+        if (l >= 0 && r < n && l <= r){
+            i64 currSum = prefixSum[r + 1] - prefixSum[l];
+            cout << currSum << nl;
+        }
     }
 }
 

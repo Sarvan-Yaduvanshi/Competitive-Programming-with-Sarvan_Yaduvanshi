@@ -80,65 +80,80 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD){
     return res;
 }
 
-// Approach 1 : Brute force
-// TC -> O(N^2) | SC -> (N)
-bool bruteForceDivideArraySubarraySum(const vec<int>& arr){
-    int n = sz(arr);
+/**
+ * PROBLEM: Partition Array into Two Subarrays with Equal Sum
+ * * LOGIC:
+ * We need to find an index 'i' such that Sum(0...i) == Sum(i+1...n-1).
+ * Let TotalSum = Sum(0...n-1).
+ * If Sum(0...i) == Sum(i+1...n-1), then 2 * Sum(0...i) == TotalSum.
+ * * COROLLARY:
+ * 1. If TotalSum is ODD, partition is impossible -> Return False immediately.
+ * 2. We only need to find a prefix sum equal to TotalSum / 2.
+ */
 
-    for (int i = 0; i < n - 1; i++){
-        int leftSum = 0;
-        int rightSum = 0;
-
-        // Step 1: cal left sum 0 to i
-        for (int j = 0; j <= i; j++)
-            leftSum += arr[j];
-
-        // Step 2: cal right sum i + 1 to n
-        for (int j = i + 1; j < n; j++)
-            rightSum += arr[j];
-
-        // Step 3: check both are equal or not
-        if (leftSum == rightSum) return true;
-    }
-
-    return false;
-}
-
-// Approach 2 : Prefix Sum
-// Logic : Cal first whole array sum than cal left prefix sum than right prefix sum
-// TC -> O(N) | SC -> O(1)
-bool divideArraySubarraySum(const vec<int>& a){
+// Approach 1: Brute Force
+// Checks every possible split point independently.
+// Time: O(N^2) | Space: O(1)
+// note: Use i64 for sums to prevent overflow on large inputs.
+bool checkBruteForce(const vec<int>& a) {
     int n = sz(a);
 
-    // Step 1 : Cal total sum
-    i64 totalSum = 0;
-    for (int x : a)
-        totalSum += x;
-
-    // Step 2: cal left prefix sum and right prefix sum
-    i64 leftSum = 0;
+    // Split point i: Left subarray is a[0...i], Right is a[i+1...n-1]
     for (int i = 0; i < n - 1; i++) {
-        leftSum += a[i];
-        i64 rightSum = totalSum - leftSum;
+        i64 leftSum = 0, rightSum = 0;
+
+        for (int j = 0; j <= i; j++) leftSum += a[j];
+        for (int j = i + 1; j < n; j++) rightSum += a[j];
 
         if (leftSum == rightSum) return true;
+    }
+    return false;
+}
+
+// Approach 2: Prefix Sum Optimization (Linear Scan)
+// Accumulate prefix sum and derive suffix sum in O(1).
+// Time: O(N) | Space: O(1)
+bool checkLinear(const vec<int>& a) {
+    int n = sz(a);
+
+    // 1. Calculate Total Sum
+    // using accumulate is cleaner, but loop is fine.
+    i64 totalSum = 0;
+    for (int x : a) totalSum += x;
+
+    // GM Optimization: Parity Check
+    // If sum is odd, it's impossible to split into two integers.
+    if (totalSum % 2 != 0) return false;
+
+    // 2. Iterate and check split points
+    i64 leftSum = 0;
+
+    // Iterate up to n-2 because right subarray must be non-empty
+    // (Last valid split is at index n-2, leaving a[n-1] for right side)
+    for (int i = 0; i < n - 1; i++) {
+        leftSum += a[i];
+
+        // Mathematical Check: Is current prefix half of total?
+        // Equivalent to: if (leftSum == totalSum - leftSum)
+        if (leftSum * 2 == totalSum) {
+            return true;
+        }
     }
 
     return false;
 }
 
-void solve(){
-    int n; cin >> n;
+void solve() {
+    int n;
+    cin >> n;
     vec<int> a(n);
     read(a);
 
-    // bool ans = bruteForceDivideArraySubarraySum(a);
-    bool ans = divideArraySubarraySum(a);
+    // In a contest, usually only the optimal solution is submitted.
+    bool possible = checkLinear(a);
 
-    cout << (ans ? "Yes Divide the array in 2Subarray with equal sum" : "No can not divide") << nl;
-
+    cout << (possible ? "YES" : "NO") << nl;
 }
-
 
 int main(){
     ios::sync_with_stdio(false);

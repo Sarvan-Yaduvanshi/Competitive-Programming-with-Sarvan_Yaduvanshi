@@ -18,6 +18,5 @@ foreach(SOURCE_FILE ${SOURCES})
 
     # --- THE FIX IS HERE ---
     # Only use ${SOURCE_FILE}. Do NOT add other files here.
-    add_executable(${TARGET_NAME} ${SOURCE_FILE}
-            practice.cpp)
+    add_executable(${TARGET_NAME} ${SOURCE_FILE})
 endforeach()
