@@ -1,7 +1,10 @@
-/*
-Author: Sarvan.DP.GrandMaster
-Created : 2026-02-07 16:01:28
-*/
+// Author: sarvan.dp.grandmaster
+// Created: 2026-02-08 15:08:38
+// Problem: D. Table Cut
+// Contest: Codeforces - Codeforces Round 1078 (Div. 2)
+// URL: https://codeforces.com/contest/2194/problem/D
+// Memory Limit: 256 MB
+// Time Limit: 2000 ms
 
 #ifndef __APPLE__
     #pragma GCC optimize("Ofast")
@@ -77,48 +80,53 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-// Approach 1: Brute force Solution
-// TC -> O(N^2) || SC -> O(1)
-int subarraySum(const vec<int>& nums, const int k){
-    int n = sz(nums);
-    int cnt = 0;
+void solve() {
+    int n, m;
+    cin >> n >> m;
 
-    for (int i = 0; i < n; i++){
-        int currSum = 0;
-        for (int j = i; j < n; j++){
-            currSum += nums[j];
-            if (currSum == k) cnt++;
+    vvec<int> a(n, vec<int>(m));
+
+    i64 total = 0;
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
+            cin >> a[i][j];
+            total += a[i][j];
         }
     }
-    return cnt;
-}
 
-// Approach 2: Prefix Sum + map
-// TC -> O(N) || SC -> O(N)
-int subarraySumOptimal(const vec<int>& nums, int k){
-    unordered_map<int, int> prefixSumCount;
-    prefixSumCount[0] = 1;
+    i64 target = total / 2;
+    i64 need_remove = total - target;
 
-    int currSum = 0;
-    int count = 0;
+    string s;
+    s.append(m, 'R');
+    s.append(n, 'D');
 
-    for (const int num : nums){
-        currSum += num;
-
-        int target = currSum - k;
-        if (prefixSumCount.contains(target))
-            count += prefixSumCount[target];
-
-        prefixSumCount[currSum]++;
+    if (need_remove == 0) {
+        cout << target * (total - target) << "\n";
+        cout << s << "\n";
+        return;
     }
 
-    return count;
-}
+    bool done = false;
+    for (int i = 0; i < n && !done; i++) {
+        for (int j = m - 1; j >= 0; j--) {
 
-void solve() {
-    
-}
+            swap(s[i + j], s[i + j + 1]);
 
+            if (a[i][j] == 1) {
+                need_remove--;
+
+                if (need_remove == 0) {
+                    done = true;
+                    break;
+                }
+            }
+        }
+    }
+
+    cout << target * (total - target) << "\n";
+    cout << s << "\n";
+}
 
 int main() {
     ios::sync_with_stdio(false);
@@ -126,12 +134,9 @@ int main() {
     
     cout << fixed << setprecision(10);
     
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
+    int TC = 1;
+    cin >> TC;
+    while (TC--) solve();
     
-    solve();
     return 0;
 }
-

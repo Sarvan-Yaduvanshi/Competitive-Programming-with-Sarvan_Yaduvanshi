@@ -1,7 +1,10 @@
-/*
-Author: Sarvan.DP.GrandMaster
-Created : 2026-02-07 16:01:28
-*/
+// Author: sarvan.dp.grandmaster
+// Created: 2026-02-08 14:38:54
+// Problem: A. Lawn Mower
+// Contest: Codeforces - Codeforces Round 1078 (Div. 2)
+// URL: https://codeforces.com/contest/2194/problem/A
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
 
 #ifndef __APPLE__
     #pragma GCC optimize("Ofast")
@@ -18,7 +21,7 @@ Created : 2026-02-07 16:01:28
 #include <stack>
 #include <cmath>
 #include <iomanip>
-#include <numeric>
+#include <numeric>ß
 #include <climits>
 #include <random>
 #include <chrono>
@@ -77,46 +80,13 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-// Approach 1: Brute force Solution
-// TC -> O(N^2) || SC -> O(1)
-int subarraySum(const vec<int>& nums, const int k){
-    int n = sz(nums);
-    int cnt = 0;
-
-    for (int i = 0; i < n; i++){
-        int currSum = 0;
-        for (int j = i; j < n; j++){
-            currSum += nums[j];
-            if (currSum == k) cnt++;
-        }
-    }
-    return cnt;
-}
-
-// Approach 2: Prefix Sum + map
-// TC -> O(N) || SC -> O(N)
-int subarraySumOptimal(const vec<int>& nums, int k){
-    unordered_map<int, int> prefixSumCount;
-    prefixSumCount[0] = 1;
-
-    int currSum = 0;
-    int count = 0;
-
-    for (const int num : nums){
-        currSum += num;
-
-        int target = currSum - k;
-        if (prefixSumCount.contains(target))
-            count += prefixSumCount[target];
-
-        prefixSumCount[currSum]++;
-    }
-
-    return count;
-}
-
 void solve() {
+    i64 n, w;
+    cin >> n >> w;
     
+    i64 ans = n - (n / w);
+    
+    cout << ans << nl;
 }
 
 
@@ -126,12 +96,9 @@ int main() {
     
     cout << fixed << setprecision(10);
     
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
+    int TC = 1;
+    cin >> TC;
+    while (TC--) solve();
     
-    solve();
     return 0;
 }
-
