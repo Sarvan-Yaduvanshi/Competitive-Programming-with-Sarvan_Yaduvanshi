@@ -1,8 +1,8 @@
 // Author :  sarvan.dp.grandmaster
-// Created :  2025-12-18 17:31:53
-// Problem: B. Multiply by 2, divide by 6
-// Contest: Codeforces - Codeforces Round 653 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1374/B
+// Created :  2025-10-16 23:23:47
+// Problem: C. Next Alphabet
+// Contest: Codeforces - Contest #1
+// URL: https://codeforces.com/group/MWSDmqGsZm/contest/326175/problem/C
 // Memory Limit: 256 MB
 // Time Limit: 1000 ms
 
@@ -81,32 +81,39 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
 }
 
 void solve() {
-	i64 n; cin >> n;
+	char ch;
+	cin >> ch;
 	
-	i64 power2 = 0, power3 = 0;
+	// if (ch < 'z') cout << (char)(ch + 1) << endl;
+	// else cout << "a" << endl;
 	
-	while (n % 2 == 0) {
-		power2++;
-		n /= 2;
-	}
+	cout << (ch == 'z' ? 'a' : char(ch + 1)) << endl;
 	
-	while (n % 3 == 0) {
-		power3++;
-		n /= 3;
-	}
-	
-	if (n > 1 || power2 > power3) cout << "-1\n";
-	else cout << ((power3 - power2) + power3) << "\n"; 
+	/*
+	// Another Elegant "Pro" Solution (Modulo Arithmetic)
+	// Convert 'a'->0, 'b'->1, ..., 'z'->25
+    int val = ch - 'a';
+
+    // Get the next value, wrapping around from 25 back to 0
+    int next_val = (val + 1) % 26;
+
+    // Convert back to a character
+    char next_char = 'a' + next_val;
+
+    cout << next_char << endl;
+    */
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    
+    solve();
 
-    int TC = 1;
-    cin >> TC;
-    while(TC--) {
-        solve();
-    }
+    // int TC = 1;
+    // cin >> TC;
+    // while(TC--) {
+        // solve();
+    // }
     return 0;
 }

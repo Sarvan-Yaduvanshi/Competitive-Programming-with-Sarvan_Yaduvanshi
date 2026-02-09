@@ -1,8 +1,8 @@
 // Author :  sarvan.dp.grandmaster
-// Created :  2025-12-18 17:31:53
-// Problem: B. Multiply by 2, divide by 6
-// Contest: Codeforces - Codeforces Round 653 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1374/B
+// Created :  2025-10-16 23:46:07
+// Problem: D. Ali Baba and Puzzles
+// Contest: Codeforces - Contest #1
+// URL: https://codeforces.com/group/MWSDmqGsZm/contest/326175/problem/D
 // Memory Limit: 256 MB
 // Time Limit: 1000 ms
 
@@ -81,32 +81,27 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
 }
 
 void solve() {
-	i64 n; cin >> n;
+	i64 a, b, c, d;
+	cin >> a >> b >> c >> d;
 	
-	i64 power2 = 0, power3 = 0;
+	bool opt_1 = a + b - c == d || a + b * c == d;
+	bool opt_2 = a - b + c == d || a - b * c == d;
+	bool opt_3 = a * b + c == d || a * b - c == d;
 	
-	while (n % 2 == 0) {
-		power2++;
-		n /= 2;
-	}
-	
-	while (n % 3 == 0) {
-		power3++;
-		n /= 3;
-	}
-	
-	if (n > 1 || power2 > power3) cout << "-1\n";
-	else cout << ((power3 - power2) + power3) << "\n"; 
+	if (opt_1 || opt_2 || opt_3) cout << "YES" << endl;
+	else cout << "NO" << endl;
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    
+    solve();
 
-    int TC = 1;
-    cin >> TC;
-    while(TC--) {
-        solve();
-    }
+    // int TC = 1;
+    // cin >> TC;
+    // while(TC--) {
+        // solve();
+    // }
     return 0;
 }

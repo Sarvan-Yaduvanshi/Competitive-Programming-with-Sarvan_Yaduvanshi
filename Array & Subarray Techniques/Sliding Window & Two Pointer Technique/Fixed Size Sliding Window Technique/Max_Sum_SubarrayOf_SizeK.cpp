@@ -112,7 +112,8 @@ i64 maxSumOfSubarraySizeK(const vec<int>& arr, const int k){
     return maxSum;
 }
 
-/* Algorithm: Max Subarray Sum of Size K (Prefix Sum Strategy)
+/* Approach 2 : Using Prefix
+ * Algorithm: Max Subarray Sum of Size K (Prefix Sum Strategy)
  * APPLYING TO SIZE K WINDOW:
  * Indices: i, i+1, i+2, ...., i+(k-1)
  * start = i and end = i + k - 1
@@ -146,29 +147,112 @@ i64 maxSubarraySumSizeK(const vec<int>& arr, const int k){
     return maxSum;
 }
 
+// Approach 3: Using Fixed Size Sliding Window Concept
+// TC -> O(N) || SC -> O(1)
+i64 maxSubarraySum(const vec<int>& arr, const int k){
+    int n = sz(arr);
+    i64 sum = 0;
+    i64 maxi = LLONG_MIN;
+
+    // cal the first window sum
+    for (int i = 0; i < k; i++)
+        sum += arr[i];
+
+    // update the sum with maxi sum
+    maxi = max(maxi, sum);
+
+    // use another loop to slide window one at a time
+    for (int i = k; i < n; i++){
+        int add_idx = i;
+        int remove_idx = i - k;
+
+        sum += arr[add_idx] - arr[remove_idx];
+        maxi = max(maxi, sum);
+    }
+
+    return maxi;
+}
+
+// Approach 4: Single Loop sliding window
+// Logic:  1. ADD arr[i] (Expand right)
+//         2. REMOVE arr[i - k] (Shrink left) -> only if we have passed size k
+//         3. UPDATE Answer -> Only if the window is full size
+// TC -> O(N) | SC -> O(1)
+i64 maxSubarraySumOptimal(const vec<int>& arr, const int k){
+    int n = sz(arr);
+
+    if (n < k) return -1; // Safety check: specific to problem constraints
+
+    i64 currSum = 0;
+    i64 maxSum = LLONG_MIN;
+
+    for (int i = 0; i < n; i++){
+        // 1. Expand window (add current element)
+        currSum += arr[i];
+
+        // 2. Shrink window (remove element that falls out)
+        // We start removing only when i >= k
+        // The element to remove is at index (i - k)
+        if (i >= k) currSum -= arr[i - k];
+
+        // 3. Update answer
+        // We start updating max_sum only when we hit window size k (at index k-1)
+        if (i >= k - 1) maxSum = max(maxSum, currSum);
+    }
+    return maxSum;
+}
+
+// Approach 3: Single Loop sliding window
+// print starting index and ending index
+i64 maxSubarraySumWithIndex(const vec<int>& arr, int k, int& sIdx, int& eIdx){
+    int n = sz(arr);
+    i64 maxSum = LLONG_MIN;
+    i64 currSum = 0;
+
+    sIdx = eIdx = -1;
+
+    for (int i = 0; i < n; i++){
+        currSum += arr[i];
+        if (i >= k) currSum -= arr[i - k];
+
+        // Replace max -> MANUAL CHECK: Only update if strictly greater
+        if (i >= k - 1){
+            if (currSum > maxSum){
+                maxSum = currSum;
+                sIdx = i - k + 1;
+                eIdx = i;
+            }
+        }
+    }
+
+    return maxSum;
+}
+
 
 void solve() {
     int n, k; cin >> n >> k;
 
     vec<int> a(n);
     read(a);
-    
-    cout << maxSubarraySumSizeK(a, k) << nl;
+
+    int sIdx = 0, eIdx = 0;
+    i64 ans = maxSubarraySumWithIndex(a, k, sIdx, eIdx);
+    cout << "Max sum: " << ans << nl;
+    cout << "Found at indices: [" << sIdx << ", " << eIdx << "]" << nl;
 }
 
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
+
     cout << fixed << setprecision(10);
-    
+
     // Multi-test case support (commented out for this demo)
     // int TC = 1;
     // cin >> TC;
     // while (TC--) solve();
-    
+
     solve();
     return 0;
 }
-

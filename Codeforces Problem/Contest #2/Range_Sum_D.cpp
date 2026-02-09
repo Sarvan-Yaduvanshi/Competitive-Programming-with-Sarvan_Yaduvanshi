@@ -1,8 +1,8 @@
 // Author :  sarvan.dp.grandmaster
-// Created :  2025-12-18 17:31:53
-// Problem: B. Multiply by 2, divide by 6
-// Contest: Codeforces - Codeforces Round 653 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1374/B
+// Created :  2025-09-28 18:23:44
+// Problem: D. Range Sum
+// Contest: Codeforces - Contest #2
+// URL: https://codeforces.com/group/MWSDmqGsZm/contest/326907/problem/D
 // Memory Limit: 256 MB
 // Time Limit: 1000 ms
 
@@ -80,24 +80,27 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
 	return res;
 }
 
-void solve() {
-	i64 n; cin >> n;
-	
-	i64 power2 = 0, power3 = 0;
-	
-	while (n % 2 == 0) {
-		power2++;
-		n /= 2;
-	}
-	
-	while (n % 3 == 0) {
-		power3++;
-		n /= 3;
-	}
-	
-	if (n > 1 || power2 > power3) cout << "-1\n";
-	else cout << ((power3 - power2) + power3) << "\n"; 
+i64 f(i64 n) {
+	i64 ans = n * 1ll * (n + 1) / 2;
+	return ans;
 }
+
+void solve() {
+	i64 l, r; cin >> l >> r;
+	
+	// first approach
+	// i64 sum = 0;
+	// for (int i = l; i <= r; i++) sum += i;
+	// cout << sum << endl;
+	
+	// 2nd approach Math formula
+	if (l > r) swap(l, r);
+	
+	i64 ans = f(r) - f(l - 1);
+	
+	cout << ans << endl;
+}
+
 
 int main() {
     ios::sync_with_stdio(false);

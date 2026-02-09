@@ -1,8 +1,8 @@
 // Author :  sarvan.dp.grandmaster
-// Created :  2025-12-18 17:31:53
-// Problem: B. Multiply by 2, divide by 6
-// Contest: Codeforces - Codeforces Round 653 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1374/B
+// Created :  2025-10-17 00:50:15
+// Problem: E. Interval Sweep
+// Contest: Codeforces - Contest #1
+// URL: https://codeforces.com/group/MWSDmqGsZm/contest/326175/problem/E
 // Memory Limit: 256 MB
 // Time Limit: 1000 ms
 
@@ -81,32 +81,28 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
 }
 
 void solve() {
-	i64 n; cin >> n;
+	int a, b;
+	cin >> a >> b;
 	
-	i64 power2 = 0, power3 = 0;
-	
-	while (n % 2 == 0) {
-		power2++;
-		n /= 2;
+	// egde case if a == 0, b == 0
+	if (a == 0 && b == 0) {
+		cout << "NO";
+		return;
 	}
 	
-	while (n % 3 == 0) {
-		power3++;
-		n /= 3;
-	}
-	
-	if (n > 1 || power2 > power3) cout << "-1\n";
-	else cout << ((power3 - power2) + power3) << "\n"; 
+	cout << (abs(a - b) > 1 ? "NO" : "YES") << "\n";
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
+    
+    solve();
 
-    int TC = 1;
-    cin >> TC;
-    while(TC--) {
-        solve();
-    }
+    // int TC = 1;
+    // cin >> TC;
+    // while(TC--) {
+        // solve();
+    // }
     return 0;
 }

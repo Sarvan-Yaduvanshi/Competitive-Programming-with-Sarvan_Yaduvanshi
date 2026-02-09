@@ -1,14 +1,11 @@
-// Author :  sarvan.dp.grandmaster
-// Created :  2025-12-18 17:31:53
-// Problem: B. Multiply by 2, divide by 6
-// Contest: Codeforces - Codeforces Round 653 (Div. 3)
-// URL: https://codeforces.com/problemset/problem/1374/B
-// Memory Limit: 256 MB
-// Time Limit: 1000 ms
+/*
+Author: Sarvan.DP.GrandMaster
+Created : 2026-02-09 18:34:32
+*/
 
 #ifndef __APPLE__
-	#pragma GCC optimize("Ofast")
-	#pragma GCC optimize("unroll-loops")
+    #pragma GCC optimize("Ofast")
+    #pragma GCC optimize("unroll-loops")
 #endif
 
 #include <iostream>
@@ -60,7 +57,7 @@ mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 // Input helper
 template<class T>
 void read(vec<T> &v) {
-	for (auto &x : v) cin >> x;
+    for (auto &x : v) cin >> x;
 }
 #define nl '\n'
 #define YES cout << "YES" << nl
@@ -70,43 +67,61 @@ inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
 inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
 
 inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-	i64 res = 1;
-	base %= mod;
-	while (exp > 0) {
-		if (exp & 1) res = (res * base) % mod;
-		base = (base * base) % mod;
-		exp >>= 1;
-	}
-	return res;
+    i64 res = 1;
+    base %= mod;
+    while (exp > 0) {
+        if (exp & 1) res = (res * base) % mod;
+        base = (base * base) % mod;
+        exp >>= 1;
+    }
+    return res;
 }
 
-void solve() {
-	i64 n; cin >> n;
-	
-	i64 power2 = 0, power3 = 0;
-	
-	while (n % 2 == 0) {
-		power2++;
-		n /= 2;
-	}
-	
-	while (n % 3 == 0) {
-		power3++;
-		n /= 3;
-	}
-	
-	if (n > 1 || power2 > power3) cout << "-1\n";
-	else cout << ((power3 - power2) + power3) << "\n"; 
+// Approach 1: Brute Force
+// TC -> O(N^2) | SC -> O(K)
+vec<int> firstNegInt(const vec<int>& arr, int k) {
+    int n = sz(arr);
+    vec<int> ans;
+
+    for (int i = 0; i <= n - k; i++) {
+        bool flag = false;
+        for (int j = i; j < i + k; j++) {
+            if (arr[j] < 0) {
+                ans.push_back(arr[j]);
+                flag = true;
+                break;
+            }
+        }
+        if (!flag) ans.push_back(0);
+    }
+    return ans;
 }
+
+// Approach 2: Using sliding window concept
+// TC -> O(N) | SC -> (K)
+vec<int> firstNegIntOptimal(const vec<int>& arr, int k){
+    int n = sz(arr);
+    vec<int> ans;
+
+
+}
+void solve() {
+    
+}
+
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    int TC = 1;
-    cin >> TC;
-    while(TC--) {
-        solve();
-    }
+    
+    cout << fixed << setprecision(10);
+    
+    // Multi-test case support (commented out for this demo)
+    // int TC = 1;
+    // cin >> TC;
+    // while (TC--) solve();
+    
+    solve();
     return 0;
 }
+
