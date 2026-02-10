@@ -77,7 +77,7 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-// Brute Force solution for LeetCode 1074
+// Approach 1: Brute Force solution for LeetCode 1074
 // Time Complexity -> O(M * N)^3
 // Space Complexity -> O(1)
 int sumOfSubMatrix(const vvec<int>& mat, int i, int rowSize, int j, int colSize){
@@ -107,6 +107,79 @@ int numSubmatrixSumTarget(const vvec<int>& mat, int k){
     return ans;
 }
 
+// Approach 2: Using Prefix Sum
+// TC -> O(M * N)^2 | SC -> O(M * N)
+int numSubmatrixSumTargetPrefix(const vvec<int>& mat, int k){
+    int rows = sz(mat);
+    int cols = sz(mat[0]);
+
+    vvec<int> pref(rows + 1, vec<int>(cols + 1, 0));
+    for (int i = 1; i <= rows; i++){
+        for (int j = 1; j <= cols; j++){
+            pref[i][j] = mat[i - 1][j - 1]
+                       + pref[i - 1][j]
+                       + pref[i][j - 1]
+                       - pref[i - 1][j - 1];
+        }
+    }
+
+    int cnt = 0;
+    for (int r1 = 1; r1 <= rows; r1++){
+        for (int c1 = 1; c1 <= cols; c1++){
+            for (int r2 = r1; r2 <= rows; r2++){
+                for (int c2 = c1; c2 <= cols; c2++){
+                    const i64 currSum = pref[r2][c2]
+                                - pref[r1 - 1][c2]
+                                - pref[r2][c1 - 1]
+                                + pref[r1 - 1][c1 - 1];
+
+                    if (currSum == k) cnt++;
+                }
+            }
+        }
+    }
+
+    return cnt;
+}
+
+// Approach 3: Using Prefix sum + Map + 1D Subarray sum equal k
+// TC -> O(M * N)^2 | SC -> O(N)
+int subarraySum(const vec<int>& nums, const int k){
+    unordered_map<int, int> prefixMap;
+    prefixMap[0] = 1;
+
+    int cnt = 0;
+    int currSum = 0;
+
+    for (auto num : nums){
+        currSum += num;
+
+        if (prefixMap.contains(currSum - k))
+            cnt += prefixMap[currSum - k];
+
+        prefixMap[currSum]++;
+    }
+    return cnt;
+}
+int numSubmatrixSumTargetOptimal(const vvec<int>& mat, int k){
+    int rows = sz(mat);
+    int cols = sz(mat[0]);
+    int cnt = 0;
+
+    // Fixed Top row
+    for (int top = 0; top < rows; top++){
+        vec<int> colSum(cols, 0);
+        // Fixed bottom row
+        for (int bottom = top; bottom < cols; bottom++){
+            for (int col = 0; col < cols; col++){
+                colSum[col] = mat[bottom][col];
+            }
+            cnt += subarraySum(colSum, k);
+        }
+    }
+    return cnt;
+}
+
 void solve() {
     int n, m;
     cin >> n >> m;
@@ -118,7 +191,7 @@ void solve() {
     }
 
     int k; cin >> k;
-    int ans = numSubmatrixSumTarget(mat, k);
+    int ans = numSubmatrixSumTargetOptimal(mat, k);
 
     cout << ans << nl;
 }

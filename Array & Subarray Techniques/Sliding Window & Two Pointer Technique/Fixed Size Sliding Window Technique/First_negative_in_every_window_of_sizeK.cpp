@@ -97,16 +97,69 @@ vec<int> firstNegInt(const vec<int>& arr, int k) {
     return ans;
 }
 
-// Approach 2: Using sliding window concept
-// TC -> O(N) | SC -> (K)
+// Approach 2: Sliding Window + Deque (Optimized)
+// TC -> O(N) | SC -> O(K) (Deque stores useful indices only)
 vec<int> firstNegIntOptimal(const vec<int>& arr, int k){
     int n = sz(arr);
+
+    deque<int> dq; // store indices of negative number
+    vec<int> ans; // store answer
+
+    for (int i = 0; i < n; i++){
+        // 1. if curr element is negative, add its idx
+        if (arr[i] < 0) dq.pb(i);
+
+        // 2. Remove: Current window is [i-k+1 ... i]. So index <= i-k is expired
+        if (!dq.empty() && dq.front() <= i - k)
+            dq.pop_front();
+
+        // 3. Answer: Only record answer once first window is formed
+        if (i >= k - 1){
+            if (dq.empty()) ans.pb(0); // No negative number in this window
+            else ans.pb(arr[dq.front()]); // Front is always the first valid negative
+        }
+    }
+    return ans;
+}
+
+// Approach 3: Two-Pointer Optimization (The "Smart Caterpillar")
+// why O(N) -> Even though there is a nested loop, the inner pointer only moves forward and never resets, so total operations are linear
+// TC -> O(N) (Amortized) || SC -> O(1) (Auxiliary Space)
+vec<int> firstNegIntPointerTrick(const vec<int>& arr, int k){
+    int n = sz(arr);
+
     vec<int> ans;
+    int firstNegIdx = 0; // Track idx of first negative number
 
+    for (int i = 0; i <= n - k; i++){
+        // Optimization: if last idx negative found than curr window start
+        // // we must jump it forward to at least 'i'
+        if (firstNegIdx < i) firstNegIdx = i;
 
+        // Search Forward: Find the next negative number inside the current window [i ... i+k-1]
+        // Note: We don't reset 'firstNegIdx' to 'i' every time. We continue from where we left off!
+        while (firstNegIdx < i + k && arr[firstNegIdx] >= 0)
+            firstNegIdx++;
+
+        // Logic: Did we find a negative number inside valid range?
+        if (firstNegIdx < i + k) ans.pb(arr[firstNegIdx]); // Found one!
+        else ans.pb(0); // Window has no negative numbers
+    }
+
+    return ans;
 }
 void solve() {
-    
+    int n, k;
+    cin >> n >> k;
+
+    vec<int> a(n);
+    read(a);
+
+    vec<int> ans = firstNegIntOptimal(a, k);
+    cout << "[";
+    for (int i = 0; i < sz(ans); i++)
+        cout << ans[i] << (i + 1 == sz(ans) ? "" : ", ");
+    cout << "]" << nl;
 }
 
 
