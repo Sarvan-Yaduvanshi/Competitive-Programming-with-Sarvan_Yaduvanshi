@@ -1,9 +1,8 @@
 /*
 Author: Sarvan.DP.GrandMaster
-Created : 2026-02-10 00:23:34
+Created : 2026-02-11 18:35:21
 */
 
-#include <unordered_set>
 #ifndef __APPLE__
     #pragma GCC optimize("Ofast")
     #pragma GCC optimize("unroll-loops")
@@ -77,81 +76,65 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     }
     return res;
 }
-/* Given an integer array arr[] and a number k.
- * Find the count of distinct elements in every window of size k in the array.
- * Example:- arr = [1 2 1 3 4 2 3], k = 4
- * First window is [1, 2, 1, 3], count of distinct numbers is 3.
- * Second window is [2, 1, 3, 4] count of distinct numbers is 4.
- * Third window is [1, 3, 4, 2] count of distinct numbers is 4.
- * Fourth window is [3, 4, 2, 3] count of distinct numbers is 3
- * Answer -> [3 4 4 3]
- */
 
-// Approach 1: Brute force + set
-// TC -> O(N * K) | TC -> O(k)
-vec<int> countDistinct(const vec<int> &arr, int k){
+/* Problem: For every window of size k, return maximum element.
+ * Example:- nums = [1,3,-1,-3,5,3,6,7], k = 3
+* Window position                Max
+* ---------------               -----
+* [1  3  -1] -3  5  3  6  7       3
+*  1 [3  -1  -3] 5  3  6  7       3
+*  1  3 [-1  -3  5] 3  6  7       5
+*  1  3  -1 [-3  5  3] 6  7       5
+*  1  3  -1  -3 [5  3  6] 7       6
+*  1  3  -1  -3  5 [3  6  7]      7
+*  Answer -> [3 3 5 5 6 7]
+*/
+
+// Approach 1: Brute Force
+// TC -> O(N * k) | SC -> O(k)
+vec<int> maxSlidingWindowBruteForce(const vec<int>& arr, int k){
     int n = sz(arr);
+
+    int mxNum = INT_MIN;
     vec<int> ans;
 
     for (int i = 0; i <= n - k; i++){
-        unordered_set<int> st;
+        int currMax = INT_MIN;
         for (int j = i; j < i + k; j++){
-            st.insert(arr[j]);
+            currMax = max(currMax, arr[j]);
         }
-        ans.pb(st.size());
+        ans.pb(currMax);
     }
     return ans;
 }
 
-// Approach 2: Sliding Window + Frequency Map (GM Style)
-// TC -> O(N) | SC -> O(K) or O(Max_Value)
-// Note: Use vector<int> freq if values are <= 10^6 for O(1) strict access.
-vec<int> countDistinctOptimal(const vec<int>& arr, int k){
+// Approach 2: Using Max Heap (Priority Queue)
+// Time Complexity -> O(N logK) || Space Complexity -> O(K)
+vec<int> maxSlidingWindowMaxHeap(const vec<int>& arr, int k){
     int n = sz(arr);
-
-    // GM Tip: If constraints are small (e.g., arr[i] <= 10^5), use this:
-    // vector<int> freq(100001, 0);
-    // Otherwise use map:
-    unordered_map<int, int> freq; // freq count;
-    vec<int> ans; // answer store
-    int distinct_cnt = 0;
+    vec<int> ans;
+    priority_queue<pii> pq; // max heap -> store {value, index}
 
     for (int i = 0; i < n; i++){
-        // 1. ACQUIRE (Add new element to window)
-        // If it's the first time we see this number in current window, distinct++
-        if (freq[arr[i]] == 0) distinct_cnt++;
-        freq[arr[i]]++;
+        // Step 1: add curr element
+        pq.push({arr[i], i});
 
-        // If frequency drops to 0, it is no longer in the window
-        if (i >= k){
-            int removal_val = arr[i - k];
-            freq[removal_val]--;
+        // Step 2: Remove out-of-window elements
+        while (!pq.empty() && pq.top().se <= i - k)
+            pq.pop();
 
-            if (freq[removal_val] == 0) {
-                distinct_cnt--;
-                // Optional: freq.erase(remove_val) to save map space
-            }
-        }
-
-        // 3. RECORD ANSWER
-        // We have a full window of size k starting from i = k - 1
-        if (i >= k - 1) ans.pb(distinct_cnt);
+        // Step 3: Answer
+        if (i >= k - 1) ans.pb(pq.top().fi);
     }
     return ans;
 }
 
-void solve() {
-    int n, k; cin >> n >> k;
-    vec<int> arr(n);
-    read(arr);
 
-    vec<int> ans = countDistinctOptimal(arr, k);
-    cout << "[";
-    for (int i = 0; i < sz(ans); i++){
-        cout << ans[i] << (i + 1 == sz(ans) ? "" : ", ");
-    }
-    cout << "]";
+
+void solve() {
+    
 }
+
 
 int main() {
     ios::sync_with_stdio(false);
