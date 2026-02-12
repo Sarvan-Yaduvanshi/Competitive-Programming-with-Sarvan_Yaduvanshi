@@ -129,6 +129,66 @@ vec<int> maxSlidingWindowMaxHeap(const vec<int>& arr, int k){
     return ans;
 }
 
+// Approach 3: Using Multiset + Sliding Window Concept
+// Time Complexity -> O(N logK) || Space Complexity -> O(K)
+vec<int> maxSlidingWindowMultiSet(const vec<int>& arr, int k){
+    int n = sz(arr);
+
+    vec<int> ans;
+    multiset<int> ms; // store value in sorted order | allow duplicate value
+
+    for (int i = 0; i < n; i++){
+        // Step 1: add a[i] to window
+        ms.insert(arr[i]); // o(logk)
+
+        // Step 2: remove a[i - k]
+        if (i >= k){
+            // delete only one occurrence
+            ms.erase(ms.find(arr[i - k])); // o(logk)
+        }
+
+        // Step 3: Update Answer
+        if (i >= k - 1){
+            int largest = *ms.rbegin(); // o(1)
+            ans.pb(largest);
+        }
+    }
+
+    return ans;
+}
+
+// Approach 4: Monotonic Deque (Index Only)
+// TC -> O(N) | SC -> O(K) (Only stores indices)
+vec<int> maxSlidingWindowDeque(const vec<int>& arr, int k){
+    int n = sz(arr);
+
+    vec<int> ans;
+    deque<int> deq;
+
+    for (int i = 0; i < n; i++){
+        // 1. MAINTAIN ORDER (Monotonic Decreasing)
+        // Remove indices of elements that are smaller than the current element
+        // because they can never be the maximum again.
+        while (!deq.empty() && arr[deq.back()] <= arr[i])
+            deq.pop_back();
+
+        // 2. ADD current index
+        deq.pb(i);
+
+        // 3. REMOVE expired index
+        // The element at the front is the largest. Check if it's out of the window.
+        // Current window is [i-k+1 ... i]. If front == i-k, it's gone.
+        if (deq.front() == i - k)
+            deq.pop_front();
+
+        // 4. ANSWER
+        // The front of the deque ALWAYS has the index of the maximum element.
+        if (i >= k - 1)
+            ans.push_back(arr[deq.front()]);
+    }
+    return ans;
+}
+
 
 
 void solve() {
