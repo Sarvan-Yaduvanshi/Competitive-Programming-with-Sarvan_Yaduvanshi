@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║         FREQUENCY COUNT MASTERY GUIDE: Zero to Grandmaster Level             ║
+║        FREQUENCY COUNT MASTERY GUIDE: Zero to Grandmaster Level              ║
 ║                    Author: Sarvan.DP.GrandMaster                             ║
 ║                    Created: 2026-02-15                                       ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
