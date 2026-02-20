@@ -116,22 +116,23 @@ int subarraySumOptimal(const vec<int>& nums, int k){
 }
 
 void solve() {
-    
+
 }
 
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
+
     cout << fixed << setprecision(10);
-    
+
     // Multi-test case support (commented out for this demo)
     // int TC = 1;
     // cin >> TC;
     // while (TC--) solve();
-    
+
     solve();
     return 0;
 }
+
 
