@@ -120,6 +120,35 @@ vector<int> twoSumUsingHashSet(vector<int>& nums, int target){
     return {};
 }
 
+// Approach 3: Sorting + Two Pointers
+// Time Complexity -> O(N logN) | Space Complexity -> O(N) (because we need to store original indices)
+vector<int> twoSumSortingTwoPointers(vector<int>& nums, int target){
+    vec<pii> arr;
+    arr.reserve(sz(nums));
+
+    for (int i = 0; i < n; i++){
+        arr.eb(nums[i], i);
+    }
+
+    sort(all(arr));
+
+    int left = 0, right = sz(arr) - 1;
+    while (left < right){
+        int currSum = arr[left].fi + arr[right].fi;
+
+        if (currSum == target){
+            return {arr[left].se, arr[right].se};
+        }
+        else if (currSum < target){
+            left++;
+        }
+        else{
+            right--;
+        }
+    }
+    return {};
+}
+
 void solve() {
     int n; cin >> n;
     vec<int> arr(n); read(arr);

@@ -1,7 +1,10 @@
-/*
-Author: Sarvan.DP.GrandMaster
-Created : 2026-02-20 01:33:47
-*/
+// Author: sarvan.dp.grandmaster
+// Created: 2026-02-21 20:05:19
+// Problem: A. String Rotation Game
+// Contest: Codeforces - Codeforces Round 1081 (Div. 2)
+// URL: https://codeforces.com/contest/2192/problem/A
+// Memory Limit: 256 MB
+// Time Limit: 1000 ms
 
 #ifndef __APPLE__
     #pragma GCC optimize("Ofast")
@@ -77,55 +80,27 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-/* palindrome string problem:
-   Given a string, determine if it is a palindrome (reads the same backward as forward).
-   Example: "racecar" is a palindrome, while "hello" is not.
-*/
-
-// Approach 1: Use Brute Force
-// Logic: Reverse the string and compare it with the original string.
-// If they are the same, it's a palindrome.
-// Time Complexity: O(n) for reversing the string and O(n) for comparison, resulting in O(n) overall.
-// Space Complexity: O(n) for storing the reversed string.
-bool isPalindromeBruteForce(const string &s) {
-    // string s2 = reversed(s.rbegin(), s.rend());
-    // return s == reversed;
-
-    // Manually reverse the string without using extra space
-    int n = sz(s);
-    for (int i = 0; i < n / 2; ++i){
-        if (s[i] != s[n - 1 - i]){
-            return false;
-        }
-    }
-    return true;
-}
-
-// Approach 2: Use Two Pointers
-// Logic: Use two pointers, one starting at the beginning of the string and the other at
-// the end. Move both pointers towards the center, comparing characters at each step.
-// If any characters don't match, it's not a palindrome.
-// Time Complexity: O(n) for comparing characters.
-// Space Complexity: O(1) since we are using only a constant amount of extra space.
-bool isPalindromeTwoPointers(const string &s){
-    int left = 0;
-    int right = sz(s) - 1;
-
-    while (left < right){
-        if (s[left] != s[right])
-            return false;
-        left++;
-        right--;
-    }
-
-    return true;
-}
-
 void solve() {
-    string str; cin >> str;
+    int n; string s;
+    cin >> n >> s;
 
-    // cout << (isPalindromeBruteForce(str) ? "YES" : "NO") << nl;
-    cout << (isPalindromeTwoPointers(str) ? "YES" : "NO") << nl;
+    int diffs = 0;
+    int sames = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (s[i] != s[(i + 1) % n]) diffs++;
+        else sames++; 
+    }
+
+    if (sames == n) {
+        cout << 1 << nl;
+        return;
+    }
+
+    if (sames > 0)
+        cout << diffs + 1 << nl;
+    else 
+        cout << diffs << nl;
 }
 
 
@@ -135,12 +110,9 @@ int main() {
     
     cout << fixed << setprecision(10);
     
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
+    int TC = 1;
+    cin >> TC;
+    while (TC--) solve();
     
-    solve();
     return 0;
 }
-
