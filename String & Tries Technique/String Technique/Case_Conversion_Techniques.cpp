@@ -332,13 +332,13 @@ void countCharTypes(const string &s) {
  *  ┌──────────────────────────┬───────────────────────┬────────────────────┐
  *  │ Operation                │ Code                  │ How it Works       │
  *  ├──────────────────────────┼───────────────────────┼────────────────────┤
- *  │ To Uppercase             │ c & ~32  or  c & 0xDF │ Clear bit 5       │
- *  │ To Lowercase             │ c | 32   or  c | 0x20 │ Set bit 5         │
- *  │ Toggle Case              │ c ^ 32   or  c ^ 0x20 │ Flip bit 5        │
- *  │ Check if Lowercase       │ (c & 32) != 0         │ Bit 5 is set?     │
- *  │ Check if Uppercase       │ (c & 32) == 0         │ Bit 5 is clear?   │
- *  │ Case-insensitive compare │ (a|32) == (b|32)      │ Force both lower  │
- *  │ Get letter index (0-25)  │ (c | 32) - 'a'        │ Force lower, sub  │
+ *  │ To Uppercase             │ c & ~32  or  c & 0xDF │ Clear bit 5        │
+ *  │ To Lowercase             │ c | 32   or  c | 0x20 │ Set bit 5          │
+ *  │ Toggle Case              │ c ^ 32   or  c ^ 0x20 │ Flip bit 5         │
+ *  │ Check if Lowercase       │ (c & 32) != 0         │ Bit 5 is set?      │
+ *  │ Check if Uppercase       │ (c & 32) == 0         │ Bit 5 is clear?    │
+ *  │ Case-insensitive compare │ (a|32) == (b|32)      │ Force both lower   │
+ *  │ Get letter index (0-25)  │ (c | 32) - 'a'        │ Force lower, sub   │
  *  └──────────────────────────┴───────────────────────┴────────────────────┘
  *
  *  ⚠️ IMPORTANT: These bitwise tricks ONLY work on ASCII letters (a-z, A-Z).

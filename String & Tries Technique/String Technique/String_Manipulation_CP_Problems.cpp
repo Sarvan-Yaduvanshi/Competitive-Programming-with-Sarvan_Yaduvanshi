@@ -359,20 +359,20 @@ int countWords(const string &s) {
  *  ┌────────────────────────────────┬──────────────────────────────────┐
  *  │ Operation                      │ Code                             │
  *  ├────────────────────────────────┼──────────────────────────────────┤
- *  │ char → lowercase               │ c | 32     or  c | ' '          │
- *  │ char → uppercase               │ c & ~32    or  c & '_'          │
- *  │ Toggle case                    │ c ^ 32     or  c ^ ' '          │
- *  │ Is lowercase? (letter only)    │ (c & 32) != 0                   │
- *  │ Is uppercase? (letter only)    │ (c & 32) == 0                   │
- *  │ Case-insensitive compare       │ (a | 32) == (b | 32)            │
- *  │ Letter index (0-25)            │ (c | 32) - 'a'                  │
- *  │ Check if letter                │ ((c|32) >= 'a' && (c|32) <= 'z')│
- *  │ Check if digit                 │ c >= '0' && c <= '9'            │
- *  │ Digit value                    │ c - '0'                         │
- *  │ Pangram check (bitmask)        │ mask |= (1 << ((c|32) - 'a'))  │
- *  │ All unique (bitmask)           │ if (mask & (1 << idx)) → dupe  │
- *  │ Caesar shift                   │ (c - base + shift) % 26 + base  │
- *  │ Get base ('A' or 'a')         │ (c & 32) ? 'a' : 'A'           │
+ *  │ char → lowercase               │ c | 32     or  c | ' '           │
+ *  │ char → uppercase               │ c & ~32    or  c & '_'           │
+ *  │ Toggle case                    │ c ^ 32     or  c ^ ' '           │
+ *  │ Is lowercase? (letter only)    │ (c & 32) != 0                    │
+ *  │ Is uppercase? (letter only)    │ (c & 32) == 0                    │
+ *  │ Case-insensitive compare       │ (a | 32) == (b | 32)             │
+ *  │ Letter index (0-25)            │ (c | 32) - 'a'                   │
+ *  │ Check if letter                │ ((c|32) >= 'a' && (c|32) <= 'z') │
+ *  │ Check if digit                 │ c >= '0' && c <= '9'             │
+ *  │ Digit value                    │ c - '0'                          │
+ *  │ Pangram check (bitmask)        │ mask |= (1 << ((c|32) - 'a'))    │
+ *  │ All unique (bitmask)           │ if (mask & (1 << idx)) → dupe    │
+ *  │ Caesar shift                   │ (c - base + shift) % 26 + base   │
+ *  │ Get base ('A' or 'a')          │ (c & 32) ? 'a' : 'A'             │
  *  └────────────────────────────────┴──────────────────────────────────┘
  *
  *  🔥 TIP: In competitive programming, (c | 32) - 'a' is the fastest way
