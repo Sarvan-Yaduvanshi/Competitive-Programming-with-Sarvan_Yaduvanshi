@@ -22,18 +22,18 @@
  * ============================================================================
  *  KEY PATTERNS:
  *  ┌────────────────────────────────────────────────────────────────┐
- *  │  DFS: Use recursion or stack. Good for exploring connected    │
- *  │       components, backtracking, counting areas.               │
+ *  │  DFS: Use recursion or stack. Good for exploring connected     │
+ *  │       components, backtracking, counting areas.                │
  *  │                                                                │
- *  │  BFS: Use queue. Good for shortest paths in unweighted grids, │
+ *  │  BFS: Use queue. Good for shortest paths in unweighted grids,  │
  *  │       level-by-level expansion, multi-source problems.         │
  *  │                                                                │
- *  │  4-dir: dx={-1,1,0,0}, dy={0,0,-1,1}                        │
- *  │  8-dir: dx={-1,-1,-1,0,0,1,1,1}, dy={-1,0,1,-1,1,-1,0,1}   │
+ *  │  4-dir: dx={-1,1,0,0}, dy={0,0,-1,1}                           │
+ *  │  8-dir: dx={-1,-1,-1,0,0,1,1,1}, dy={-1,0,1,-1,1,-1,0,1}       │
  *  │                                                                │
  *  │  Visited marking:                                              │
- *  │  - Separate visited array                                     │
- *  │  - Modify grid in-place (change value)                        │
+ *  │  - Separate visited array                                      │
+ *  │  - Modify grid in-place (change value)                         │
  *  └────────────────────────────────────────────────────────────────┘
  *
  *  Related Problems:
@@ -48,7 +48,28 @@
  * ============================================================================
  */
 
-#include <bits/stdc++.h>
+
+#ifndef __APPLE__
+    #pragma GCC optimize("Ofast")
+    #pragma GCC optimize("unroll-loops")
+#endif
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <iomanip>
+#include <numeric>
+#include <climits>
+#include <random>
+#include <chrono>
+#include <cassert>
+
 using namespace std;
 
 void printGrid(const vector<vector<int>>& grid, const string& title = "") {

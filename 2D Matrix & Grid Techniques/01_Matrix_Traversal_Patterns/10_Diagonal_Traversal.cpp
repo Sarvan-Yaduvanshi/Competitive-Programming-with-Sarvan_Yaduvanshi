@@ -21,12 +21,12 @@
  * ============================================================================
  *  DIAGONAL KEY INSIGHT:
  *  ┌────────────────────────────────────────────────────────────────┐
- *  │  Primary diagonals:  Elements with same (i - j) value        │
- *  │  Anti-diagonals:     Elements with same (i + j) value        │
- *  │                                                               │
- *  │  For N×M matrix:                                              │
- *  │  - (i-j) ranges from -(M-1) to (N-1)  → N+M-1 diagonals    │
- *  │  - (i+j) ranges from 0 to (N+M-2)     → N+M-1 anti-diags   │
+ *  │  Primary diagonals:  Elements with same (i - j) value          │
+ *  │  Anti-diagonals:     Elements with same (i + j) value          │
+ *  │                                                                │
+ *  │  For N×M matrix:                                               │
+ *  │  - (i-j) ranges from -(M-1) to (N-1)  → N+M-1 diagonals        │
+ *  │  - (i+j) ranges from 0 to (N+M-2)     → N+M-1 anti-diags       │
  *  └────────────────────────────────────────────────────────────────┘
  *
  *  Related Problems:
@@ -39,7 +39,27 @@
  * ============================================================================
  */
 
-#include <bits/stdc++.h>
+#ifndef __APPLE__
+    #pragma GCC optimize("Ofast")
+    #pragma GCC optimize("unroll-loops")
+#endif
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <iomanip>
+#include <numeric>
+#include <climits>
+#include <random>
+#include <chrono>
+#include <cassert>
+
 using namespace std;
 
 void printMatrix(const vector<vector<int>>& mat, const string& title = "") {

@@ -22,14 +22,14 @@
  *  2D PREFIX SUM FORMULA:
  *  ┌────────────────────────────────────────────────────────────────┐
  *  │  BUILD:                                                        │
- *  │  pre[i][j] = mat[i][j]                                       │
- *  │            + pre[i-1][j] + pre[i][j-1]                       │
+ *  │  pre[i][j] = mat[i][j]                                         │
+ *  │            + pre[i-1][j] + pre[i][j-1]                         │
  *  │            - pre[i-1][j-1]                                     │
  *  │                                                                │
- *  │  QUERY (sum of submatrix from (r1,c1) to (r2,c2)):           │
+ *  │  QUERY (sum of submatrix from (r1,c1) to (r2,c2)):             │
  *  │  sum = pre[r2][c2]                                             │
- *  │      - pre[r1-1][c2] - pre[r2][c1-1]                         │
- *  │      + pre[r1-1][c1-1]                                        │
+ *  │      - pre[r1-1][c2] - pre[r2][c1-1]                           │
+ *  │      + pre[r1-1][c1-1]                                         │
  *  └────────────────────────────────────────────────────────────────┘
  *
  *  INCLUSION-EXCLUSION VISUAL:
@@ -52,7 +52,28 @@
  * ============================================================================
  */
 
-#include <bits/stdc++.h>
+
+#ifndef __APPLE__
+    #pragma GCC optimize("Ofast")
+    #pragma GCC optimize("unroll-loops")
+#endif
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <iomanip>
+#include <numeric>
+#include <climits>
+#include <random>
+#include <chrono>
+#include <cassert>
+
 using namespace std;
 
 void printMatrix(const vector<vector<int>>& mat, const string& title = "") {

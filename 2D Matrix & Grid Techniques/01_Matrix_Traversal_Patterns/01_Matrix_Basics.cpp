@@ -27,7 +27,19 @@
  * ============================================================================
  */
 
-#include <bits/stdc++.h>
+#ifndef __APPLE__
+    #pragma GCC optimize("Ofast")
+    #pragma GCC optimize("unroll-loops")
+#endif
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <map>
+#include <iomanip>
+#include <random>
+#include <chrono>
+
 using namespace std;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -58,7 +70,7 @@ using namespace std;
 void declarationCStyle() {
     cout << "=== Method 1: C-Style 2D Array ===" << endl;
 
-    const int MAXN = 100;
+    constexpr int MAXN = 100;
     int mat[MAXN][MAXN]; // Fixed size, fast but limited
 
     // Initialize a small portion
@@ -111,7 +123,7 @@ void declarationVector() {
 
 // Method 3: Global Array (For Competitive Programming - Large Sizes)
 // CP TIP: Declare large arrays globally to avoid stack overflow!
-const int MAXN = 1005;
+constexpr int MAXN = 1005;
 int globalMat[MAXN][MAXN]; // Stored in BSS segment, zero-initialized
 
 void declarationGlobal() {
@@ -340,18 +352,18 @@ void utilityDemo() {
 // ─────────────────────────────────────────────────────────────────────────────
 /*
  *  ╔════════════════════════════════════════════════════════════════════╗
- *  ║                     CP TIPS FOR MATRIX PROBLEMS                  ║
+ *  ║                     CP TIPS FOR MATRIX PROBLEMS                    ║
  *  ╠════════════════════════════════════════════════════════════════════╣
- *  ║ 1. Use global arrays for large matrices to avoid stack overflow  ║
- *  ║ 2. Use memset(mat, 0, sizeof(mat)) to zero-fill C-style arrays  ║
- *  ║ 3. Use memset(mat, -1, sizeof(mat)) for -1 fill (works for int) ║
- *  ║ 4. Prefer row-wise traversal for cache efficiency                ║
- *  ║ 5. Use ios_base::sync_with_stdio(false); cin.tie(NULL); for I/O ║
- *  ║ 6. Use '\n' instead of endl for faster output                   ║
- *  ║ 7. For direction arrays: dx[] = {-1,1,0,0}, dy[] = {0,0,-1,1}  ║
- *  ║ 8. Check bounds: 0 <= i < n && 0 <= j < m                      ║
- *  ║ 9. For 1-indexed: allocate (n+1) × (m+1) and start from 1      ║
- *  ║ 10. Use pair<int,int> or struct for cell coordinates             ║
+ *  ║ 1. Use global arrays for large matrices to avoid stack overflow    ║
+ *  ║ 2. Use memset(mat, 0, sizeof(mat)) to zero-fill C-style arrays     ║
+ *  ║ 3. Use memset(mat, -1, sizeof(mat)) for -1 fill (works for int)    ║
+ *  ║ 4. Prefer row-wise traversal for cache efficiency                  ║
+ *  ║ 5. Use ios_base::sync_with_stdio(false); cin.tie(NULL); for I/O    ║
+ *  ║ 6. Use '\n' instead of endl for faster output                      ║
+ *  ║ 7. For direction arrays: dx[] = {-1,1,0,0}, dy[] = {0,0,-1,1}      ║
+ *  ║ 8. Check bounds: 0 <= i < n && 0 <= j < m                          ║
+ *  ║ 9. For 1-indexed: allocate (n+1) × (m+1) and start from 1          ║
+ *  ║ 10. Use pair<int,int> or struct for cell coordinates               ║
  *  ╚════════════════════════════════════════════════════════════════════╝
  */
 
@@ -400,7 +412,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════╗" << endl;
-    cout << "║     MATRIX BASICS - ZERO TO GM MASTERY      ║" << endl;
+    cout << "║     MATRIX BASICS - ZERO TO GM MASTERY       ║" << endl;
     cout << "╚══════════════════════════════════════════════╝" << endl;
     cout << endl;
 

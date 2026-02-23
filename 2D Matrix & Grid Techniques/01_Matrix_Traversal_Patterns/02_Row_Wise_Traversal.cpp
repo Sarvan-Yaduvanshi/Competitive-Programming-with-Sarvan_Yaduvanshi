@@ -22,7 +22,22 @@
  * ============================================================================
  */
 
-#include <bits/stdc++.h>
+#ifndef __APPLE__
+    #pragma GCC optimize("Ofast")
+    #pragma GCC optimize("unroll-loops")
+#endif
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <map>
+#include <iomanip>
+#include <numeric>
+#include <climits>
+#include <random>
+#include <chrono>
+
 using namespace std;
 
 // Utility: Print Matrix
