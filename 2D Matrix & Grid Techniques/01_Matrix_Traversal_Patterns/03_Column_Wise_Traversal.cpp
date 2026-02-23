@@ -281,7 +281,7 @@ void flattenColumnWise(const vector<vector<int>>& mat) {
  *
  *  ┌──────────────────────────────────────────────────────┐
  *  │  Row-wise:    Memory access pattern: [0][1][2][3]... │
- *  │               Sequential → Cache HITS               │
+ *  │               Sequential → Cache HITS                │
  *  │                                                      │
  *  │  Column-wise: Memory access pattern: [0][M][2M]...   │
  *  │               Jumping → Cache MISSES                 │
@@ -325,7 +325,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════════╗" << endl;
-    cout << "║   COLUMN-WISE TRAVERSAL - ZERO TO GM MASTERY    ║" << endl;
+    cout << "║   COLUMN-WISE TRAVERSAL - ZERO TO GM MASTERY     ║" << endl;
     cout << "╚══════════════════════════════════════════════════╝" << endl;
     cout << endl;
 

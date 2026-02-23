@@ -282,7 +282,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════════╗" << endl;
-    cout << "║   ROW-WISE TRAVERSAL - ZERO TO GM MASTERY       ║" << endl;
+    cout << "║   ROW-WISE TRAVERSAL - ZERO TO GM MASTERY        ║" << endl;
     cout << "╚══════════════════════════════════════════════════╝" << endl;
     cout << endl;
 

@@ -310,7 +310,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════════╗" << endl;
-    cout << "║    TRANSPOSE MATRIX - ZERO TO GM MASTERY        ║" << endl;
+    cout << "║    TRANSPOSE MATRIX - ZERO TO GM MASTERY         ║" << endl;
     cout << "╚══════════════════════════════════════════════════╝" << endl;
     cout << endl;
 

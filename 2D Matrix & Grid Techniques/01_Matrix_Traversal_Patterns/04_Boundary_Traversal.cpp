@@ -327,7 +327,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════════╗" << endl;
-    cout << "║    BOUNDARY TRAVERSAL - ZERO TO GM MASTERY      ║" << endl;
+    cout << "║    BOUNDARY TRAVERSAL - ZERO TO GM MASTERY       ║" << endl;
     cout << "╚══════════════════════════════════════════════════╝" << endl;
     cout << endl;
 
