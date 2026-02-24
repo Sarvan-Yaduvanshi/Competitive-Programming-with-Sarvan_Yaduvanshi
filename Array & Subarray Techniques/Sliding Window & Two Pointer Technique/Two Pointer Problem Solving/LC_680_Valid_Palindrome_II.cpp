@@ -1,6 +1,6 @@
 /*
 Author: Sarvan.DP.GrandMaster
-Created : 2026-01-01 20:31:33
+Created : 2026-02-24 06:14:18
 */
 
 #ifndef __APPLE__
@@ -54,8 +54,11 @@ mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
 #define fi first
 #define se second
 
-#define v1(v, n) vec<i64> v(n)
-#define take(v) for(auto &x : v) cin >> x
+// Input helper
+template<class T>
+void read(vec<T> &v) {
+    for (auto &x : v) cin >> x;
+}
 #define nl '\n'
 #define YES cout << "YES" << nl
 #define NO cout << "NO" << nl
@@ -74,40 +77,70 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-void solve() {
-    vector<int> v;
+/* Problem: LeetCode 680 - Valid Palindrome II
+ * Given a string s, return true if the s can be palindrome after deleting at most one character from it.
+ *
+ * Example 1:
+ * Input: s = "aba"
+ * Output: true
+ *
+ * Example 2:
+ * Input: s = "abca"
+ * Output: true
+ * Explanation: You could delete the character 'c'.
+ *
+ * Example 3:
+ * Input: s = "abc"
+ * Output: false
+ *
+ * Constraints:
+ * 1 <= s.length <= 10^5
+ * s consists of lowercase English letters.
+ */
 
-    v.push_back(2); // [2]
-    v.push_back(3); // [2, 3]
-    v.push_back(5); // [2, 3, 5]
-    v.push_back(7); // [2, 3, 5, 7]
-    v[1] = 4; // sets element at index 1 to 4 --> [2, 4, 5, 7]
-    v.erase(v.begin() + 1); // removes element at index 1 -> [2, 5, 7]
-    // this remove method is O(n); to be avoided
-    v.push_back(8); // [2, 5, 7, 8]
-    v.erase(v.end() - 1); // [2, 5, 7]
-    // here, we remove the element from the end of the list; this is O(1).
-    v.push_back(4); // [2, 5, 7, 4]
-    v.push_back(4); // [2, 5, 7, 4, 4]
-    v.push_back(9); // [2, 5, 7, 4, 4, 9]
-    cout << v[2]; // print value index 2 --> 7
-    v.erase(v.begin(), v.begin() + 3); // [4, 4, 9]
-    // this erases the first three elements; O(n)
+// Approach 1: Two Pointers with Helper Function
+// Time: O(N), Space: O(1)
+bool isPalindrome(const string& s, int left, int right){
+    while (left <= right){
+        if (s[left] != s[right])
+            return false;
 
-    // In a dynamic array, we can also add and delete
-    // elements at the end in O(1) time.
-    // However, we need to be careful that we only add elements to the end of the vector;
-    // insertion and deletion in the middle of the vector is O(n)
+        left++;
+        right--;
+    }
 
-    for (auto val : v) cout << val << " ";
+    return true;
 }
+
+bool validPalindrome(string& s){
+    int left = 0;
+    int right = sz(s) - 1;
+
+    while (left < right){
+        if (s[left] == s[right]){
+            left++;
+            right--;
+        } else
+            return isPalindrome(s, left + 1, right) || isPalindrome(s, left, right - 1);
+    }
+
+    return true;
+}
+
+
+
+void solve() {
+    
+}
+
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
     
     cout << fixed << setprecision(10);
-
+    
+    // Multi-test case support (commented out for this demo)
     // int TC = 1;
     // cin >> TC;
     // while (TC--) solve();

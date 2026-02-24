@@ -107,7 +107,7 @@ vec<int> firstNegIntOptimal(const vec<int>& arr, int k){
 
     for (int i = 0; i < n; i++){
         // 1. if curr element is negative, add its idx
-        if (arr[i] < 0) dq.pb(i);
+        if (arr[i] < 0) dq.pb(i);                       ZZ
 
         // 2. Remove: Current window is [i-k+1 ... i]. So index <= i-k is expired
         if (!dq.empty() && dq.front() <= i - k)
