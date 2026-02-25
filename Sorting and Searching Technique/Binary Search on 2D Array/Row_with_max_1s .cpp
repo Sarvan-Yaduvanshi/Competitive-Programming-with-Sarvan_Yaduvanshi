@@ -80,7 +80,144 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD){
     return res;
 }
 
+/* Problem: Row with Maximum 1s in Binary Matrix
+ * Given a binary matrix where each row has 0s followed by 1s,
+ * find the row with the maximum number of 1s.
+ *
+ * Approach: Start from top-right. Move left on 1, move down on 0.
+ * Time: O(N + M), Space: O(1)
+ *
+ * Example:
+ * 0 0 0 1 1
+ * 0 0 1 1 1
+ * 0 0 0 0 1
+ * 0 1 1 1 1
+ *
+ * Answer: Row 3 (four 1s)
+ *  interview version: In staircase search, we start from the top-right corner.
+ *                     At each step, depending on the value, we eliminate either one full row or one full column.
+ *                     This reduces the search space efficiently, giving O(n + m) time complexity.
+ */
+
+// Approach 1: Brute Force O(N × M)
+int rowWithMaxOnesBrute(const vector<vector<int>>& mat) {
+    int n = sz(mat), m = sz(mat[0]);
+    int maxRow = 0, maxOnes = 0;
+
+    for (int i = 0; i < n; i++) {
+        int countOnes = 0;
+        for (int j = 0; j < m; j++) {
+            if (mat[i][j] == 1) countOnes++;
+        }
+        if (countOnes > maxOnes) {
+            maxOnes = countOnes;
+            maxRow = i;
+        }
+    }
+    return maxRow;
+}
+
+
+// ─────────────────────────────────────────────────────────────────────────────
+// LEVEL 4: ROW WITH MAXIMUM 1s IN BINARY MATRIX  O(N + M)
+// ─────────────────────────────────────────────────────────────────────────────
+/*
+ *  Given binary matrix where each row has 0s followed by 1s,
+ *  find the row with the maximum number of 1s.
+ *
+ *  Approach: Start from top-right. Move left on 1, move down on 0.
+ *  Time: O(N + M), Space: O(1)
+ *
+ *  Example:
+ *  0 0 0 1 1
+ *  0 0 1 1 1
+ *  0 0 0 0 1
+ *  0 1 1 1 1
+ * Answer: Row 3 (four 1s)
+ * Counting number of 1s using index j
+ * (Staircase Algorithm Notes)
+ * Example row:
+ * index:  0 1 2 3 4
+ * value:  0 0 0 1 1
+ * After staircase movement:
+ * index:  0 1 2 3 4
+ * value:  0 0 0 1 1
+               ↑
+               j = 2   (j points to LAST 0)
+ * ----------------------------------------
+ * Step 1: Count number of zeros
+ * Zeros exist from index 0 to j
+ * Formula:
+ * count = last_index - first_index + 1
+ * count = j - 0 + 1
+ * count = j + 1
+ * Example:
+ * j = 2
+ * zeros = 2 + 1 = 3
+ * Reason:
+ * Index starts from 0, so count is always j+1
+ * ----------------------------------------
+ * Step 2: Count number of ones
+ * Total columns = m
+ * Formula:
+ * ones = total_columns - zeros
+ * ones = m - (j + 1)
+ * ones = m - 1 - j
+ * Example:
+ * m = 5, j = 2
+ * ones = 5 - 1 - 2 -> ans => 2
+ * ----------------------------------------
+ * Final formulas to remember:
+ * zeros = j + 1
+ * ones  = m - 1 - j
+ * ----------------------------------------
+ * Key intuition:
+ * j points to last 0
+ * j+1 is first 1 index
+ * Example:
+ * 0 0 0 1 1
+        ↑
+        j
+ * ones exist from index (j+1) to (m-1)
+ * count = (m-1) - (j+1) + 1 -> m - 1 - j
+ * ----------------------------------------
+ * Time complexity advantage:
+ * No need to count manually → O(1)
+ * Because staircase already found boundary
+ *  interview version: In staircase search, we start from the top-right corner.
+ *                     At each step, depending on the value, we eliminate either one full row or one full column.
+ *                     This reduces the search space efficiently, giving O(n + m) time complexity.
+ */
+int rowWithMaxOnes(const vector<vector<int>>& mat){
+    int m = sz(mat);
+    int n = sz(mat[0]);
+
+    int maxRow = 0;
+    int j = n - 1; // Start from top-right
+
+    for (int i = 0; i < n; i++){
+        while (j >= 0 && mat[i][j] == 1){
+            j--;
+            maxRow = i; // This row has more 1s
+        }
+    }
+
+    return maxRow;
+}
+
 void solve(){
+    int n, m;
+    cin >> n >> m;
+
+    vvec<int> mat(n, vec<int>(m));
+    for (auto& row : mat){
+        for (auto& val : row){
+            cin >> val;
+        }
+    }
+
+    int ans = rowWithMaxOnes(mat);
+    cout << "Row with maximum 1s: " << ans << endl;
 }
 
 

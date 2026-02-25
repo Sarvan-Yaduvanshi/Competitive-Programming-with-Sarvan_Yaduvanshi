@@ -94,8 +94,6 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
 // TC -> O(N * k) | SC -> O(k)
 vec<int> maxSlidingWindowBruteForce(const vec<int>& arr, int k){
     int n = sz(arr);
-
-    int mxNum = INT_MIN;
     vec<int> ans;
 
     for (int i = 0; i <= n - k; i++){
