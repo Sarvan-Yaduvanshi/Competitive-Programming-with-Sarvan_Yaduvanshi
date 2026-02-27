@@ -108,40 +108,40 @@ void boundaryCheckDemo(const vector<vector<int>>& mat) {
  */
 vector<int> clockwiseBoundary(const vector<vector<int>>& mat) {
     cout << "=== Clockwise Boundary Traversal ===" << endl;
-    int n = mat.size(), m = mat[0].size();
     vector<int> result;
 
-    if (n == 0 || m == 0) return result;
+    if (mat.empty() || mat[0].empty()) return result;
+
+    int top = 0;
+    int bottom = mat.size() - 1;
+    int left = 0;
+    int right = mat[0].size() - 1;
+
+    // Step 1: Top row → (left to right)
+    for (int i = left; i <= right; i++)
+        result.push_back(mat[top][i]);
+    top++;
+
+    // Step 2: Right column ↓ (top to bottom)
+    for (int i = top; i <= bottom; i++)
+        result.push_back(mat[i][right]);
+    right--;
 
     // Handle single row
-    if (n == 1) {
-        for (int j = 0; j < m; j++)
-            result.push_back(mat[0][j]);
-        return result;
+    if (top <= bottom){
+        // Step 3: Bottom row ← (right to left)
+        for (int i = right; i >= left; i--)
+            result.push_back(mat[bottom][i]);
+        bottom--;
     }
 
     // Handle single column
-    if (m == 1) {
-        for (int i = 0; i < n; i++)
-            result.push_back(mat[i][0]);
-        return result;
+    if (left <= right){
+        // Step 4: Left column ↑ (bottom to top)
+        for (int i = bottom; i >= top; i--)
+            result.push_back(mat[i][left]);
+        left++;
     }
-
-    // Step 1: Top row → (left to right)
-    for (int j = 0; j < m; j++)
-        result.push_back(mat[0][j]);
-
-    // Step 2: Right column ↓ (top+1 to bottom)
-    for (int i = 1; i < n; i++)
-        result.push_back(mat[i][m - 1]);
-
-    // Step 3: Bottom row ← (right-1 to left)
-    for (int j = m - 2; j >= 0; j--)
-        result.push_back(mat[n - 1][j]);
-
-    // Step 4: Left column ↑ (bottom-1 to top+1)
-    for (int i = n - 2; i >= 1; i--)
-        result.push_back(mat[i][0]);
 
     cout << "Order: ";
     for (int x : result) cout << x << " ";
@@ -168,34 +168,39 @@ vector<int> clockwiseBoundary(const vector<vector<int>>& mat) {
  */
 vector<int> antiClockwiseBoundary(const vector<vector<int>>& mat) {
     cout << "=== Anti-Clockwise Boundary Traversal ===" << endl;
-    int n = mat.size(), m = mat[0].size();
     vector<int> result;
+    if (mat.empty() || mat[0].empty()) return result;
 
-    if (n == 0 || m == 0) return result;
-    if (n == 1) {
-        for (int j = 0; j < m; j++) result.push_back(mat[0][j]);
-        return result;
+    int top = 0;
+    int bottom = mat.size() - 1;
+    int left = 0;
+    int right = mat[0].size() - 1;
+
+    // Step 1: Left column ↓ (top to bottom)
+    for (int i = top; i <= bottom; i++)
+        result.push_back(mat[i][left]);
+    left++;
+
+    // Step 2: Bottom row → (left to right)
+    for (int j = left; j <= right; j++)
+        result.push_back(mat[bottom][j]);
+    bottom--;
+
+    // Handle single row
+    if (top <= bottom) {
+        // Step 3: Right column ↑ (bottom to top)
+        for (int i = bottom; i >= top; i--)
+            result.push_back(mat[i][right]);
+        right--;
     }
-    if (m == 1) {
-        for (int i = 0; i < n; i++) result.push_back(mat[i][0]);
-        return result;
+
+    // Handle single column
+    if (left <= right) {
+        // Step 4: Top row ← (right to left)
+        for (int j = right; j >= left; j--)
+            result.push_back(mat[top][j]);
+        top++;
     }
-
-    // Step 1: Left column ↓
-    for (int i = 0; i < n; i++)
-        result.push_back(mat[i][0]);
-
-    // Step 2: Bottom row →
-    for (int j = 1; j < m; j++)
-        result.push_back(mat[n - 1][j]);
-
-    // Step 3: Right column ↑
-    for (int i = n - 2; i >= 0; i--)
-        result.push_back(mat[i][m - 1]);
-
-    // Step 4: Top row ←
-    for (int j = m - 2; j >= 1; j--)
-        result.push_back(mat[0][j]);
 
     cout << "Order: ";
     for (int x : result) cout << x << " ";

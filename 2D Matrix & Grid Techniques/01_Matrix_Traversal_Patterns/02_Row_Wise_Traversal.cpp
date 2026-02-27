@@ -259,8 +259,8 @@ vector<int> flattenRowWise(const vector<vector<int>>& mat) {
  *
  *  1D Array:         Matrix (3×3):
  *  [1,2,3,4,5,6,7,8,9]  →  1  2  3
- *                            4  5  6
- *                            7  8  9
+ *                          4  5  6
+ *                          7  8  9
  *
  *  Index Mapping: arr[k] → mat[k / M][k % M]
  */
