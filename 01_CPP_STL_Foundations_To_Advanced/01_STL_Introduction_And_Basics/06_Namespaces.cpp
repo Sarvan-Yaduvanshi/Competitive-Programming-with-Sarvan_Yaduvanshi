@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           06 — NAMESPACES IN C++                                           ║
-║           From Zero to Grandmaster — Scope Management                      ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           06 — NAMESPACES IN C++                                             ║
+║           From Zero to Grandmaster — Scope Management                        ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -23,7 +23,11 @@ CORE IDEA:
   Without "using namespace std", you'd write std::vector, std::sort, etc.
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+#include <map>
 using namespace std;  // THE CP WAY — explained below
 
 // ═══════════════════════════════════════════════════════════════

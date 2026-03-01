@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           02 — DEQUE COMPLETE GUIDE                                        ║
-║           From Zero to Grandmaster — Double-Ended Power                    ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           02 — DEQUE COMPLETE GUIDE                                          ║
+║           From Zero to Grandmaster — Double-Ended Power                      ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -31,7 +31,11 @@ GM TIP: deque is used in CP for:
   3. When you need both front and back operations
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+#include <map>
 using namespace std;
 
 // ═══════════════════════════════════════════════════════════════
@@ -77,7 +81,7 @@ void demonstrateBasicOps() {
  │ Feature         │ vector       │ deque        │
  ├─────────────────┼──────────────┼──────────────┤
  │ push_back       │ O(1)*        │ O(1)*        │
- │ push_front      │ O(n) ❌       │ O(1)* ✓      │
+ │ push_front      │ O(n) ❌      │ O(1)* ✓      │
  │ Random access   │ O(1)         │ O(1)         │
  │ Memory          │ Contiguous   │ Segmented    │
  │ Cache perf      │ Excellent    │ Good         │

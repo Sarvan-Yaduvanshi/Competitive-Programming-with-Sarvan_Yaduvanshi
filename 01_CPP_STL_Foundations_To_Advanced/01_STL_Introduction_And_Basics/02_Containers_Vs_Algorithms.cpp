@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           02 — CONTAINERS VS ALGORITHMS                                    ║
-║           From Zero to Grandmaster — STL Architecture                      ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           02 — CONTAINERS VS ALGORITHMS                                      ║
+║           From Zero to Grandmaster — STL Architecture                        ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:

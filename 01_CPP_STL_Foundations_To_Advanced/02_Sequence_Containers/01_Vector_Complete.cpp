@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           01 — VECTOR COMPLETE GUIDE                                       ║
-║           From Zero to Grandmaster — The King of CP Containers             ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           01 — VECTOR COMPLETE GUIDE                                         ║
+║           From Zero to Grandmaster — The King of CP Containers               ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -34,7 +34,11 @@ WHAT IS VECTOR?
   This is O(n) but happens rarely → amortized O(1) push_back.
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+#include <map>
 using namespace std;
 
 // ═══════════════════════════════════════════════════════════════

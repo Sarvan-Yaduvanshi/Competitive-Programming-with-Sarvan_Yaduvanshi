@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           05 — HEADER FILES IN C++ FOR CP                                  ║
-║           From Zero to Grandmaster — Smart Includes                        ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           05 — HEADER FILES IN C++ FOR CP                                    ║
+║           From Zero to Grandmaster — Smart Includes                          ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:

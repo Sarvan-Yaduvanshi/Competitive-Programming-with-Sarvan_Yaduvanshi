@@ -1,8 +1,8 @@
-/*
+ /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           07 — AUTO KEYWORD IN C++                                         ║
-║           From Zero to Grandmaster — Type Deduction Magic                  ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           07 — AUTO KEYWORD IN C++                                           ║
+║           From Zero to Grandmaster — Type Deduction Magic                    ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:

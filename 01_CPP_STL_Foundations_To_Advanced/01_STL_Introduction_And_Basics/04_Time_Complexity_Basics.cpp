@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           04 — TIME COMPLEXITY BASICS FOR STL                              ║
-║           From Zero to Grandmaster — Know Your Costs                       ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           04 — TIME COMPLEXITY BASICS FOR STL                                ║
+║           From Zero to Grandmaster — Know Your Costs                         ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -52,10 +52,10 @@ using namespace std;
  │ O(log N)     │ 17           │ 20           │ Binary search, set.find()  │
  │ O(√N)        │ 316          │ 1000         │ Factorization, sqrt decomp │
  │ O(N)         │ 10^5         │ 10^6         │ Linear scan, accumulate    │
- │ O(N log N)   │ 1.7 × 10^6  │ 2 × 10^7    │ sort(), building BST       │
+ │ O(N log N)   │ 1.7 × 10^6   │ 2 × 10^7     │ sort(), building BST       │
  │ O(N²)        │ 10^10 ❌     │ 10^12 ❌     │ Nested loops, bubble sort  │
  │ O(N³)        │ 10^15 ❌     │ 10^18 ❌     │ Floyd-Warshall             │
- │ O(2^N)       │ 10^30000 ❌  │ ∞ ❌          │ Subset enumeration         │
+ │ O(2^N)       │ 10^30000 ❌  │ ∞ ❌         │ Subset enumeration         │
  └──────────────┴──────────────┴──────────────┴────────────────────────────┘
 
  RULE: For 1 second time limit:

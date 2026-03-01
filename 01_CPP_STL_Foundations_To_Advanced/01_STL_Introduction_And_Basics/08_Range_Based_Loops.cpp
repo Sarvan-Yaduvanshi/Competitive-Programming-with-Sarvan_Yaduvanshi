@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           08 — RANGE-BASED FOR LOOPS                                       ║
-║           From Zero to Grandmaster — Modern C++ Iteration                  ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           08 — RANGE-BASED FOR LOOPS                                         ║
+║           From Zero to Grandmaster — Modern C++ Iteration                    ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -24,7 +24,11 @@ CORE IDEA:
   Cleaner, safer, less bug-prone.
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+#include <map>
 using namespace std;
 
 // ═══════════════════════════════════════════════════════════════

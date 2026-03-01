@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           09 — LAMBDA BASICS                                               ║
-║           From Zero to Grandmaster — Anonymous Functions                   ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           09 — LAMBDA BASICS                                                 ║
+║           From Zero to Grandmaster — Anonymous Functions                     ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -22,7 +22,11 @@ CORE IDEA:
   Custom sorting, filtering, transforming — all done with lambdas.
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <set>
+#include <map>
 using namespace std;
 
 // ═══════════════════════════════════════════════════════════════

@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           01 — WHAT IS STL? (Standard Template Library)                     ║
-║           From Zero to Grandmaster — Complete Foundation                    ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           01 — WHAT IS STL? (Standard Template Library)                      ║
+║           From Zero to Grandmaster — Complete Foundation                     ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -55,10 +55,10 @@ using namespace std;
  ┌──────────────────────────────────────────────────────────┐
  │                    STL ARCHITECTURE                      │
  │                                                          │
- │   ┌─────────────┐     ┌──────────────┐                  │
- │   │  CONTAINERS  │────▶│  ITERATORS   │                  │
- │   │ (store data) │     │ (point/scan) │                  │
- │   └─────────────┘     └──────┬───────┘                  │
+ │   ┌─────────────┐     ┌──────────────┐                   │
+ │   │  CONTAINERS  │────▶│  ITERATORS  │                   │
+ │   │ (store data) │     │ (point/scan)│                   │
+ │   └─────────────┘     └──────┬───────┘                   │
  │                              │                           │
  │                              ▼                           │
  │                      ┌──────────────┐                    │
