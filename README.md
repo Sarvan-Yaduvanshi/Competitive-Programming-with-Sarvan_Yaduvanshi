@@ -9,7 +9,7 @@
 
 <!-- Typing Animation -->
 <a href="https://github.com/Sarvan-Yaduvanshi/Competitive-Programming-with-Sarvan_Yaduvanshi">
-  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&duration=3000&pause=1000&color=00D4FF&center=true&vCenter=true&multiline=true&repeat=true&width=900&height=100&lines=%F0%9F%8F%86+Think+Faster.+Code+Cleaner.+Solve+Harder.;%F0%9F%92%BB+643%2B+Solutions+%7C+15+Core+Topics+%7C+C%2B%2B17" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&duration=3000&pause=1000&color=00D4FF&center=true&vCenter=true&multiline=true&repeat=true&width=900&height=100&lines=%F0%9F%8F%86+Think+Faster.+Code+Cleaner.+Solve+Harder.;%F0%9F%9F%A3+CF+Candidate+Master+%7C+%E2%AD%90+CodeChef+5+Star+%7C+%F0%9F%9B%A1%EF%B8%8F+LC+Guardian;%F0%9F%92%BB+643%2B+Solutions+%7C+15+Core+Topics+%7C+C%2B%2B17" alt="Typing SVG" />
 </a>
 
 <br/>
@@ -20,9 +20,9 @@
 [![Topics](https://img.shields.io/badge/Topics-15%2B%20Core-blueviolet?style=for-the-badge&logo=bookstack&logoColor=white)](.)
 [![License](https://img.shields.io/badge/License-MIT-00C853?style=for-the-badge)](LICENSE)
 
-[![Codeforces](https://img.shields.io/badge/Codeforces-Active-1F8ACB?style=for-the-badge&logo=codeforces&logoColor=white)](https://codeforces.com/)
-[![LeetCode](https://img.shields.io/badge/LeetCode-Active-FFA116?style=for-the-badge&logo=leetcode&logoColor=black)](https://leetcode.com/)
-[![CSES](https://img.shields.io/badge/CSES-Active-2E7D32?style=for-the-badge)](https://cses.fi/)
+[![Codeforces](https://img.shields.io/badge/Codeforces-Candidate_Master_🟣-A0A?style=for-the-badge&logo=codeforces&logoColor=white)](https://codeforces.com/profile/sarvan.dp.grandmaster)
+[![CodeChef](https://img.shields.io/badge/CodeChef-5_Star_⭐-5B4638?style=for-the-badge&logo=codechef&logoColor=white)](https://www.codechef.com/users/cpoptimizer)
+[![LeetCode](https://img.shields.io/badge/LeetCode-Guardian_🛡️-FFA116?style=for-the-badge&logo=leetcode&logoColor=black)](https://leetcode.com/u/Sarvan_DP_Grandmaster/)
 [![Stars](https://img.shields.io/github/stars/Sarvan-Yaduvanshi/Competitive-Programming-with-Sarvan_Yaduvanshi?style=for-the-badge&color=FFD700&logo=github)](https://github.com/Sarvan-Yaduvanshi/Competitive-Programming-with-Sarvan_Yaduvanshi)
 
 <br/>
@@ -551,32 +551,187 @@ Found a bug, have a cleaner approach, or want to add a missing problem?
 
 ## 👤 About the Author
 
+<!-- ═══════════════════════════════════════════════════════════════════════════════
+     AUTHOR INTRODUCTION — SARVAN YADUVANSHI
+     ═══════════════════════════════════════════════════════════════════════════════ -->
+
 <div align="center">
 
-<img src="https://img.shields.io/badge/Sarvan_Yaduvanshi-Competitive_Programmer-00599C?style=for-the-badge&logo=codeforces&logoColor=white" />
+<img src="https://capsule-render.vercel.app/api?type=rect&color=0:0d1117,100:1a1a2e&height=2" width="100%" />
+
+<br/>
+
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=800&size=32&duration=2500&pause=800&color=00D4FF&center=true&vCenter=true&repeat=true&width=700&height=50&lines=Hey+%F0%9F%91%8B+I'm+Sarvan+Yaduvanshi" alt="Hey I'm Sarvan Yaduvanshi" />
+
+<br/>
+
+<!-- Title Badges -->
+<img src="https://img.shields.io/badge/🟣_Candidate_Master-Codeforces-1F8ACB?style=for-the-badge&logo=codeforces&logoColor=white" />
+<img src="https://img.shields.io/badge/⭐⭐⭐⭐⭐_5_Star-CodeChef-5B4638?style=for-the-badge&logo=codechef&logoColor=white" />
+<img src="https://img.shields.io/badge/🛡️_Guardian-LeetCode-FFA116?style=for-the-badge&logo=leetcode&logoColor=black" />
 
 </div>
 
+<br/>
+
 <table align="center">
 <tr>
-<td align="center">
 
-**Sarvan Yaduvanshi**
+<!-- LEFT SIDE — Story & Bio -->
+<td width="55%" valign="top">
 
-*Competitive Programmer | Algorithm Designer | Problem Solver*
+### 🚀 The Journey — From Zero to Candidate Master
 
-Building strong algorithmic foundations, one pattern at a time.
+```
+📅 2023 — The Beginning
+────────────────────────────────────
+"One day I opened a code editor, wrote my first
+ 'Hello World', and decided I would never stop."
+```
 
-| 🔗 Link | 📍 Platform |
-|:---:|:---:|
-| [@Sarvan-Yaduvanshi](https://github.com/Sarvan-Yaduvanshi) | GitHub |
-| [Competitive Programming Repo](https://github.com/Sarvan-Yaduvanshi/Competitive-Programming-with-Sarvan_Yaduvanshi) | This Repo |
+I started my competitive programming journey in **2023** with nothing but raw curiosity and an unstoppable hunger to learn. No prior coding background. No CS degree advantage. Just **pure dedication**.
 
-**Focus Areas:** DSA Mastery • Codeforces Rating Climb • FAANG Prep • Algorithm Design
+**What followed was relentless grinding:**
+
+- 🔥 **Daily contests** — rain or shine, weekday or weekend
+- 📚 **500+ problems in the first year** — building brick by brick
+- 🧠 **Pattern recognition over memorization** — learning *why*, not just *how*
+- ⏰ **Late nights debugging**, early mornings solving
+- 📈 **Consistent upsolving** — every contest loss became a lesson
+
+> *"I didn't have talent. I had discipline. And discipline beats talent every single day when talent doesn't work hard."*
+> — **Sarvan Yaduvanshi**
+
+```
+📅 2023 → 2026 — The Transformation
+────────────────────────────────────
+Newbie → Pupil → Specialist → Expert → Candidate Master
+  "3 years. 643+ problems. Zero days off from learning."
+```
+
+Today, I'm a **Candidate Master on Codeforces**, a **5-Star on CodeChef**, and a **Guardian on LeetCode** — not because I was gifted, but because I **showed up every single day** and refused to quit.
+
+</td>
+
+<!-- RIGHT SIDE — Stats Card -->
+<td width="45%" valign="top" align="center">
+
+<br/>
+
+### 🏅 Competitive Profiles
+
+<br/>
+
+<a href="https://codeforces.com/profile/sarvan.dp.grandmaster">
+  <img src="https://img.shields.io/badge/Codeforces-Candidate_Master_🟣-A0A?style=for-the-badge&logo=codeforces&logoColor=white" width="100%" />
+</a>
+
+<br/><br/>
+
+<a href="https://www.codechef.com/users/cpoptimizer">
+  <img src="https://img.shields.io/badge/CodeChef-5_Star_⭐⭐⭐⭐⭐-5B4638?style=for-the-badge&logo=codechef&logoColor=white" width="100%" />
+</a>
+
+<br/><br/>
+
+<a href="https://leetcode.com/u/Sarvan_DP_Grandmaster/">
+  <img src="https://img.shields.io/badge/LeetCode-Guardian_🛡️-FFA116?style=for-the-badge&logo=leetcode&logoColor=black" width="100%" />
+</a>
+
+<br/><br/>
+
+<a href="https://www.linkedin.com/in/sarvan-yaduvanshi-2b9b7a287/">
+  <img src="https://img.shields.io/badge/LinkedIn-Connect_🤝-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" width="100%" />
+</a>
+
+<br/><br/>
+
+<a href="https://github.com/Sarvan-Yaduvanshi">
+  <img src="https://img.shields.io/badge/GitHub-@Sarvan--Yaduvanshi-181717?style=for-the-badge&logo=github&logoColor=white" width="100%" />
+</a>
+
+<br/><br/>
+
+---
+
+### 📊 By the Numbers
+
+| 🏷️ | 📈 |
+|:---|:---:|
+| **Started** | `2023` |
+| **Problems Solved** | `643+` |
+| **Codeforces** | `Candidate Master 🟣` |
+| **CodeChef** | `5 Star ⭐⭐⭐⭐⭐` |
+| **LeetCode** | `Guardian 🛡️` |
+| **Languages** | `C++17` |
+| **Daily Streak** | `Never Stopped 🔥` |
 
 </td>
 </tr>
 </table>
+
+<!-- Journey Timeline -->
+<div align="center">
+
+<br/>
+
+### 📈 The Growth Timeline
+
+```
+ 2023                    2024                    2025                    2026
+  │                       │                       │                       │
+  ▼                       ▼                       ▼                       ▼
+┌──────────┐     ┌──────────────┐     ┌──────────────────┐     ┌──────────────────┐
+│ 🌱 Day 1 │     │ ⚡ Specialist │     │ 🟣 Candidate     │     │ 🏆 Building      │
+│ "Hello   │────▶│ Codeforces   │────▶│    Master (CF)   │────▶│    This Repo     │
+│  World"  │     │ 3★ CodeChef  │     │ 5★ CodeChef      │     │    For YOU       │
+│          │     │ Knight (LC)  │     │ Guardian (LC)    │     │    643+ Solved   │
+└──────────┘     └──────────────┘     └──────────────────┘     └──────────────────┘
+     │                  │                      │                        │
+     └──── Curiosity ───┴──── Consistency ─────┴──── Mastery ──────────┘
+```
+
+<br/>
+
+### 🧬 Core Philosophy
+
+<table>
+<tr>
+<td align="center" width="25%">
+
+**🎯 Consistency**
+<br/>
+*"I don't code when I feel like it. I code every single day — feelings are irrelevant."*
+
+</td>
+<td align="center" width="25%">
+
+**🧠 Smart Work**
+<br/>
+*"Hard work gets you started. Smart work — learning patterns — gets you to the top."*
+
+</td>
+<td align="center" width="25%">
+
+**🔥 Never Quit**
+<br/>
+*"Every red submission is one step closer to green. The only real failure is stopping."*
+
+</td>
+<td align="center" width="25%">
+
+**📖 Teach Others**
+<br/>
+*"If you can't explain it simply, you don't understand it deeply enough."*
+
+</td>
+</tr>
+</table>
+
+> ### *"Started in 2023 with zero knowledge. Now a Candidate Master. The secret? I never took a day off from learning."*
+> **— Sarvan Yaduvanshi**
+
+</div>
 
 ---
 
