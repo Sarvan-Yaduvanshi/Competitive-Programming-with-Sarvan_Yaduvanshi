@@ -116,7 +116,7 @@ void printArr(const string& label, const vec<int>& arr) {
  * ├───────────────────────────────────┼────────┼────────┤
  * │ Brute Force (rotate by 1, K times)│ O(NK)  │ O(1)   │
  * │ Using Temp Array                  │ O(N)   │ O(N)   │
- * │ Reversal Algorithm ★             │ O(N)   │ O(1)   │
+ * │ Reversal Algorithm ★              │ O(N)   │ O(1)   │
  * │ Juggling Algorithm                │ O(N)   │ O(1)   │
  * │ Cyclic Replacement                │ O(N)   │ O(1)   │
  * │ Block Swap                        │ O(N)   │ O(1)   │
@@ -225,6 +225,33 @@ void rightRotateReversal(vec<int>& arr, int k) {
     reverse(arr.begin(), arr.end());              // Reverse [0, n)
     reverse(arr.begin(), arr.begin() + k);        // Reverse [0, k)
     reverse(arr.begin() + k, arr.end());          // Reverse [k, n)
+}
+
+// GM Notes: Write a whole algorithm manually use two pointers
+// Logic: Same logic:
+//                   Reverse [0, n - 1]
+//                   Reverse [0, k - 1]
+//                   Reverse [k, n - 1]
+void rightRotateManual(vec<int>& arr, int k){
+    int n = sz(arr);
+    if (n == 0) return;
+
+    // overflow safe if k >= n
+    k %= n;
+    if (k == 0) return;
+
+    int st = 0, en = n - 1;
+
+    // Step 1: Reverse entire array -> 0..n-1
+    while (st < en) swap(arr[st++], arr[en--]);
+
+    // Step 2: Reverse first K elements -> 0..k-1
+    st = 0, en = k - 1;
+    while (st < en) swap(arr[st++], arr[en--]);
+
+    // Step 3: Reverse remaining elements -> k..n-1
+    st = k, en = n - 1;
+    while (st < en) swap(arr[st++], arr[en--]);
 }
 
 // -------------------------------------------------------------

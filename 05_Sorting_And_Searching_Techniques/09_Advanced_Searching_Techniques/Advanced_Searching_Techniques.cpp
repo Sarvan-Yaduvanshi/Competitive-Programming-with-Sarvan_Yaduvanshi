@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           CHAPTER 09 — ADVANCED SEARCHING TECHNIQUES                       ║
-║           From Zero to Grandmaster — Complete Foundation                    ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           CHAPTER 09 — ADVANCED SEARCHING TECHNIQUES                         ║
+║           From Zero to Grandmaster — Complete Foundation                     ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:

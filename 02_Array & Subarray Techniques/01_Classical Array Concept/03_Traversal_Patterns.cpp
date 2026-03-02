@@ -380,11 +380,11 @@ void traversal_with_index(const vec<int>& arr) {
  * because of prefetching.
  *
  * ┌──────────────┬─────────────────┬──────────────┐
- * │ Access        │ Cache Behavior   │ Performance  │
+ * │ Access       │ Cache Behavior  │ Performance  │
  * ├──────────────┼─────────────────┼──────────────┤
- * │ Sequential    │ Perfect prefetch │ ~10 GB/s     │
- * │ Stride (skip) │ Some misses      │ ~2-5 GB/s    │
- * │ Random        │ Constant misses  │ ~0.1 GB/s    │
+ * │ Sequential   │ Perfect prefetch│ ~10 GB/s     │
+ * │ Stride (skip)│ Some misses     │ ~2-5 GB/s    │
+ * │ Random       │ Constant misses │ ~0.1 GB/s    │
  * └──────────────┴─────────────────┴──────────────┘
  *
  * GM Implication:

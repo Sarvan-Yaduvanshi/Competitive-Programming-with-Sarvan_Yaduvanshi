@@ -369,6 +369,14 @@ vector<vector<int>> shiftGrid(vector<vector<int>>& grid, int k) {
 
     // Rotate right by k
     k %= (n * m);
+
+    // If k == 0, return original grid -> no need to rotate
+    // example: k = 9, n = 3, m = 3 → k % 9 = 0 → no change
+    // (Optimization for large k)
+    if (k == 0) retutn grid;
+
+    // if k > 0, rotate right by k → last k elements move to front
+    // rotate -> rotate[first, middle, last] -> [middle -> last) + [first -> middle)
     rotate(flat.begin(), flat.end() - k, flat.end());
 
     // Reshape

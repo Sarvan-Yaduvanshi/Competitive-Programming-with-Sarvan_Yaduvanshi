@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           CHAPTER 05 — SORTING PATTERNS & TRICKS                           ║
-║           From Zero to Grandmaster — Complete Foundation                    ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           CHAPTER 05 — SORTING PATTERNS & TRICKS                             ║
+║           From Zero to Grandmaster — Complete Foundation                     ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
