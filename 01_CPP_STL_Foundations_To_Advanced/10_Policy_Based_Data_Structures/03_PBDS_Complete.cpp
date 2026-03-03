@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           03 — POLICY-BASED DATA STRUCTURES (PBDS)                         ║
-║           From Zero to Grandmaster — K-th Smallest in O(log n)             ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           03 — POLICY-BASED DATA STRUCTURES (PBDS)                           ║
+║           From Zero to Grandmaster — K-th Smallest in O(log n)               ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -28,7 +28,22 @@ WHAT IS PBDS?
   ⚠️ GCC-only! Works on Codeforces, AtCoder, CSES. NOT on MSVC.
 */
 
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <string>
+#include <algorithm>
+#include <map>
+#include <set>
+#include <queue>
+#include <stack>
+#include <cmath>
+#include <iomanip>
+#include <numeric>
+#include <climits>
+#include <random>
+#include <chrono>
+#include <cassert>
+
 using namespace std;
 
 // PBDS includes

@@ -13,10 +13,9 @@ TABLE OF CONTENTS:
  4.  First Occurrence of Element
  5.  Last Occurrence of Element
  6.  Count of Element in Sorted Array
- 7.  Search Insert Position
- 8.  Search in Infinite Sorted Array
- 9.  Binary Search Templates (Closed/Open Interval)
- 10. STL Binary Search Functions
+ 7.  Search in Infinite Sorted Array
+ 8.  Binary Search Templates (Closed/Open Interval)
+ 9. STL Binary Search Functions
 
 OVERVIEW:
 ─────────
@@ -56,6 +55,7 @@ MASTER TEMPLATE:
 #include <vector>
 #include <algorithm>
 #include <cassert>
+#include <set>
 #include <climits>
 using namespace std;
 
@@ -141,12 +141,19 @@ void demo_classic_bs() {
  RECURSION: T(n) = T(n/2) + O(1) → O(log n)
  SPACE: O(log n) for recursion stack
 */
-
 int binarySearch_recursive(const vector<int>& arr, int target, int lo, int hi) {
+    // Base Case: Search space is exhausted
     if (lo > hi) return -1;
+
+    // GM Optimization: Prevents (low + high) overflow for large arrays
     int mid = lo + (hi - lo) / 2;
-    if (arr[mid] == target) return mid;
+
+    if (arr[mid] == target) return mid; // Target found
+
+    // Target is in the right half
     if (arr[mid] < target) return binarySearch_recursive(arr, target, mid + 1, hi);
+
+    // Target is in the left half
     return binarySearch_recursive(arr, target, lo, mid - 1);
 }
 
@@ -384,50 +391,7 @@ void demo_count_element() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SECTION 7: SEARCH INSERT POSITION
-// ═══════════════════════════════════════════════════════════════
-/*
- THEORY:
- ───────
- Given a sorted array, find the index where target would be inserted
- to keep the array sorted. (LC 35)
-
- This is exactly lower_bound!
-
- If target exists: return its index
- If not: return the index where it should be inserted
-
- EXAMPLES:
-   [1, 3, 5, 6], target=5 → 2 (exists at index 2)
-   [1, 3, 5, 6], target=2 → 1 (insert between 1 and 3)
-   [1, 3, 5, 6], target=7 → 4 (insert at end)
-   [1, 3, 5, 6], target=0 → 0 (insert at beginning)
-*/
-
-int searchInsertPosition(const vector<int>& arr, int target) {
-    int lo = 0, hi = (int)arr.size();
-    while (lo < hi) {
-        int mid = lo + (hi - lo) / 2;
-        if (arr[mid] < target) lo = mid + 1;
-        else hi = mid;
-    }
-    return lo;
-}
-
-void demo_search_insert() {
-    cout << "=== SECTION 7: SEARCH INSERT POSITION ===" << endl;
-
-    vector<int> arr = {1, 3, 5, 6};
-    cout << "Insert 5: " << searchInsertPosition(arr, 5) << endl;  // 2
-    cout << "Insert 2: " << searchInsertPosition(arr, 2) << endl;  // 1
-    cout << "Insert 7: " << searchInsertPosition(arr, 7) << endl;  // 4
-    cout << "Insert 0: " << searchInsertPosition(arr, 0) << endl;  // 0
-
-    cout << endl;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SECTION 8: SEARCH IN INFINITE SORTED ARRAY
+// SECTION 7: SEARCH IN INFINITE SORTED ARRAY
 // ═══════════════════════════════════════════════════════════════
 /*
  THEORY:
@@ -452,6 +416,8 @@ void demo_search_insert() {
 int searchInfinite(const vector<int>& arr, int target) {
     // Step 1: Find bounds using exponential search
     int lo = 0, hi = 1;
+
+    // In real infinite case, use API access instead of size()
     while (hi < (int)arr.size() && arr[hi] < target) {
         lo = hi;
         hi *= 2;
@@ -506,7 +472,7 @@ void demo_infinite_search() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SECTION 9: BINARY SEARCH TEMPLATES
+// SECTION 8: BINARY SEARCH TEMPLATES
 // ═══════════════════════════════════════════════════════════════
 /*
  THEORY:
@@ -610,7 +576,7 @@ void demo_templates() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SECTION 10: STL BINARY SEARCH FUNCTIONS
+// SECTION 9: STL BINARY SEARCH FUNCTIONS
 // ═══════════════════════════════════════════════════════════════
 /*
  THEORY:
@@ -798,4 +764,5 @@ int main() {
 ║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 */
+
 
