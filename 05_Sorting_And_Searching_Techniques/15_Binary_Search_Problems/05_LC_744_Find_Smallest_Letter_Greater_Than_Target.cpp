@@ -1,6 +1,6 @@
 /*
 Author: Sarvan.DP.GrandMaster
-Created : 2026-03-03 21:42:58
+Created : 2026-03-04 13:09:07
 */
 
 #ifndef __APPLE__
@@ -77,8 +77,50 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
+/* Problem: LeetCode 744: Find Smallest Letter Greater Than Target
+ * Difficulty: Easy
+ * You are given an array of characters letters that is sorted in non-decreasing order, and a character target.
+ * There are at least two different characters in letters.
+ * Return the smallest character in letters that is lexicographically greater than target.
+ * If such a character does not exist, return the first character in letters.
+ *
+ * Example 1:
+ * Input: letters = ["c","f","j"], target = "a"
+ * Output: "c"
+ * Explanation: The smallest character that is lexicographically greater than 'a' in letters is 'c'.
+ * Example 2:
+ * Input: letters = ["c","f","j"], target = "c"
+ * Output: "f"
+ * Explanation: The smallest character that is lexicographically greater than 'c' in letters is 'f'.
+ *
+ * Constraints:
+ * 2 <= letters.length <= 104
+ * letters[i] is a lowercase English letter.
+ * letters is sorted in non-decreasing order.
+ * target is a lowercase English letter.
+ */
+
+char nextGreatestLetter(const vector<char>& letters, char target) {
+    int lo = 0;
+    int hi = (int)letters.size();
+
+    while (lo < hi) {
+        int mid = lo + (hi - lo) / 2;
+        if (letters[mid] <= target) lo = mid + 1;
+        else hi = mid;
+    }
+
+    return (lo == (int)letters.size()) ? letters[0] : letters[lo];
+}
+
 void solve() {
-    
+    int n;
+    char target;
+    cin >> n >> target;
+    vector<char> letters(n);
+    read(letters);
+
+    cout << nextGreatestLetter(letters, target) << nl;
 }
 
 
