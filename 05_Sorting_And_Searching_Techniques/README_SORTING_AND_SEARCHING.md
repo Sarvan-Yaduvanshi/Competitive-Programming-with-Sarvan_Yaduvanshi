@@ -50,7 +50,7 @@ This module is the **most comprehensive Sorting & Searching resource** for compe
 
 | # | Chapter | Key Topics | Lines | Difficulty |
 |:-:|---------|------------|:-----:|:----------:|
-| 06 | [**Binary Search Basics**](06_Binary_Search_Basics/Binary_Search_Basics.cpp) | Classic BS (iterative + recursive), Lower/Upper bound, First/Last occurrence, Count of element, Search insert position, Infinite array search, BS templates (closed/open interval) | 802 | ⭐⭐⭐ |
+| 06 | [**Binary Search Basics**](06_Binary_Search_Basics/02_Binary_Search_Basics.cpp) | Classic BS (iterative + recursive), Lower/Upper bound, First/Last occurrence, Count of element, Search insert position, Infinite array search, BS templates (closed/open interval) | 802 | ⭐⭐⭐ |
 | 07 | [**Binary Search On Answer**](07_Binary_Search_On_Answer/Binary_Search_On_Answer.cpp) | Monotonic function, Feasibility checking, Minimize maximum, Maximize minimum, Aggressive Cows, Allocate Books, Painters Partition, Parametric search, Floating-point BS | 887 | ⭐⭐⭐ |
 | 08 | [**2D Searching & Binary Search**](08_2D_Searching_And_Binary_Search/2D_Searching_And_Binary_Search.cpp) | Row-wise search, Flatten matrix BS, Staircase search O(n+m), Kth smallest in matrix, Median in row-sorted matrix, 2D peak finding, Parametric search in grid | 554 | ⭐⭐⭐⭐ |
 
@@ -451,7 +451,7 @@ make
 │   └── Sorting_Patterns_And_Tricks.cpp         ← 879 lines
 │
 ├── 📂 06_Binary_Search_Basics/
-│   └── Binary_Search_Basics.cpp                ← 802 lines
+│   └── 02_Binary_Search_Basics.cpp                ← 802 lines
 │
 ├── 📂 07_Binary_Search_On_Answer/
 │   └── Binary_Search_On_Answer.cpp             ← 887 lines

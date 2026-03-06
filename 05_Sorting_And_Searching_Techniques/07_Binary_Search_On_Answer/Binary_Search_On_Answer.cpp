@@ -1,13 +1,25 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           CHAPTER 07 — BINARY SEARCH ON ANSWER                             ║
-║           From Zero to Grandmaster — Complete Foundation                    ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           CHAPTER 07 — BINARY SEARCH ON ANSWER                               ║
+║           From Zero to Grandmaster — Complete Foundation                     ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
 ─────────────────
+ 0.  ★ WHY BINARY SEARCH IS O(log n) — Mathematical Proof ★
+     0a. Intuitive Explanation (Halving Principle)
+     0b. Recurrence Relation: T(n) = T(n/2) + O(1)
+     0c. Solving the Recurrence (Expansion Method)
+     0d. Proof by Master Theorem
+     0e. Proof by Logarithmic Identity
+     0f. Visual: How fast log₂(n) grows vs n
+
  1.  Monotonic Function Property
+     1a. ★ GRAPHS: Increasing Monotonic, Decreasing Monotonic ★
+     1b. ★ GRAPH: Non-Monotonic (Why BS fails) ★
+     1c. Formal Definition & Feasibility
+
  2.  Feasibility Checking Pattern
  3.  Minimize Maximum (Binary Search on Answer)
  4.  Maximize Minimum (Binary Search on Answer)
@@ -16,6 +28,194 @@ TABLE OF CONTENTS:
  7.  Painters Partition
  8.  Parametric Search
  9.  Floating Point Binary Search
+
+═══════════════════════════════════════════════════════════════════════════════
+ ★★★  SECTION 0: WHY BINARY SEARCH IS O(log n) — FULL MATHEMATICAL PROOF ★★★
+═══════════════════════════════════════════════════════════════════════════════
+
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │  "In competitive programming, understanding WHY an algorithm is         │
+ │   O(log n) is just as important as knowing HOW to use it."              │
+ └─────────────────────────────────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────
+ 0a. INTUITIVE EXPLANATION (Halving Principle)
+ ─────────────────────────────────────────
+
+   Binary Search works by HALVING the search space each step.
+
+   Start:     n elements
+   Step 1:    n/2 elements remain
+   Step 2:    n/4 elements remain
+   Step 3:    n/8 elements remain
+     ...
+   Step k:    n / 2^k elements remain
+
+   We stop when only 1 element remains:
+       n / 2^k = 1
+       ⟹  2^k = n
+       ⟹  k = log₂(n)              ← THIS IS WHY IT'S O(log n)!
+
+   ┌──────────────────────────────────────────────────────────────────┐
+   │  n = 1,000,000  →  log₂(1,000,000) ≈ 20 steps only!              │
+   │  n = 1,000,000,000  →  log₂(10⁹) ≈ 30 steps only!                │
+   │                                                                  │
+   │  Linear search: 10⁹ operations = TLE ❌                          │
+   │  Binary search: 30 operations  = AC  ✅                          │
+   └──────────────────────────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────
+ 0b. RECURRENCE RELATION: T(n) = T(n/2) + O(1)
+ ─────────────────────────────────────────
+
+   Let T(n) = time to binary search in array of size n.
+
+   At each step:
+     • We compute mid = (lo + hi) / 2           → O(1)
+     • We compare arr[mid] with target           → O(1)
+     • We recurse on LEFT half OR RIGHT half     → T(n/2)
+
+   Therefore the RECURRENCE RELATION is:
+
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   T(n) = T(n/2) + c       where c = O(1)    │
+   │   T(1) = O(1)             (base case)       │
+   │                                             │
+   └─────────────────────────────────────────────┘
+
+   This is one of the most fundamental recurrences in CS!
+
+ ─────────────────────────────────────────
+ 0c. SOLVING THE RECURRENCE (Expansion / Unrolling Method)
+ ─────────────────────────────────────────
+
+   T(n) = T(n/2) + c
+
+   Expand T(n/2):
+   T(n) = [T(n/4) + c] + c
+        = T(n/4) + 2c
+
+   Expand T(n/4):
+   T(n) = [T(n/8) + c] + 2c
+        = T(n/8) + 3c
+
+   After k expansions:
+   ┌─────────────────────────────────────────────┐
+   │   T(n) = T(n / 2^k) + k·c                   │
+   └─────────────────────────────────────────────┘
+
+   We reach base case when n / 2^k = 1:
+       2^k = n
+       k = log₂(n)
+
+   Substituting:
+       T(n) = T(1) + log₂(n) · c
+            = O(1) + O(log n)
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   ∴  T(n) = O(log n)   ■ (QED)              │
+   │                                             │
+   └─────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────
+ 0d. PROOF BY MASTER THEOREM
+ ─────────────────────────────────────────
+
+   The Master Theorem solves recurrences of the form:
+       T(n) = a · T(n/b) + O(n^d)
+
+   For Binary Search:
+       T(n) = 1 · T(n/2) + O(n^0)
+       ⟹ a = 1, b = 2, d = 0
+
+   Compare log_b(a) with d:
+       log₂(1) = 0 = d
+
+   When log_b(a) = d, Master Theorem Case 2 gives:
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   T(n) = O(n^d · log n) = O(n^0 · log n)    │
+   │        = O(log n)         ■ (QED)           │
+   │                                             │
+   └─────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────
+ 0e. PROOF BY LOGARITHMIC IDENTITY
+ ─────────────────────────────────────────
+
+   The number of times you can divide n by 2 before reaching 1 is:
+
+       ⌊log₂(n)⌋
+
+   PROOF:
+   Let k = number of halvings.
+       n → n/2 → n/4 → ... → n/2^k ≥ 1
+
+       n / 2^k ≥ 1  AND  n / 2^(k+1) < 1
+       ⟹  2^k ≤ n < 2^(k+1)
+       ⟹  k ≤ log₂(n) < k + 1
+       ⟹  k = ⌊log₂(n)⌋
+
+   Each halving does O(1) work:
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   Total = ⌊log₂(n)⌋ × O(1) = O(log n)       │
+   │                                      ■ QED  │
+   └─────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────
+ 0f. VISUAL: How fast log₂(n) grows vs n
+ ─────────────────────────────────────────
+
+   ┌─────────────────────┬──────────┬───────────────┐
+   │         n           │  log₂(n) │  Speedup (n / │
+   │                     │ (steps)  │    log₂(n))   │
+   ├─────────────────────┼──────────┼───────────────┤
+   │              16     │     4    │        4×     │
+   │             256     │     8    │       32×     │
+   │           1,024     │    10    │      102×     │
+   │          65,536     │    16    │    4,096×     │
+   │       1,048,576     │    20    │   52,428×     │
+   │   1,000,000,000     │    30    │   33,333,333× │
+   └─────────────────────┴──────────┴───────────────┘
+
+   GRAPH of log₂(n) vs n:
+
+   steps
+    30 │                                              ●  (10⁹)
+       │
+    25 │
+       │
+    20 │                          ●  (10⁶)
+       │
+    15 │
+       │                ●  (32768)
+    10 │          ●  (1024)
+       │
+     5 │    ●  (32)
+       │  ●  (4)
+     0 ├──┬─────┬──────┬──────────┬───────────────────┬──→ n
+       0  4    32   1024       10⁶                   10⁹
+
+   ↑ log₂(n) grows EXTREMELY SLOWLY — that's the power of Binary Search!
+
+   COMPARISON WITH OTHER COMPLEXITIES:
+   ┌──────────────┬───────┬────────┬─────────┬──────────────┐
+   │     n        │ O(1)  │O(log n)│  O(n)   │   O(n²)      │
+   ├──────────────┼───────┼────────┼─────────┼──────────────┤
+   │     10       │  1    │   3    │    10   │     100      │
+   │    100       │  1    │   7    │   100   │  10,000      │
+   │  1,000       │  1    │  10    │  1,000  │ 1,000,000    │
+   │ 10⁶          │  1    │  20    │   10⁶   │   10¹²  ☠️   │
+   │ 10⁹          │  1    │  30    │   10⁹   │   10¹⁸  ☠️☠️ │
+   └──────────────┴───────┴────────┴─────────┴──────────────┘
+
+   In CP: O(log n) ≈ "basically free" — you NEVER worry about it!
+
+═══════════════════════════════════════════════════════════════════════════════
+               END OF SECTION 0 — MATHEMATICAL PROOF
+═══════════════════════════════════════════════════════════════════════════════
 
 OVERVIEW:
 ─────────
@@ -67,11 +267,260 @@ using namespace std;
 // SECTION 1: MONOTONIC FUNCTION PROPERTY
 // ═══════════════════════════════════════════════════════════════
 /*
+ ┌─────────────────────────────────────────────────────────────────────────┐
+ │  "Monotonicity is the HEART of Binary Search on Answer.                 │
+ │   If you can prove the function is monotonic, you can binary search."   │
+ └─────────────────────────────────────────────────────────────────────────┘
+
  THEORY:
  ───────
  A function f(x) is MONOTONIC if:
-   f(x) ≤ f(x+1) for all x (non-decreasing) or
-   f(x) ≥ f(x+1) for all x (non-increasing)
+   f(x) ≤ f(x+1) for all x (non-decreasing / increasing monotonic) or
+   f(x) ≥ f(x+1) for all x (non-increasing / decreasing monotonic)
+
+ FORMAL MATHEMATICAL DEFINITION:
+ ─────────────────────────────────
+   • Monotonically Non-Decreasing:  ∀ x₁ < x₂ : f(x₁) ≤ f(x₂)
+   • Strictly Increasing:            ∀ x₁ < x₂ : f(x₁) < f(x₂)
+   • Monotonically Non-Increasing:  ∀ x₁ < x₂ : f(x₁) ≥ f(x₂)
+   • Strictly Decreasing:            ∀ x₁ < x₂ : f(x₁) > f(x₂)
+
+ ══════════════════════════════════════════════════════════════════════
+ 1a. ★ GRAPH: INCREASING MONOTONIC (Non-Decreasing) ★
+ ══════════════════════════════════════════════════════════════════════
+
+   feasible(x) = "Can we split array with max sum ≤ x?"
+   As x ↑, constraint relaxes → becomes EASIER → F F F...T T T
+
+   feasible
+     T │                          ● ● ● ● ● ● ● ●   ← ALL TRUE
+       │                        ╱
+       │                      ╱   ← transition point (answer!)
+       │                    ╱
+     F │● ● ● ● ● ● ● ● ●       ← ALL FALSE
+       └──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──→ x (answer)
+          1  2  3  4  5  6  7  8  9 10 11 12 13 14 15
+
+          ◄── NOT feasible ──►◄── feasible ──────────►
+          F  F  F  F  F  F  F  F  T  T  T  T  T  T  T
+
+   Binary Search finds: FIRST TRUE = answer = 9  (minimize)
+
+   ┌────────────────────────────────────────────────────────────┐
+   │  REAL WORLD EXAMPLES (Increasing Monotonic):               │
+   │                                                            │
+   │  • "Min capacity to ship in D days"     (LC 1011)          │
+   │     capacity ↑ → easier to ship → F F...T T                │
+   │                                                            │
+   │  • "Min max pages per student"          (Allocate Books)   │
+   │     maxPages ↑ → fewer students needed → F F...T T         │
+   │                                                            │
+   │  • "Min eating speed for Koko"          (LC 875)           │
+   │     speed ↑ → finishes faster → F F...T T                  │
+   │                                                            │
+   │  • "Min days to make M bouquets"        (LC 1482)          │
+   │     days ↑ → more flowers bloom → F F...T T                │
+   │                                                            │
+   │  CODE PATTERN:                                             │
+   │    while (lo < hi) {                                       │
+   │      mid = lo + (hi - lo) / 2;                             │
+   │      if (feasible(mid)) hi = mid;    // ← try smaller      │
+   │      else lo = mid + 1;                                    │
+   │    }                                                       │
+   │    return lo;  // first TRUE                               │
+   └────────────────────────────────────────────────────────────┘
+
+   DETAILED GRAPH — "Allocate Books" example:
+   pages = {12, 34, 67, 90}, students = 2
+
+   feasible(maxPages)?
+     T │                                    ● ● ● ● ● ● ● ●
+       │                                  ╱
+       │                                ╱
+     F │● ● ● ● ● ● ● ● ● ● ● ● ● ●
+       └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──→ maxPages
+         90 95 100 105 110  113  115 120 130 140 150 160 180 200 203
+                            ↑
+                      ANSWER = 113  (first TRUE)
+                      [12,34,67 | 90] → max(113, 90) = 113 ✅
+
+ ══════════════════════════════════════════════════════════════════════
+ 1b. ★ GRAPH: DECREASING MONOTONIC (Non-Increasing) ★
+ ══════════════════════════════════════════════════════════════════════
+
+   feasible(x) = "Can we place cows with min distance ≥ x?"
+   As x ↑, constraint tightens → becomes HARDER → T T T...F F F
+
+   feasible
+     T │● ● ● ● ● ● ● ●         ← ALL TRUE
+       │                  ╲
+       │                    ╲   ← transition point (answer!)
+       │                      ╲
+     F │                        ● ● ● ● ● ● ●   ← ALL FALSE
+       └──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──┬──→ x (min distance)
+          1  2  3  4  5  6  7  8  9 10 11 12 13 14
+
+          ◄─── feasible ───────►◄── NOT feasible ─►
+          T  T  T  T  T  T  T  T  F  F  F  F  F  F
+
+   Binary Search finds: LAST TRUE = answer = 8  (maximize)
+
+   ┌────────────────────────────────────────────────────────────┐
+   │  REAL WORLD EXAMPLES (Decreasing Monotonic):               │
+   │                                                            │
+   │  • "Max min distance between cows"  (SPOJ AGGRCOW)         │
+   │     dist ↑ → harder to place all → T T...F F               │
+   │                                                            │
+   │  • "Max height to cut wood (EKO)"  (SPOJ EKO)              │
+   │     height ↑ → less wood collected → T T...F F             │
+   │                                                            │
+   │  • "Max min force between balls"    (LC 1552)              │
+   │     force ↑ → harder to place → T T...F F                  │
+   │                                                            │
+   │  • "Max length of rope pieces"                             │
+   │     length ↑ → fewer pieces → T T...F F                    │
+   │                                                            │
+   │  CODE PATTERN:                                             │
+   │    while (lo < hi) {                                       │
+   │      mid = lo + (hi - lo + 1) / 2;  // ← CEILING!          │
+   │      if (feasible(mid)) lo = mid;    // ← try larger       │
+   │      else hi = mid - 1;                                    │
+   │    }                                                       │
+   │    return lo;  // last TRUE                                │
+   └────────────────────────────────────────────────────────────┘
+
+   DETAILED GRAPH — "Aggressive Cows" example:
+   stalls = {1, 2, 4, 8, 9}, cows = 3
+
+   canPlace(minDist)?
+     T │● ● ●               ← place at {1,4,8} or {1,4,9} etc.
+       │      ╲
+       │        ╲
+     F │          ● ● ● ● ● ● ●
+       └──┴──┴──┴──┴──┴──┴──┴──┴──┴──→ minDist
+          1  2  3  4  5  6  7  8  9
+                ↑
+          ANSWER = 3  (last TRUE)
+          Place cows at {1, 4, 9} → distances: 3, 5 → min = 3 ✅
+
+ ══════════════════════════════════════════════════════════════════════
+ 1c. ★ GRAPH: NON-MONOTONIC — WHY BINARY SEARCH FAILS! ★
+ ══════════════════════════════════════════════════════════════════════
+
+   EXAMPLE: f(x) = "Is x a prime number?"
+   Primes: 2,3,5,7,11,13... → TRUE/FALSE alternates randomly!
+
+   isPrime?
+     T │  ● ●   ● ●         ●  ●            ●  ●         ← random!
+       │
+     F │●     ●     ● ● ● ●   ●  ● ● ● ● ●   ● ● ● ●
+       └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──→ x
+          1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16
+
+          F  T  T  F  T  F  T  F  F  F  T  F  T  F  F  F
+
+   ❌ NOT monotonic! Binary search CANNOT work here!
+   ❌ No clean F...T or T...F boundary exists.
+   ❌ BS would skip over valid answers!
+
+   ┌─────────────────────────────────────────────────────────────┐
+   │  MORE NON-MONOTONIC EXAMPLES (BS FAILS! ❌):                │
+   │                                                             │
+   │  • "Is x a perfect square?"                                 │
+   │     1→T, 2→F, 3→F, 4→T, 5→F...  ← scattered T/F             │
+   │                                                             │
+   │  • "Does array contain element x?"                          │
+   │     (unsorted array) → random pattern                       │
+   │                                                             │
+   │  • f(x) = sin(x) > 0 ?                                      │
+   │     Oscillates T/F/T/F... → no monotonic boundary           │
+   │                                                             │
+   │  • "Number of divisors of x > 10?"                          │
+   │     12→T, 13→F, 24→T, 25→F... → no pattern                  │
+   └─────────────────────────────────────────────────────────────┘
+
+   ANOTHER NON-MONOTONIC GRAPH — f(x) = x² - 10x + 21 (parabola):
+
+   f(x)
+    10 │●                                         ●
+       │  ╲                                     ╱
+     5 │    ╲                                 ╱
+       │      ╲                             ╱
+     0 │─ ─ ─ ─●─ ─ ─ ─ ─ ─ ─ ─ ─ ─ ─●─ ─ ─ ─ ─ ─ zero line
+       │          ╲                   ╱
+    -5 │            ╲     ●       ╱
+       │              ╲ ╱   ╲ ╱
+       └──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──┴──→ x
+          0  1  2  3  4  5  6  7  8  9 10
+
+   f(x) > 0?  →  T T T F F F F F T T T
+   ❌ T T T...F F F...T T T → NOT monotonic! TWO transitions!
+   ❌ Binary Search sees T at x=1, F at x=5, T at x=9 → confused!
+
+ ══════════════════════════════════════════════════════════════════════
+ 1d. SUMMARY: MONOTONIC vs NON-MONOTONIC — THE KEY TEST
+ ══════════════════════════════════════════════════════════════════════
+
+   ┌──────────────────────────────────────────────────────────────────┐
+   │                                                                  │
+   │  MONOTONIC (BS works ✅):                                        │
+   │  ─────────────────────                                           │
+   │  Pattern 1: F F F F F F T T T T T T  (find first T → minimize)   │
+   │  Pattern 2: T T T T T T F F F F F F  (find last T → maximize)    │
+   │                                                                  │
+   │  Mathematical condition:                                         │
+   │  If feasible(x) = TRUE  ⟹  feasible(x+1) = TRUE  (Pattern 1)    │
+   │  If feasible(x) = FALSE ⟹  feasible(x-1) = FALSE (Pattern 1)    │
+   │                                                                  │
+   │  NON-MONOTONIC (BS fails ❌):                                    │
+   │  ────────────────────────                                        │
+   │  Pattern: T F T F T T F T F  (random, no clean boundary)         │
+   │  Pattern: F F T T F F T T T  (multiple transitions)              │
+   │                                                                  │
+   │  ★ GOLDEN RULE: Before applying BS on answer, PROVE that the     │
+   │    feasibility function is monotonic! Ask yourself:              │
+   │    "If answer = x works, does answer = x+1 also work?"           │
+   │    If YES → monotonic increasing (F...T) → minimize              │
+   │    "If answer = x works, does answer = x-1 also work?"           │
+   │    If YES → monotonic decreasing (T...F) → maximize              │
+   │                                                                  │
+   └──────────────────────────────────────────────────────────────────┘
+
+   SIDE-BY-SIDE COMPARISON:
+
+   INCREASING MONOTONIC          DECREASING MONOTONIC          NON-MONOTONIC
+   (Minimize answer)             (Maximize answer)             (BS FAILS!)
+
+   T│        ●●●●●●●            T│●●●●●●●                    T│  ● ●   ● ●   ●
+    │      ╱                      │        ╲                    │
+   F│●●●●●                      F│          ●●●●●●            F│●     ●     ● ●
+    └──────────→ x                └──────────→ x                └──────────→ x
+    F F F F T T T T T            T T T T T F F F F F           F T T F T T F T
+
+    ↑ find first T               ↑ find last T                 ↑ no boundary!
+    hi = mid                     lo = mid                      ❌ CANNOT BS
+
+ ══════════════════════════════════════════════════════════════════════
+ 1e. REAL CP EXAMPLE — PROVING MONOTONICITY
+ ══════════════════════════════════════════════════════════════════════
+
+   PROBLEM: "Ship packages in D days, minimize capacity" (LC 1011)
+
+   CLAIM: feasible(cap) is monotonically non-decreasing.
+   PROOF:
+     Suppose feasible(cap) = TRUE for some capacity cap.
+     That means we can ship all packages in ≤ D days with capacity cap.
+
+     Now consider capacity cap + 1 (strictly larger capacity).
+     Every day, we can carry AT LEAST as much as before (since cap+1 ≥ cap).
+     So we need AT MOST as many days as before.
+     ⟹ We can still ship in ≤ D days.
+     ⟹ feasible(cap + 1) = TRUE.
+
+     By mathematical induction:
+       feasible(cap) = TRUE ⟹ feasible(cap + k) = TRUE  ∀k ≥ 0
+
+     Therefore: F F F ... T T T T  (monotonic!)  ■ QED
 
  For binary search on answer, we need:
    "feasible(x)" to be monotonic:
@@ -849,38 +1298,38 @@ int main() {
 
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║                         PRACTICE PROBLEMS                                  ║
+║                         PRACTICE PROBLEMS                                    ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
-║                                                                            ║
-║  🟢 EASY:                                                                  ║
-║  1. Sqrt(x) (LC 69)                                                       ║
-║  2. First Bad Version (LC 278)                                             ║
-║  3. Koko Eating Bananas (LC 875)                                           ║
-║                                                                            ║
-║  🟡 MEDIUM:                                                                ║
-║  4. Capacity To Ship Packages (LC 1011)                                    ║
-║  5. Split Array Largest Sum (LC 410)                                       ║
-║  6. Smallest Divisor (LC 1283)                                             ║
-║  7. Min Days for Bouquets (LC 1482)                                        ║
-║  8. Magnetic Force (LC 1552) — Aggressive Cows                             ║
-║  9. CSES — Factory Machines                                                ║
-║ 10. CSES — Array Division                                                  ║
-║ 11. Min Speed to Arrive on Time (LC 1870)                                  ║
-║                                                                            ║
-║  🔴 HARD:                                                                  ║
-║ 12. SPOJ EKO — Cut wood                                                   ║
-║ 13. SPOJ AGGRCOW — Aggressive Cows                                        ║
-║ 14. CF 1201C — Maximum Median                                              ║
-║ 15. CF 1117C — Magic Ship                                                  ║
-║ 16. Allocate Books (GFG / InterviewBit)                                    ║
-║                                                                            ║
-║  🔵 GRANDMASTER:                                                           ║
-║ 17. CF 1468C — Boredom                                                     ║
-║ 18. CF 1623C — Balanced Stone Heaps                                        ║
-║ 19. CF 1486D — Max Median (BS + prefix)                                    ║
-║ 20. Parallel Binary Search (CF problems)                                   ║
-║ 21. USACO — Haybale Feast                                                  ║
-║                                                                            ║
+║                                                                              ║
+║  🟢 EASY:                                                                    ║
+║  1. Sqrt(x) (LC 69)                                                          ║
+║  2. First Bad Version (LC 278)                                               ║
+║  3. Koko Eating Bananas (LC 875)                                             ║
+║                                                                              ║
+║  🟡 MEDIUM:                                                                  ║
+║  4. Capacity To Ship Packages (LC 1011)                                      ║
+║  5. Split Array Largest Sum (LC 410)                                         ║
+║  6. Smallest Divisor (LC 1283)                                               ║
+║  7. Min Days for Bouquets (LC 1482)                                          ║
+║  8. Magnetic Force (LC 1552) — Aggressive Cows                               ║
+║  9. CSES — Factory Machines                                                  ║
+║ 10. CSES — Array Division                                                    ║
+║ 11. Min Speed to Arrive on Time (LC 1870)                                    ║
+║                                                                              ║
+║  🔴 HARD:                                                                    ║
+║ 12. SPOJ EKO — Cut wood                                                      ║
+║ 13. SPOJ AGGRCOW — Aggressive Cows                                           ║
+║ 14. CF 1201C — Maximum Median                                                ║
+║ 15. CF 1117C — Magic Ship                                                    ║
+║ 16. Allocate Books (GFG / InterviewBit)                                      ║
+║                                                                              ║
+║  🔵 GRANDMASTER:                                                             ║
+║ 17. CF 1468C — Boredom                                                       ║
+║ 18. CF 1623C — Balanced Stone Heaps                                          ║
+║ 19. CF 1486D — Max Median (BS + prefix)                                      ║
+║ 20. Parallel Binary Search (CF problems)                                     ║
+║ 21. USACO — Haybale Feast                                                    ║
+║                                                                              ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 */
 

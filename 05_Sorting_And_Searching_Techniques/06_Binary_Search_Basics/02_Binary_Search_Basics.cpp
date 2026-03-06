@@ -7,6 +7,7 @@
 
 TABLE OF CONTENTS:
 ─────────────────
+ 0.  ★ WHY Binary Search is O(log n) — Mathematical Proof & Recurrence Relation
  1.  Classic Binary Search — Iterative
  2.  Binary Search — Recursive Version
  3.  Lower Bound & Upper Bound
@@ -15,7 +16,227 @@ TABLE OF CONTENTS:
  6.  Count of Element in Sorted Array
  7.  Search in Infinite Sorted Array
  8.  Binary Search Templates (Closed/Open Interval)
- 9. STL Binary Search Functions
+ 9.  STL Binary Search Functions
+ 10. Bonus: Common Binary Search Patterns
+ 11. Practice Problems
+
+═══════════════════════════════════════════════════════════════════════════════
+ SECTION 0: ★ WHY BINARY SEARCH IS O(log n) — FULL MATHEMATICAL PROOF ★
+═══════════════════════════════════════════════════════════════════════════════
+
+ Before writing a single line of code, let us PROVE mathematically
+ why Binary Search runs in O(log n) time using a recurrence relation.
+
+ ─────────────────────────────────────────────────────────────────────
+ 0A. THE INTUITION — HALVING THE SEARCH SPACE
+ ─────────────────────────────────────────────────────────────────────
+
+ Binary Search works on a sorted array of size n.
+ At every step, it compares the middle element with the target:
+
+   • If arr[mid] == target → FOUND (1 comparison, done)
+   • If arr[mid] < target  → search RIGHT half (size ≈ n/2)
+   • If arr[mid] > target  → search LEFT half  (size ≈ n/2)
+
+ So after each comparison, the problem size HALVES:
+
+   Step 0:  search space = n
+   Step 1:  search space = n/2
+   Step 2:  search space = n/4
+   Step 3:  search space = n/8
+     ...
+   Step k:  search space = n / 2^k
+
+ We stop when the search space shrinks to 1 element:
+
+   n / 2^k = 1
+   ⟹  2^k = n
+   ⟹  k = log₂(n)              ← This is the number of steps!
+
+ Therefore, Binary Search performs at most ⌈log₂(n)⌉ + 1 comparisons.
+
+ ─────────────────────────────────────────────────────────────────────
+ 0B. THE RECURRENCE RELATION — FORMAL DEFINITION
+ ─────────────────────────────────────────────────────────────────────
+
+ Let T(n) = the worst-case number of comparisons for an array of size n.
+
+ At each step, Binary Search:
+   1. Computes mid                              → O(1) work
+   2. Compares arr[mid] with target             → O(1) work
+   3. Recurses on ONE half of size ≈ n/2        → T(n/2) work
+
+ This gives us the RECURRENCE RELATION:
+
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   T(n) = T(n/2) + O(1)                      │
+   │                                             │
+   │   Base case: T(1) = O(1)                    │
+   │                                             │
+   └─────────────────────────────────────────────┘
+
+ Where:
+   • T(n/2) = cost of searching in half the array
+   • O(1)   = cost of computing mid + comparison
+   • T(1)   = when only 1 element remains, one comparison suffices
+
+ ─────────────────────────────────────────────────────────────────────
+ 0C. SOLVING THE RECURRENCE — METHOD 1: REPEATED SUBSTITUTION
+ ─────────────────────────────────────────────────────────────────────
+
+ Let c be the constant work at each level (c = O(1)).
+
+ Start:     T(n) = T(n/2) + c
+
+ Substitute T(n/2):
+             T(n) = [T(n/4) + c] + c
+                   = T(n/4) + 2c
+
+ Substitute T(n/4):
+             T(n) = [T(n/8) + c] + 2c
+                   = T(n/8) + 3c
+
+ After k substitutions:
+             T(n) = T(n / 2^k) + k·c
+
+ We reach the base case when n / 2^k = 1, i.e., k = log₂(n):
+
+             T(n) = T(1) + log₂(n) · c
+                   = c + c · log₂(n)
+                   = c · (1 + log₂(n))
+
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   T(n) = O(log n)    ✅  PROVED!            │
+   │                                             │
+   └─────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────────────────────────────────
+ 0D. SOLVING THE RECURRENCE — METHOD 2: MASTER THEOREM
+ ─────────────────────────────────────────────────────────────────────
+
+ The Master Theorem solves recurrences of the form:
+
+   T(n) = a · T(n/b) + O(n^d)
+
+ For Binary Search:
+   • a = 1  (we recurse on ONE subproblem)
+   • b = 2  (each subproblem is HALF the size)
+   • d = 0  (non-recursive work is O(n^0) = O(1))
+
+ Master Theorem has 3 cases. We check:
+
+   log_b(a) = log₂(1) = 0
+
+ Compare d with log_b(a):
+   d = 0, log_b(a) = 0  →  d == log_b(a)
+
+ This is CASE 2 of the Master Theorem:
+
+   When d == log_b(a):  T(n) = O(n^d · log n) = O(n^0 · log n) = O(log n)
+
+   ┌─────────────────────────────────────────────┐
+   │                                             │
+   │   By Master Theorem: T(n) = O(log n)  ✅    │
+   │                                             │
+   └─────────────────────────────────────────────┘
+
+ ─────────────────────────────────────────────────────────────────────
+ 0E. SOLVING THE RECURRENCE — METHOD 3: RECURSION TREE
+ ─────────────────────────────────────────────────────────────────────
+
+ Draw the recursion tree for T(n) = T(n/2) + c:
+
+   Level 0:  T(n)       →  cost = c        (problem size n)
+   Level 1:  T(n/2)     →  cost = c        (problem size n/2)
+   Level 2:  T(n/4)     →  cost = c        (problem size n/4)
+   Level 3:  T(n/8)     →  cost = c        (problem size n/8)
+     ...
+   Level k:  T(1)       →  cost = c        (base case, size 1)
+
+ Key observations:
+   • Each level has exactly 1 node (only 1 recursive call)
+   • Each level costs O(1) = c
+   • Number of levels = log₂(n) + 1
+
+ Total cost = c × (number of levels)
+            = c × (log₂(n) + 1)
+            = O(log n)
+
+   Recursion Tree Diagram:
+   ─────────────────────────
+             T(n)          ← c work
+              │
+            T(n/2)         ← c work
+              │
+            T(n/4)         ← c work
+              │
+            T(n/8)         ← c work
+              │
+             ...
+              │
+            T(1)           ← c work (base)
+
+   Height = log₂(n), Width = 1 at every level
+   Total = O(log n)  ✅
+
+ ─────────────────────────────────────────────────────────────────────
+ 0F. NUMERICAL EXAMPLE — FEEL THE POWER OF O(log n)
+ ─────────────────────────────────────────────────────────────────────
+
+   Array Size (n)    │ Linear O(n)     │ Binary O(log₂ n)  │ Speedup
+   ──────────────────┼─────────────────┼────────────────────┼──────────
+            10       │        10       │         4          │     2.5×
+           100       │       100       │         7          │    14.3×
+         1,000       │     1,000       │        10          │   100×
+        10,000       │    10,000       │        14          │   714×
+       100,000       │   100,000       │        17          │ 5,882×
+     1,000,000       │ 1,000,000       │        20          │ 50,000×
+    10,000,000       │ 10,000,000      │        24          │ 416,667×
+ 1,000,000,000       │ 1,000,000,000   │        30          │ 33,333,333×
+
+ With n = 10^9 (1 billion elements):
+   • Linear search: ~1 billion operations (~10 seconds TLE!)
+   • Binary search: ~30 comparisons (~instant!)
+
+ ─────────────────────────────────────────────────────────────────────
+ 0G. COMPARISON WITH OTHER SEARCH ALGORITHMS
+ ─────────────────────────────────────────────────────────────────────
+
+   Algorithm              │ Time Complexity  │ Prerequisite
+   ───────────────────────┼──────────────────┼──────────────────
+   Linear Search          │ O(n)             │ None
+   Binary Search          │ O(log n)         │ Sorted array
+   Ternary Search         │ O(log₃ n)        │ Unimodal function
+   Exponential Search     │ O(log n)         │ Sorted (unbounded)
+   Interpolation Search   │ O(log log n) avg │ Uniform distribution
+   Hash Table Lookup      │ O(1) average     │ Hash table built
+
+ Note: log₃(n) = log₂(n) / log₂(3) ≈ 0.63 × log₂(n)
+ BUT Ternary Search does 2 comparisons per level vs 1 for Binary.
+ So Binary Search is actually faster in practice!
+
+ ─────────────────────────────────────────────────────────────────────
+ 0H. SUMMARY OF THE MATHEMATICAL PROOF
+ ─────────────────────────────────────────────────────────────────────
+
+ ┌────────────────────────────────────────────────────────────────┐
+ │  Recurrence:     T(n) = T(n/2) + O(1),  T(1) = O(1)            │
+ │                                                                │
+ │  Method 1 — Substitution:                                      │
+ │    T(n) = T(n/2^k) + k·c, set k = log₂n → T(n) = O(log n)      │
+ │                                                                │
+ │  Method 2 — Master Theorem:                                    │
+ │    a=1, b=2, d=0. Case 2: T(n) = O(n^0 · log n) = O(log n)     │
+ │                                                                │
+ │  Method 3 — Recursion Tree:                                    │
+ │    Height = log₂n, cost/level = O(1) → Total = O(log n)        │
+ │                                                                │
+ │  ALL THREE METHODS CONFIRM: T(n) = O(log n)  ✅                │
+ └────────────────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════════════════
 
 OVERVIEW:
 ─────────
@@ -719,7 +940,6 @@ int main() {
     demo_first_occurrence();
     demo_last_occurrence();
     demo_count_element();
-    demo_search_insert();
     demo_infinite_search();
     demo_templates();
     demo_stl_functions();
