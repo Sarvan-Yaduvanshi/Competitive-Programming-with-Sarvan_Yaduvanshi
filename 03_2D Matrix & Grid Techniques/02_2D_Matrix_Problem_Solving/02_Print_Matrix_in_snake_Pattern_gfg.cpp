@@ -1,6 +1,6 @@
 /*
 Author: Sarvan.DP.GrandMaster
-Created : 2026-03-08 15:33:22
+Created : 2026-03-11 18:39:58
 */
 
 #ifndef __APPLE__
@@ -77,88 +77,72 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-/* Problem: Matrix Boundary Traversal
- * Platform: GeeksforGeeks | Difficulty: Easy
- * You are given a matrix mat[][] . Return the boundary traversal on the matrix
- * in a clockwise manner starting from the first row of the matrix.
- * Example 1:
- * Input:
- * N = 4, M = 4
- * mat[][] = {{1, 2, 3, 4},
- *            {5, 6, 7, 8},
- *            {9, 10, 11, 12},
- *            {13, 14, 15, 16}}
- * Output: 1 2 3 4 8 12 16 15 14 13 9 5
- * Explanation: The boundary traversal of the matrix is: 1 2 3 4 8 12 16 15 14 13 9 5.
+/* Problem: Print Matrix in Snake Pattern (GFG)
+ * Given a 2D matrix, print the elements in a snake pattern.
  *
- * Example 2:
+ * Snake pattern means:  -> -> -> -> idx 0 (even row)
+ *                     <- <- <- <- idx 1 (odd row)
+ *                     -> -> -> -> idx 2 (even row)
+ *                     ...
+ *
+ * Example:
  * Input:
- * N = 2, M = 2
- * mat[][] = {{12, 11},
- *           {4, 3}}
- * Output: 12, 11, 3, 4
- * Explanation: The boundary traversal of the matrix is: 12, 11, 3, 4.
+ * 1  2  3  4
+ * 5  6  7  8
+ * 9 10 11 12
+ *
+ * Output:
+ * 1,2,3,4,8,7,6,5,9,10,11,12
+ *
+ * Approach:
+ * - Traverse each row of the matrix.
+ * - For even-indexed rows (0-based), print left to right.
+ * - For odd-indexed rows, print right to left.
+ *
+ * Time Complexity: O(N*M) where N is number of rows and M is number of columns.
+ * Space Complexity: O(1) extra space (O(N*M) if storing results)
  */
 
-// Time Complexity: O(N*M) | Space Complexity: O(N+M)
-vec<int> boundaryTraversal(const vvec<int>& mat){
+vec<int> snakePattern(const vvec<int>& mat) {
     vec<int> result;
+    int n = sz(mat);
+    int m = sz(mat[0]);
 
-    if (mat.empty() || mat[0].empty()) return result;
+    if (n == 0) return result;
 
-    int top = 0;
-    int bottom = sz(mat) - 1;
-    int left = 0;
-    int right = sz(mat[0]) - 1;
-
-    // Step 1: Top row → (left to right)
-    for (int i = left; i <= right; i++)
-        result.push_back(mat[top][i]);
-    top++;
-
-    // Step 2: Right column ↓ (top to bottom)
-    for (int i = top; i <= bottom; i++)
-        result.push_back(mat[i][right]);
-    right--;
-
-    // Handle single row
-    if (top <= bottom){
-        // Step 3: Bottom row ← (right to left)
-        for (int i = right; i >= left; i--)
-            result.push_back(mat[bottom][i]);
-        bottom--;
+    for (int i = 0; i < n; i++) {
+        if (i % 2 == 0) {
+            // Even row: left to right
+            for (int j = 0; j < m; j++) {
+                result.pb(mat[i][j]);
+            }
+        } else {
+            // Odd row: right to left
+            for (int j = m - 1; j >= 0; j--) {
+                result.pb(mat[i][j]);
+            }
+        }
     }
-
-    // Handle single column
-    if (left <= right){
-        // Step 4: Left column ↑ (bottom to top)
-        for (int i = bottom; i >= top; i--)
-            result.push_back(mat[i][left]);
-        left++;
-    }
-
     return result;
 }
-
 
 void solve() {
     int n, m;
     cin >> n >> m;
 
     vvec<int> mat(n, vec<int>(m));
-    for (const auto& row : mat){
-        for (auto val : row){
-            cin >> val;
+    for (int i = 0; i < n; i++){
+        for (int j = 0; j < m; j++) {
+            cin >> mat[i][j];
         }
     }
 
-    vec<int> boundary = boundaryTraversal(mat);
+    vec<int> snakeOrder = snakePattern(mat);
     cout << "[";
-    for (int i = 0; i < sz(boundary); i++){
-        cout << boundary[i] << (i == sz(boundary) - 1 ? "" : ", ");
+    for (int i = 0; i < sz(snakeOrder); i++){
+        cout << snakeOrder[i] << (i < sz(snakeOrder) - 1 ? ", " : "");
     }
     cout << "]" << nl;
-
 }
 
 
