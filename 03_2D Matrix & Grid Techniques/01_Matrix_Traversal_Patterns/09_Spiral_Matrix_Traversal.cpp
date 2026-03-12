@@ -443,7 +443,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════════╗" << endl;
-    cout << "║   SPIRAL MATRIX TRAVERSAL - ZERO TO GM MASTERY  ║" << endl;
+    cout << "║   SPIRAL MATRIX TRAVERSAL - ZERO TO GM MASTERY   ║" << endl;
     cout << "╚══════════════════════════════════════════════════╝" << endl;
     cout << endl;
 
