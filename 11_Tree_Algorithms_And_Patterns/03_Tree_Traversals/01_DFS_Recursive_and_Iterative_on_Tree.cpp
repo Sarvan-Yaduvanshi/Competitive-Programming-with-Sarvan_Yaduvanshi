@@ -419,4 +419,3 @@ Subtree sizes:
  ✅ Subtree size: sub[v] = 1 + Σ sub[child] (most common DFS usage)
 ═══════════════════════════════════════════════════════════════════
 */
-
