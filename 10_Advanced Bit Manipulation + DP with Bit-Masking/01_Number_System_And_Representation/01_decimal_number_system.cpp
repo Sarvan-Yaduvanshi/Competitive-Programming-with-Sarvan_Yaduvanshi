@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           CHAPTER 01.01 — DECIMAL NUMBER SYSTEM                            ║
-║           Bit Manipulation — Number System Foundations                      ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           CHAPTER 01.01 — DECIMAL NUMBER SYSTEM                              ║
+║           Bit Manipulation — Number System Foundations                       ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 MATHEMATICAL DEFINITION:

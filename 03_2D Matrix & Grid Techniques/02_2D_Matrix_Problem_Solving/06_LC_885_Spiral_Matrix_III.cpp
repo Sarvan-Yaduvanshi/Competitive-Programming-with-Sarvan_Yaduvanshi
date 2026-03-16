@@ -105,10 +105,52 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
  *  Time: O(max(R,C)²), Space: O(R×C)
 */
 
-void solve() {
-    
+vvec<int> spiralMatrixIII(int rows, int cols, int rStart, int cStart) {
+    vvec<int> ans;
+    int totalCells = rows * cols;
+
+    int dr[] = {0, 1, 0, -1}; // Right, Down, Left, Up
+    int dc[] = {1, 0, -1, 0};
+
+    int r = rStart;
+    int c = cStart;
+    int d = 0; // Direction index
+    int steps = 1; // Number of steps to take in the current direction
+
+    ans.pb({r, c}); // start ceil is always included
+
+    while (sz(ans) < totalCells){
+        for (int rep = 0; rep < 2; rep++){ // Two directions per step-size than repeat as cycle
+            for (int s = 0; s < steps; s++){
+                r += dr[d]; // Move in the current direction
+                c += dc[d];
+
+                if (r >= 0 && r < rows && c >= 0 && c < cols) // Check if the new position is within bounds
+                    ans.pb({r, c});
+            }
+
+            d = (d + 1) % 4; // Change direction (Right → Down → Left → Up → Right ...)
+        }
+
+        steps++; // Increase the number of steps after every 2 direction changes
+    }
+    return ans;
 }
 
+void solve() {
+    int rows, cols, rStart, cStart;
+    cin >> rows >> cols >> rStart >> cStart;
+
+    auto ans = spiralMatrixIII(rows, cols, rStart, cStart);
+
+    cout << "[" << nl;
+    for (int i = 0; i < sz(ans); i++) {
+        cout << "  [" << ans[i][0] << "," << ans[i][1] << "]";
+        if (i + 1 < sz(ans)) cout << ",";
+        cout << nl;
+    }
+    cout << "]" << nl;
+}
 
 int main() {
     ios::sync_with_stdio(false);
