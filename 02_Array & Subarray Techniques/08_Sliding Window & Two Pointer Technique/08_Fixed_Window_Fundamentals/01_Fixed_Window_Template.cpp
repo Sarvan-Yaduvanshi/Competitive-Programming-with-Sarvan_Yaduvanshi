@@ -60,7 +60,7 @@ using namespace std;
 // ============================================================================
 // Basic Template: Max Sum Subarray of Size K
 // ============================================================================
-int maxSumSubarraySizeK(vector<int>& arr, int k) {
+int maxSumSubarraySizeK(const vector<int>& arr, int k) {
     int n = arr.size();
     int windowSum = 0, maxSum = INT_MIN;
 
