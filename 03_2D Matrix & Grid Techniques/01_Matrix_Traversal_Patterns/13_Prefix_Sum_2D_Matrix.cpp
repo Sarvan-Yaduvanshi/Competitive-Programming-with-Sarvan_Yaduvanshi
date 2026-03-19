@@ -527,4 +527,127 @@ int main() {
 
     return 0;
 }
-
+/*
+ * ==========================================
+ * 📚 2D PREFIX SUM FORMULA CHEATSHEET
+ * ==========================================
+ *
+ * ┌─────────────────────────────────────────┐
+ * │  1️⃣ BUILD FORMULA (Pre-computation)    │
+ * └─────────────────────────────────────────┘
+ *
+ * 1-BASED:
+ * --------
+ * pref[i][j] = mat[i][j]
+ *            + pref[i-1][j]      // Top
+ *            + pref[i][j-1]      // Left
+ *            - pref[i-1][j-1];   // Overlap
+ *
+ * 0-BASED:
+ * --------
+ * prefix[i][j] = mat[i][j];
+ * if (i > 0) prefix[i][j] += prefix[i-1][j];
+ * if (j > 0) prefix[i][j] += prefix[i][j-1];
+ * if (i > 0 && j > 0) prefix[i][j] -= prefix[i-1][j-1];
+ *
+ * ┌─────────────────────────────────────────┐
+ * │  2️⃣ QUERY FORMULA (O(1) Retrieval)     │
+ * └─────────────────────────────────────────┘
+ *
+ * Visual Representation:
+ *
+ *     c1-1  c1      c2
+ *       │    │       │
+ * r1-1──┼────┼───────┤
+ *       │ ❌ │  ❌   │
+ * r1────┼────┼───────┤
+ *       │ ❌ │  ✅   │ ← Target Region
+ * r2────┼────┼───────┤
+ *
+ * Formula Breakdown:
+ * ------------------
+ * ans = BIG - TOP - LEFT + CORNER
+ *
+ * BIG    = pref[r2][c2]         → Sum from (0,0) to (r2,c2)
+ * TOP    = pref[r1-1][c2]       → Remove region above target
+ * LEFT   = pref[r2][c1-1]       → Remove region left of target
+ * CORNER = pref[r1-1][c1-1]     → Add back (subtracted twice)
+ *
+ * 1-BASED CODE:
+ * -------------
+ * ans = pref[r2][c2]
+ *     - pref[r1-1][c2]
+ *     - pref[r2][c1-1]
+ *     + pref[r1-1][c1-1];
+ *
+ * 0-BASED CODE:
+ * -------------
+ * ans = prefix[r2][c2];
+ * if (r1 > 0) ans -= prefix[r1-1][c2];
+ * if (c1 > 0) ans -= prefix[r2][c1-1];
+ * if (r1 > 0 && c1 > 0) ans += prefix[r1-1][c1-1];
+ *
+ * ┌─────────────────────────────────────────┐
+ * │  🏆 GM-LEVEL PRO TIPS                   │
+ * └─────────────────────────────────────────┘
+ *
+ * 1. INDEXING CHOICE:
+ *    ├─ Competitive Programming → 1-based (cleaner, faster to code)
+ *    └─ LeetCode               → 0-based OR use (n+1)×(m+1) trick
+ *
+ * 2. LEETCODE TRICK:
+ *    • Allocate prefix[n+1][m+1] (internally 1-based)
+ *    • Convert input: prefix[i+1][j+1] = matrix[i][j]
+ *    • Query: add 1 to all coordinates
+ *    • Result: Clean 1-based formulas work perfectly!
+ *
+ * 3. MEMORY OPTIMIZATION:
+ *    • N, M ≤ 1000   → Static arrays [MAXN][MAXN]
+ *    • N, M > 1000   → Vectors (avoid stack overflow)
+ *    • Multiple test cases → memset(pref, 0, sizeof(pref))
+ *
+ * 4. OVERFLOW PREVENTION:
+ *    • Always use long long (i64) for prefix sums
+ *    • Check: N * M * max_element > 2×10^9 → Must use i64
+ *
+ * 5. DEBUGGING CHECKLIST:
+ *    ✓ Print pref[n][m] → Should equal sum of all elements
+ *    ✓ Test query for entire grid
+ *    ✓ Test single cell query
+ *    ✓ Check boundary cases (first row, first column)
+ *
+ * 6. COMMON MISTAKES:
+ *    ❌ Forgetting to subtract overlap in BUILD
+ *    ❌ Forgetting to add corner back in QUERY
+ *    ❌ Using int when sum can exceed 2×10^9
+ *    ❌ Off-by-one errors in 0-based indexing
+ *    ❌ Not checking if (i > 0) in 0-based code
+ *
+ * 7. CONTEST STRATEGY:
+ *    • Read problem constraints FIRST
+ *    • 1-based input → Use Method 1 (fastest to code)
+ *    • 0-based input → Use Method 4 (LeetCode template)
+ *    • Practice both methods until muscle memory!
+ *
+ * 8. RELATED PROBLEMS:
+ *    • LeetCode 304 - Range Sum Query 2D - Immutable
+ *    • LeetCode 1314 - Matrix Block Sum
+ *    • CSES - Forest Queries
+ *    • CodeForces - Greg and Array (1D version)
+ *
+ * ┌─────────────────────────────────────────┐
+ * │  ⚡ SPEED CODING SHORTCUTS              │
+ * └─────────────────────────────────────────┘
+ *
+ * 1-Based Macro (for contests):
+ * ------------------------------
+ * #define BUILD(i,j) pref[i][j]=mat[i][j]+pref[i-1][j]+pref[i][j-1]-pref[i-1][j-1]
+ * #define QUERY(r1,c1,r2,c2) (pref[r2][c2]-pref[r1-1][c2]-pref[r2][c1-1]+pref[r1-1][c1-1])
+ *
+ * Usage:
+ * for(int i=1; i<=n; i++)
+ *   for(int j=1; j<=m; j++)
+ *     cin >> mat[i][j], BUILD(i,j);
+ *
+ * cout << QUERY(r1, c1, r2, c2) << nl;
+ */

@@ -126,7 +126,7 @@ vector<int> twoSumSortingTwoPointers(vector<int>& nums, int target){
     vec<pii> arr;
     arr.reserve(sz(nums));
 
-    for (int i = 0; i < n; i++){
+    for (int i = 0; i < nums.size(); i++){
         arr.eb(nums[i], i);
     }
 
