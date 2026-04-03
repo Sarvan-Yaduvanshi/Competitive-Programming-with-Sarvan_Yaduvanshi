@@ -22,7 +22,7 @@
  *
  *  WHAT IS SNAKE TRAVERSAL?
  *  ─────────────────────────
- *  Also called "Boustrophedon" (Greek: "as the ox turns")
+ *  Also called "Boustrophedon" (Gre ek: "as the ox turns")
  *  - Even rows: Left → Right
  *  - Odd rows:  Right → Left
  *
@@ -396,7 +396,7 @@ int main() {
     cin.tie(NULL);
 
     cout << "╔══════════════════════════════════════════════════╗" << endl;
-    cout << "║   SNAKE/ZIGZAG TRAVERSAL - ZERO TO GM MASTERY   ║" << endl;
+    cout << "║   SNAKE/ZIGZAG TRAVERSAL - ZERO TO GM MASTERY    ║" << endl;
     cout << "╚══════════════════════════════════════════════════╝" << endl;
     cout << endl;
 

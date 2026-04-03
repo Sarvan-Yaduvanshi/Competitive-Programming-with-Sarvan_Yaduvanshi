@@ -18,14 +18,15 @@ TABLE OF CONTENTS:
  9.  Frequency Count (array, map, bitset)
 10.  Character Array vs std::string (definitions & differences)
 11.  ASCII Tricks (digit check, letter check, toggling case)
-12.  Basic Substring (substr, find, rfind, find_first_of)
+12.  Substring Fundamentals & Search (definition, substr overloads, find/rfind, first/last of, prefix/suffix)
+12.5 Substring vs Subsequence (definition, differences, isSubsequence demo)
 13.  Concatenation (+ operator, append, push_back, stringstream)
 
 WHAT IS A STRING?
 ─────────────────
 A string is a sequence of characters. In C++:
-  • char array:   char s[] = "hello";     // C-style, null-terminated '\0'
-  • std::string:  string s = "hello";     // C++ STL, dynamic, safe
+  • char array:   char s[] = "sarvan";     // C-style, null-terminated '\0'
+  • std::string:  string s = "sarvan";     // C++ STL, dynamic, safe
 
 KEY PROPERTIES:
   • Strings are 0-indexed: s[0] is the first character
@@ -667,7 +668,7 @@ void demo_frequency() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SECTION 10: CHARACTER ARRAY vs std::string
+// SECTION 10: CHARACTER ARRAY vs std::STRING
 // ═══════════════════════════════════════════════════════════════
 /*
  THEORY:
@@ -812,34 +813,51 @@ void demo_ascii() {
 }
 
 // ═══════════════════════════════════════════════════════════════
-// SECTION 12: BASIC SUBSTRING OPERATIONS
+// SECTION 12: SUBSTRING FUNDAMENTALS & SEARCH
 // ═══════════════════════════════════════════════════════════════
 /*
  THEORY:
  ───────
- SUBSTRING EXTRACTION:
-   s.substr(pos)        — from pos to end
-   s.substr(pos, len)   — from pos, length len
-   Both return a NEW string, O(len)
+ WHAT IS A SUBSTRING?
+   A contiguous block of characters inside a string. "abc" is a substring of
+   "zabcp" (positions 1..3), while "ac" is NOT (it is a subsequence, not
+   contiguous). All substring operations are O(k) for length k.
 
- FINDING:
-   s.find(str)          — first occurrence, returns index or string::npos
-   s.rfind(str)         — last occurrence
-   s.find(str, pos)     — first occurrence starting from pos
-   s.find_first_of(chars) — first occurrence of ANY char in chars
-   s.find_last_of(chars)
-   s.find_first_not_of(chars)
-   s.find_last_not_of(chars)
+ EXTRACTION (O(k), returns NEW string):
+   s.substr(pos)              → from pos to end (pos ∈ [0, n]).
+   s.substr(pos, len)         → len chars starting at pos; auto-clamped to end.
+   Guard: if pos > s.size(), substr throws std::out_of_range. Use a guard or
+   helper (safeSubstr) when indices may overshoot.
 
- string::npos = (size_t)(-1) = maximum value of size_t
- Always check: if (s.find(x) != string::npos)
+ FIND FAMILY (returns index or string::npos):
+   s.find(pat, start=0)       → first occurrence at/after start.
+   s.rfind(pat, start=n-1)    → last occurrence up to start.
+   s.find_first_of(chars)     → first index containing ANY char in set.
+   s.find_last_of(chars)      → last index containing ANY char in set.
+   s.find_first_not_of(chars) → first index NOT in set.
+   s.find_last_not_of(chars)  → last index NOT in set.
+   Use: if (pos != string::npos) {...}. string::npos == (size_t)(-1).
 
- COMPARISON:
-   s.compare(t)          — like strcmp: <0, 0, >0
-   s == t, s < t, s > t  — lexicographic comparison
+ PREFIX / SUFFIX CHECKS (O(k)):
+   s.compare(0, k, prefix) == 0            → starts with prefix
+   s.size()>=k && s.compare(n-k,k,suf)==0  → ends with suffix
 
- COUNTING OCCURRENCES:
-   No built-in! Use a loop with find.
+ COUNTING / ENUMERATING:
+   No direct API; loop with find and advance by 1 (overlap) or pat.size()
+   (non-overlap). Collect positions for debugging.
+
+ COMMON PITFALLS:
+   • npos is unsigned; don't store in int if you subtract from it.
+   • Ensure start index is within bounds; guard before substr/find.
+   • For large strings, frequent substr copies cost O(k); prefer
+     indices (l, r) or string_view in C++17+.
+
+ PRACTICE (beginner friendly, substr themed):
+   • LC 28 – Find the Index of First Occurrence in a String
+   • LC 459 – Repeated Substring Pattern
+   • LC 686 – Repeated String Match
+   • CF 96A – Football (six consecutive chars)
+   • CF 110A – Nearly Lucky Number (count/focus on substring of digits)
 */
 
 // Count occurrences of pattern in text
@@ -851,6 +869,35 @@ int countOccurrences(const string& text, const string& pattern) {
         pos++;  // pos += pattern.size() for non-overlapping
     }
     return count;
+}
+
+// Enumerate all starting indices of pattern in text
+vector<size_t> allOccurrences(const string& text, const string& pattern) {
+    vector<size_t> positions;
+    if (pattern.empty()) return positions;
+    size_t pos = text.find(pattern);
+    while (pos != string::npos) {
+        positions.push_back(pos);
+        pos = text.find(pattern, pos + 1);
+    }
+    return positions;
+}
+
+// Starts-with / ends-with helpers (string_view not used for portability)
+bool startsWith(const string& s, const string& prefix) {
+    if (prefix.size() > s.size()) return false;
+    return s.compare(0, prefix.size(), prefix) == 0;
+}
+
+bool endsWith(const string& s, const string& suffix) {
+    if (suffix.size() > s.size()) return false;
+    return s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+// Safe substr that tolerates overshoot and returns empty on out-of-range
+string safeSubstr(const string& s, size_t pos, size_t len) {
+    if (pos >= s.size()) return "";
+    return s.substr(pos, min(len, s.size() - pos));
 }
 
 // Extract all substrings of length k
@@ -869,34 +916,96 @@ bool isRotation(const string& s1, const string& s2) {
     return doubled.find(s2) != string::npos;
 }
 
-void demo_substring() {
-    cout << "\n=== SECTION 12: BASIC SUBSTRING ===" << endl;
-    string s = "Hello World";
+// ═══════════════════════════════════════════════════════════════
+// SECTION 12.5: SUBSTRING VS SUBSEQUENCE
+// ═══════════════════════════════════════════════════════════════
+/*
+ THEORY:
+ ───────
+ SUBSTRING (contiguous):
+   • Characters are consecutive in the original string.
+   • Examples in "zabcp": "abc" is a substring; "ac" is NOT.
+   • Count: n*(n+1)/2 + 1 including the empty string.
 
-    // substr
-    cout << "substr(6): " << s.substr(6) << endl;       // World
-    cout << "substr(0,5): " << s.substr(0, 5) << endl;  // Hello
+ SUBSEQUENCE (order preserved, gaps allowed):
+   • Can skip characters but must keep left-to-right order.
+   • Examples in "zabcp": "ac" IS a subsequence (skips 'b'); "ca" is NOT
+     (order breaks).
+   • Count: 2^n including the empty string.
 
-    // find
-    cout << "find('World'): " << s.find("World") << endl;  // 6
-    cout << "find('xyz'): " << (s.find("xyz") == string::npos ? "NOT FOUND" : "FOUND") << endl;
-    cout << "rfind('l'): " << s.rfind('l') << endl;  // 9
+ KEY DIFFERENCES:
+   • Contiguity: required for substring; optional for subsequence.
+   • Search: substrings use find/rfind; subsequences need pointers/DP.
+   • Copies: substr() makes a new string (O(k)); subsequence checks can stay
+     index-based (O(n)).
 
-    // find_first_of / find_last_of
-    cout << "find_first_of('aeiou'): " << s.find_first_of("aeiou") << endl;  // 1 (e)
-    cout << "find_last_of('aeiou'): " << s.find_last_of("aeiou") << endl;    // 7 (o)
+ PRACTICE (subsequence focused):
+   • LC 392 – Is Subsequence (two pointers)
+   • LC 1143 – Longest Common Subsequence (DP)
+   • LC 516 – Longest Palindromic Subsequence (DP)
+*/
 
-    // Count occurrences
-    cout << "Count 'l' in 'Hello World': " << countOccurrences("Hello World", "l") << endl;  // 3
+// Two-pointer check: is `sub` a subsequence of `text`?
+bool isSubsequence(const string& sub, const string& text) {
+    size_t i = 0, j = 0;
+    while (i < sub.size() && j < text.size()) {
+        if (sub[i] == text[j]) i++;
+        j++;
+    }
+    return i == sub.size();
+}
 
-    // Substrings of length k
-    auto subs = allSubstringsOfLengthK("abcd", 2);
-    cout << "Substrings of len 2: ";
-    for (auto& sub : subs) cout << sub << " ";
-    cout << endl;
+void demo_subsequence() {
+    cout << "\n=== SECTION 12.5: SUBSTRING VS SUBSEQUENCE ===" << endl;
+    string text = "abcde";
+    string sub1 = "ace";  // subsequence, not substring
+    string sub2 = "aec";  // not a subsequence (order breaks)
 
-    // Rotation check
-    cout << "Is 'lloHe' rotation of 'Hello'? " << isRotation("Hello", "lloHe") << endl;  // 1
+    cout << "Text: " << text << endl;
+    cout << "Is '" << sub1 << "' a substring? "
+         << (text.find(sub1) != string::npos) << endl;
+    cout << "Is '" << sub1 << "' a subsequence? " << isSubsequence(sub1, text) << endl;
+
+    cout << "Is '" << sub2 << "' a subsequence? " << isSubsequence(sub2, text) << endl;
+}
+
+ void demo_substring() {
+     cout << "\n=== SECTION 12: SUBSTRING FUNDAMENTALS & SEARCH ===" << endl;
+     string s = "Hello World";
+
+     // substr
+     cout << "substr(6): " << s.substr(6) << endl;       // World
+     cout << "substr(0,5): " << s.substr(0, 5) << endl;  // Hello
+     cout << "safeSubstr(50, 3): ['" << safeSubstr(s, 50, 3) << "']" << endl;
+
+     // find
+     cout << "find('World'): " << s.find("World") << endl;  // 6
+     cout << "find('xyz'): " << (s.find("xyz") == string::npos ? "NOT FOUND" : "FOUND") << endl;
+     cout << "rfind('l'): " << s.rfind('l') << endl;  // 9
+
+     // find_first_of / find_last_of
+     cout << "find_first_of('aeiou'): " << s.find_first_of("aeiou") << endl;  // 1 (e)
+     cout << "find_last_of('aeiou'): " << s.find_last_of("aeiou") << endl;    // 7 (o)
+
+     // Prefix/Suffix
+     cout << "startsWith('He'): " << startsWith(s, "He") << endl;
+     cout << "endsWith('World'): " << endsWith(s, "World") << endl;
+
+     // Count occurrences
+     cout << "Count 'l' in 'Hello World': " << countOccurrences("Hello World", "l") << endl;  // 3
+     auto occ = allOccurrences("aaaa", "aa");
+     cout << "All 'aa' in 'aaaa': ";
+     for (auto idx : occ) cout << idx << " ";
+     cout << endl;
+
+     // Substrings of length k
+     auto subs = allSubstringsOfLengthK("abcd", 2);
+     cout << "Substrings of len 2: ";
+     for (auto& sub : subs) cout << sub << " ";
+     cout << endl;
+
+     // Rotation check
+     cout << "Is 'lloHe' rotation of 'Hello'? " << isRotation("Hello", "lloHe") << endl;  // 1
 }
 
 // ═══════════════════════════════════════════════════════════════
@@ -1011,10 +1120,11 @@ int main() {
     demo_char_vs_string();
     demo_ascii();
     demo_substring();
+    demo_subsequence();
     demo_concatenation();
 
     cout << "\n═══════════════════════════════════════════" << endl;
-    cout << "✅ All 13 String Basics concepts covered!" << endl;
+    cout << "✅ All 14 String Basics concepts covered!" << endl;
     cout << "═══════════════════════════════════════════" << endl;
 
     return 0;

@@ -274,6 +274,8 @@ void solve() {
         for (int& x : row) cin >> x;
 
     cout << (canPartitionGridOptimized(grid) ? "Yes" : "No") << nl;
+
+    
 }
 
 int main() {

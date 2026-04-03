@@ -750,7 +750,7 @@ int main() {
 
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║  PRACTICE PROBLEMS                                              ║
+║  PRACTICE PROBLEMS                                               ║
 ╠══════════════════════════════════════════════════════════════════╣
 ║  LeetCode 3    — Longest Substring Without Repeating Chars      ║
 ║  LeetCode 76   — Minimum Window Substring                       ║
