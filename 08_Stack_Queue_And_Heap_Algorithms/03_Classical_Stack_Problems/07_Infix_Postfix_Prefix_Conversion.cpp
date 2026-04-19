@@ -55,17 +55,17 @@ INFIX → POSTFIX (SHUNTING YARD ALGORITHM):
   DRY RUN: "A + B * C - D"
 
   ┌─────┬────────┬──────────────┬─────────────────┐
-  │ Char│ Action │ Stack        │ Output           │
+  │ Char│ Action │ Stack        │ Output          │
   ├─────┼────────┼──────────────┼─────────────────┤
-  │  A  │ output │ []           │ A                │
-  │  +  │ push   │ [+]          │ A                │
-  │  B  │ output │ [+]          │ A B              │
-  │  *  │ push   │ [+, *]       │ A B              │
-  │  C  │ output │ [+, *]       │ A B C            │
-  │  -  │ pop *  │ [+]→pop +    │ A B C * +        │
-  │     │ push - │ [-]          │ A B C * +        │
-  │  D  │ output │ [-]          │ A B C * + D      │
-  │ END │ pop all│ []           │ A B C * + D -    │
+  │  A  │ output │ []           │ A               │
+  │  +  │ push   │ [+]          │ A               │
+  │  B  │ output │ [+]          │ A B             │
+  │  *  │ push   │ [+, *]       │ A B             │
+  │  C  │ output │ [+, *]       │ A B C           │
+  │  -  │ pop *  │ [+]→pop +    │ A B C * +       │
+  │     │ push - │ [-]          │ A B C * +       │
+  │  D  │ output │ [-]          │ A B C * + D     │
+  │ END │ pop all│ []           │ A B C * + D -   │
   └─────┴────────┴──────────────┴─────────────────┘
 
   Result: A B C * + D - ✅

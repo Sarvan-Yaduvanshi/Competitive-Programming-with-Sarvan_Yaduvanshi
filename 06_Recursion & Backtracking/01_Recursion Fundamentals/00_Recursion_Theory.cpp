@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════╗
-║        LEVEL 1: RECURSION FUNDAMENTALS — THEORY             ║
+║        LEVEL 1: RECURSION FUNDAMENTALS — THEORY              ║
 ║        Zero to Grandmaster Recursion Series                  ║
 ║        By Sarvan Yaduvanshi                                  ║
 ╚══════════════════════════════════════════════════════════════╝

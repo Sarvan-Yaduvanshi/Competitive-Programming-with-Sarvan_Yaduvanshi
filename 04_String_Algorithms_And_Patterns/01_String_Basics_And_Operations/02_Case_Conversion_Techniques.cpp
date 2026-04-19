@@ -1,6 +1,6 @@
 /*
 Author: Sarvan.DP.GrandMaster
-Created : 2026-02-21 22:50:00
+Created : 2026-04-17 11:51:06
 */
 
 /*
@@ -37,6 +37,12 @@ Created : 2026-02-21 22:50:00
  *   - SET bit 5 → lowercase
  *   - CLEAR bit 5 → uppercase
  *   - TOGGLE bit 5 → swap case
+ *
+ *   • TO LOWERCASE:   c |= 32    OR  c |= (1 << 5)    OR  c | ' '
+ *   • TO UPPERCASE:   c &= ~32   OR  c &= ~(1 << 5)   OR  c & '_'
+ *   • TOGGLE CASE:    c ^= 32    OR  c ^= (1 << 5)     OR  c ^ ' '
+ *
+ *   Note: These bit tricks work ONLY for ASCII letters. Always check isalpha() first!
  *
  * ──────────────────────── USEFUL CHECKS ─────────────────────────────────────
  *
@@ -413,4 +419,3 @@ int main() {
     solve();
     return 0;
 }
-

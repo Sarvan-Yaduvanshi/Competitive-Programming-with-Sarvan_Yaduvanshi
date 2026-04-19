@@ -11,7 +11,6 @@ TABLE OF CONTENTS:
  2.  Length of String
  3.  Traversal Techniques (index, iterator, range-for, reverse)
  4.  Reverse a String (multiple methods)
- 5.  Case Conversion Technique (toupper, tolower, bit tricks)
  6.  Remove Spaces, Whitespace & String Cleaning
  7.  String Manipulation (insert, erase, replace, swap)
  8.  Palindrome Check (multiple methods)
@@ -33,6 +32,12 @@ KEY PROPERTIES:
   • std::string is mutable — you can change individual characters
   • Time: s[i] is O(1), s.size() is O(1), s.substr() is O(k)
   • std::string internally uses a dynamic array (like vector<char>)
+
+Why C++ are mutable or Java why not mutable(java immutable)
+-> Java strings are immutable for security, thread safety, and string pool optimization,
+-> while C++ strings are mutable to provide performance and low-level control.
+-> C++ Can Also Be “Immutable-like" -> const string s = "hello"; s[0] = 'H'; // ❌ error
+-> cannot modify
 
 ASCII TABLE (MUST MEMORIZE):
   'A' = 65,  'Z' = 90
@@ -76,6 +81,10 @@ using namespace std;
    cin >> n;           // reads number, leaves '\n' in buffer
    getline(cin, s);    // reads the leftover '\n' → empty string!
    FIX: cin.ignore() between cin and getline
+
+Why use cin.ignore() ?
+-> "cin >> leaves a newline in the input buffer, and getline reads that newline as an empty line.
+-> So we use cin.ignore() to clear the buffer before calling getline."
 
  FAST I/O:
    ios::sync_with_stdio(false);
@@ -272,85 +281,6 @@ void demo_reverse() {
     cout << "Two-pointer: " << reverseTwoPointer(s) << endl;
     cout << "New string: " << reverseNew(s) << endl;
     cout << "Recursive: " << reverseRecursive(s) << endl;
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SECTION 5: CASE CONVERSION TECHNIQUE
-// ═══════════════════════════════════════════════════════════════
-/*
- THEORY:
- ───────
- • toupper(c) → converts char to uppercase
- • tolower(c) → converts char to lowercase
-
- ASCII BIT TRICK (VERY POWERFUL):
-   • 'A' = 01000001  (65)
-   • 'a' = 01100001  (97)
-   • Difference is bit 5 (value 32)!
-
-   • TO LOWERCASE:   c |= 32    OR  c |= (1 << 5)    OR  c | ' '
-   • TO UPPERCASE:   c &= ~32   OR  c &= ~(1 << 5)   OR  c & '_'
-   • TOGGLE CASE:    c ^= 32    OR  c ^= (1 << 5)     OR  c ^ ' '
-
- These bit tricks work ONLY for ASCII letters. Always check isalpha() first!
-*/
-
-string toUpperCase(string s) {
-    for (char& c : s) {
-        if (c >= 'a' && c <= 'z') {
-            c = c - 32;  // OR c = toupper(c); OR c &= ~32;
-        }
-    }
-    return s;
-}
-
-string toLowerCase(string s) {
-    for (char& c : s) {
-        if (c >= 'A' && c <= 'Z') {
-            c = c + 32;  // OR c = tolower(c); OR c |= 32;
-        }
-    }
-    return s;
-}
-
-string toggleCase(string s) {
-    for (char& c : s) {
-        if (isalpha(c)) {
-            c ^= 32;  // toggle bit 5
-        }
-    }
-    return s;
-}
-
-// Convert first letter of each word to uppercase (Title Case)
-string titleCase(string s) {
-    bool newWord = true;
-    for (char& c : s) {
-        if (c == ' ') {
-            newWord = true;
-        } else if (newWord) {
-            c = toupper(c);
-            newWord = false;
-        } else {
-            c = tolower(c);
-        }
-    }
-    return s;
-}
-
-void demo_case_conversion() {
-    cout << "\n=== SECTION 5: CASE CONVERSION ===" << endl;
-    string s = "Hello World 123";
-    cout << "Upper: " << toUpperCase(s) << endl;
-    cout << "Lower: " << toLowerCase(s) << endl;
-    cout << "Toggle: " << toggleCase(s) << endl;
-    cout << "Title: " << titleCase("hELLO wORLD") << endl;
-
-    // Bit trick demo
-    char ch = 'A';
-    cout << "A to lower (bit): " << (char)(ch | 32) << endl;   // a
-    cout << "a to upper (bit): " << (char)('a' & ~32) << endl;  // A
-    cout << "Toggle A: " << (char)(ch ^ 32) << endl;             // a
 }
 
 // ═══════════════════════════════════════════════════════════════

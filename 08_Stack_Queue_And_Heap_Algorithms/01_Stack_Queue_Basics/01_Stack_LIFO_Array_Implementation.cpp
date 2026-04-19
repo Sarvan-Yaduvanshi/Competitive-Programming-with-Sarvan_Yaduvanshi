@@ -93,23 +93,23 @@ OVERFLOW & UNDERFLOW:
   UNDERFLOW: Trying to pop when stack is empty (topIndex == -1)
 
   ┌──────────────────────────────────────────────────┐
-  │  OVERFLOW: push on full stack                     │
-  │  ┌────┐                                           │
+  │  OVERFLOW: push on full stack                    │
+  │  ┌────┐                                          │
   │  │ 50 │ ← topIndex = 4 (capacity = 5)            │
   │  ├────┤   push(60) → ERROR! No space!            │
-  │  │ 40 │                                           │
-  │  ├────┤                                           │
-  │  │ 30 │                                           │
-  │  ├────┤                                           │
-  │  │ 20 │                                           │
-  │  ├────┤                                           │
-  │  │ 10 │                                           │
-  │  └────┘                                           │
-  │                                                    │
-  │  UNDERFLOW: pop on empty stack                     │
-  │  ┌────┐                                           │
-  │  │    │ ← topIndex = -1                           │
-  │  └────┘   pop() → ERROR! Nothing to remove!       │
+  │  │ 40 │                                          │
+  │  ├────┤                                          │
+  │  │ 30 │                                          │
+  │  ├────┤                                          │
+  │  │ 20 │                                          │
+  │  ├────┤                                          │
+  │  │ 10 │                                          │
+  │  └────┘                                          │
+  │                                                  │
+  │  UNDERFLOW: pop on empty stack                   │
+  │  ┌────┐                                          │
+  │  │    │ ← topIndex = -1                          │
+  │  └────┘   pop() → ERROR! Nothing to remove!      │
   └──────────────────────────────────────────────────┘
 
 APPLICATIONS OF STACK:
@@ -149,7 +149,7 @@ using namespace std;
 
 class StackArray {
 private:
-    static const int MAX_SIZE = 1000;
+    static constexpr int MAX_SIZE = 1000;
     int arr[MAX_SIZE];
     int topIndex;
 
@@ -157,11 +157,11 @@ public:
     // Constructor: Initialize empty stack
     StackArray() : topIndex(-1) {}
 
-    // Push: Add element on top
+    // 1. Push: Add element on top
     // Time: O(1)
     void push(int val) {
         if (isFull()) {
-            cout << "  ❌ OVERFLOW! Stack is full. Cannot push " << val << "\n";
+            cout << " OVERFLOW! Stack is full. Cannot push " << val << "\n";
             return;
         }
         arr[++topIndex] = val;
@@ -171,7 +171,7 @@ public:
     // Time: O(1)
     int pop() {
         if (isEmpty()) {
-            cout << "  ❌ UNDERFLOW! Stack is empty. Cannot pop.\n";
+            cout << " UNDERFLOW! Stack is empty. Cannot pop.\n";
             return -1;
         }
         return arr[topIndex--];
@@ -181,7 +181,7 @@ public:
     // Time: O(1)
     int top() {
         if (isEmpty()) {
-            cout << "  ❌ Stack is empty. No top element.\n";
+            cout << " Stack is empty. No top element.\n";
             return -1;
         }
         return arr[topIndex];
@@ -332,14 +332,14 @@ public:
   │  After push(20):    │ 20 │              │
   │                     │ 10 │              │
   │                     └────┘              │
-  │  After push(30):    │ 30 │ ← TOP       │
+  │  After push(30):    │ 30 │ ← TOP        │
   │                     │ 20 │              │
   │                     │ 10 │              │
   │                     └────┘              │
-  │  After pop():       │ 20 │ ← TOP       │
+  │  After pop():       │ 20 │ ← TOP        │
   │                     │ 10 │              │
   │                     └────┘              │
-  │  After push(40):    │ 40 │ ← TOP       │
+  │  After push(40):    │ 40 │ ← TOP        │
   │                     │ 20 │              │
   │                     │ 10 │              │
   │                     └────┘              │
