@@ -3,22 +3,34 @@
 #include <stdexcept>
 using namespace std;
 
+ void Decreasing(int num){
+	 // Base Case
+ 	if (num == 1){
+ 		cout << num << "\n";
+ 		return;
+ 	}
+
+ 	// Call Nxt Function
+ 	cout << num << " ";
+ 	Decreasing(num - 1);
+ }
+
+void inCreasing(int num){
+	 // Base Case
+ 	if (num == 1){
+ 		cout << num << " ";
+ 		return;
+ 	}
+
+ 	// call first than print
+ 	inCreasing(num - 1);
+ 	cout << num << " ";
+ }
+
 int main(){
-	string str;
-	getline(cin, str);
+	int n; cin >> n;
 
-	bool newWord = true;
-	for (char &ch : str){
-		if (ch == ' '){
-			newWord = true;
-		} else{
-			if (newWord && ch >= 'a' && ch <= 'z'){
-				ch -= 32;
-			}
-			newWord = false;
-		}
-	}
-
-	cout << str << "\n";
+ 	Decreasing(n);
+ 	inCreasing(n);
 }
 

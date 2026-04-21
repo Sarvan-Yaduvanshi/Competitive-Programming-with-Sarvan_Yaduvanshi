@@ -97,6 +97,57 @@ int stringCompression(vector<char>& chars){
     return left;
 }
 
+int stringCompressionTwist(vector<char>& chars) {
+    int n = chars.size();
+    if (n == 0) return 0;
+
+    // --- PASS 1: Calculate the exact final length ---
+    int final_len = 0;
+    int i = 0;
+    while (i < n) {
+        int count = 0;
+        char ch = chars[i];
+        while (i < n && chars[i] == ch) {
+            count++;
+            i++;
+        }
+        // Every group needs 1 slot for the char, plus slots for the digits
+        final_len += 1 + to_string(count).size();
+    }
+
+    // Resize the array to hold the new larger string
+    chars.resize(final_len);
+
+    // --- PASS 2: Read and Write Right-to-Left ---
+    int read = n - 1;             // End of original data
+    int write = final_len - 1;    // End of resized array
+
+    while (read >= 0) {
+        char ch = chars[read];
+        int count = 0;
+
+        // Count the group going backwards
+        while (read >= 0 && chars[read] == ch) {
+            count++;
+            read--;
+        }
+
+        // Since we are writing BACKWARDS:
+        // For "12a", we must write 'a' first, then '2', then '1'
+
+        // 1. Write the character
+        chars[write--] = ch;
+
+        // 2. Write the digits backwards
+        string cnt_str = to_string(count);
+        for (int j = cnt_str.size() - 1; j >= 0; j--) {
+            chars[write--] = cnt_str[j];
+        }
+    }
+
+    return final_len;
+}
+
 void solve() {
     int n; cin >> n;
     vector<char> ch(n);
