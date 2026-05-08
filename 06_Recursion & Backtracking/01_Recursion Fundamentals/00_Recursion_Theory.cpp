@@ -153,18 +153,19 @@
     BOTH PRE + POST IN THE SAME FUNCTION (Powerful!)
     ────────────────────────────────────────────────────────────────────
 
-        void func(int i, int n) {
-            if (i > n) return;
+            void func(int i, int n) {
+                if (i > n) return;
 
-            printf("↓ Going down:  %d\n", i);   // PRE-ORDER
-            func(i + 1, n);
-            printf("↑ Coming back: %d\n", i);   // POST-ORDER
-        }
+                cout << "↓ Going down:  " << i << "\n";   // PRE
+                func(i + 1, n);
+                cout << "↑ Coming back:  " << i << "\n";  // POST
+}
 
         Output for func(1, 3):
             ↓ Going down:  1
             ↓ Going down:  2
             ↓ Going down:  3
+
             ↑ Coming back: 3
             ↑ Coming back: 2
             ↑ Coming back: 1
@@ -194,7 +195,7 @@
         void printIncreasing(int i, int n) {
             if (i > n) return;            // BASE CASE
 
-            printf("%d ", i);             // ★ PRE-ORDER WORK ★
+            cout << i << " ";             // ★ PRE-ORDER WORK ★
                                           //   (BEFORE the recursive call)
             printIncreasing(i + 1, n);    // recursive call
         }
@@ -270,7 +271,7 @@
 
             printDecreasing(i + 1, n);    // recursive call
 
-            printf("%d ", i);             // ★ POST-ORDER WORK ★
+            cout << i << " ";            // ★ POST-ORDER WORK ★
                                           //   (AFTER the recursive call)
         }
         // Invoke: printDecreasing(1, 5)

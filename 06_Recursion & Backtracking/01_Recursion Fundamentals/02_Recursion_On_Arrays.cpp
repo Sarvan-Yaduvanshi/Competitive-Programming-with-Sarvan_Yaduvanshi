@@ -14,33 +14,19 @@
    7. Reverse an array recursively
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
-#include <map>
 #include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
 
 using i64 = long long;
 template<class T> using vec = vector<T>;
-
-constexpr i64 MOD = 1'000'000'007LL;
 
 #define all(x) (x).begin(), (x).end()
 #define sz(x) ((int)(x).size())

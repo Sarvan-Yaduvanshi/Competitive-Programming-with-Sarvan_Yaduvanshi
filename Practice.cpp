@@ -1,36 +1,41 @@
 #include <iostream>
+#include <vector>
 #include <string>
-#include <stdexcept>
+#include <map>
+#include <iomanip>
+#include <random>
+#include <chrono>
+
 using namespace std;
 
- void Decreasing(int num){
-	 // Base Case
- 	if (num == 1){
- 		cout << num << "\n";
- 		return;
- 	}
+void solve(){
+	string str;
+	cin >> str;
 
- 	// Call Nxt Function
- 	cout << num << " ";
- 	Decreasing(num - 1);
- }
+	stack<char> st;
 
-void inCreasing(int num){
-	 // Base Case
- 	if (num == 1){
- 		cout << num << " ";
- 		return;
- 	}
+	auto isValid = [&]() -> bool {
+		for (char ch : str){
+			if (ch == '(' || ch == '[' || ch == '{')
+				st.push(ch);
+			else{
+				if (st.empty()) return false;
+				char top = st.top();
+				if ((ch == ')' && top == '(' || ch == '}' && top == '{' || ch == ']' && top == '['))
+					st.pop();
+				else return false;
+			}
+		}
 
- 	// call first than print
- 	inCreasing(num - 1);
- 	cout << num << " ";
- }
+		return st.empty();
+	};
 
-int main(){
-	int n; cin >> n;
+	cout << (isValid() ? "true" : "false") << "\n";
 
- 	Decreasing(n);
- 	inCreasing(n);
 }
 
+int main(){
+	solve();
+
+	return 0;
+}

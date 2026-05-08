@@ -12,58 +12,18 @@
    5. Print 1 to N (Head recursion vs Tail recursion)
    6. Print N to 1
 */
-
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
 #include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
 
 using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
-
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
 constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
 #define nl '\n'
 
 // ═══════════════════════════════════════════════════════════
