@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║    02 — TREE TERMINOLOGY & RELATIONSHIPS (Complete Guide)       ║
+║    02 — TREE TERMINOLOGY & RELATIONSHIPS (Complete Guide)        ║
 ║    Zero to GM Level — Tree Foundations                           ║
 ╚══════════════════════════════════════════════════════════════════╝
 
@@ -40,8 +40,8 @@ TABLE OF CONTENTS
  │ Term         │ Definition & Example                            │
  ├──────────────┼─────────────────────────────────────────────────┤
  │ ROOT         │ Top node with no parent. Node 1.                │
- │ LEAF         │ Node with no children. Nodes: 3, 7, 8, 9, 10.  │
- │ INTERNAL     │ Node that is NOT a leaf. Nodes: 1, 2, 4, 5, 6. │
+ │ LEAF         │ Node with no children. Nodes: 3, 7, 8, 9, 10.   │
+ │ INTERNAL     │ Node that is NOT a leaf. Nodes: 1, 2, 4, 5, 6.  │
  │ PARENT       │ Direct ancestor. Parent of 5 is 2.              │
  │ CHILD        │ Direct descendant. Children of 2 are {5, 6}.    │
  │ SIBLING      │ Same parent. 5 and 6 are siblings (parent = 2). │
@@ -51,13 +51,13 @@ TABLE OF CONTENTS
  │              │ Descendants of 2: {5, 6, 8, 9, 10}              │
  │ SUBTREE      │ A node + all its descendants.                   │
  │              │ Subtree(2) = {2, 5, 6, 8, 9, 10}                │
- │ EDGE         │ Connection between parent-child pair.            │
+ │ EDGE         │ Connection between parent-child pair.           │
  │ DEGREE       │ Number of children. Degree(1) = 3, Degree(3) = 0│
  │ DEPTH        │ # edges from root to node. Depth(8) = 3.        │
- │ HEIGHT       │ # edges from node to deepest leaf below.         │
- │              │ Height(2) = 3, Height(leaf) = 0.                 │
- │ LEVEL        │ All nodes at same depth. Level 0 = {1},          │
- │              │ Level 1 = {2,3,4}, Level 2 = {5,6,7}             │
+ │ HEIGHT       │ # edges from node to deepest leaf below.        │
+ │              │ Height(2) = 3, Height(leaf) = 0.                │
+ │ LEVEL        │ All nodes at same depth. Level 0 = {1},         │
+ │              │ Level 1 = {2,3,4}, Level 2 = {5,6,7}            │
  └──────────────┴─────────────────────────────────────────────────┘
 
 ═══════════════════════════════════════════════════════════════════

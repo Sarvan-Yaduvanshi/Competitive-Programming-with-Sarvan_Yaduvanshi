@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       02 — TREE TERMINOLOGY (Complete Reference)                ║
+║       02 — TREE TERMINOLOGY (Complete Reference)                 ║
 ║       Zero to GM Level — Tree Foundations                        ║
 ╚══════════════════════════════════════════════════════════════════╝
 

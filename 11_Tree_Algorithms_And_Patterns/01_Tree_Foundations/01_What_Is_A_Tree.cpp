@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       01 — WHAT IS A TREE? (Definition & Properties)            ║
+║       01 — WHAT IS A TREE? (Definition & Properties)             ║
 ║       Zero to GM Level — Tree Foundations                        ║
 ╚══════════════════════════════════════════════════════════════════╝
 
@@ -49,15 +49,15 @@
  KEY PROPERTIES (MEMORIZE!)
 ═══════════════════════════════════════════════════════════════════
 
- ┌────────────────────────────────────────────────────────────────┐
+ ┌───────────────────────────────────────────────────────────────┐
  │ Property                           │ Value                    │
  ├────────────────────────────────────┼──────────────────────────┤
  │ Number of edges                    │ ALWAYS N - 1             │
  │ Number of paths between u and v    │ ALWAYS exactly 1         │
  │ Removing any edge                  │ Disconnects into 2 parts │
  │ Adding any edge                    │ Creates exactly 1 cycle  │
- │ Minimum leaves (N≥2)              │ At least 2               │
- │ Sum of all degrees                 │ 2 × (N-1) = 2N - 2      │
+ │ Minimum leaves (N≥2)               │ At least 2               │
+ │ Sum of all degrees                 │ 2 × (N-1) = 2N - 2       │
  └────────────────────────────────────┴──────────────────────────┘
 
 ═══════════════════════════════════════════════════════════════════

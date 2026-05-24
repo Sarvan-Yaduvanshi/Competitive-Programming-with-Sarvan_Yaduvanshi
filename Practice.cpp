@@ -8,30 +8,35 @@
 
 using namespace std;
 
+
 void solve(){
-	string str;
-	cin >> str;
+	int n; cin >> n;
 
-	stack<char> st;
+	vector<vector<int>> adj(n);
+	for (int i = 0; i < n - 1; i++){
+		int u, v;
+		cin >> u >> v;
+		u--; v--;
 
-	auto isValid = [&]() -> bool {
-		for (char ch : str){
-			if (ch == '(' || ch == '[' || ch == '{')
-				st.push(ch);
-			else{
-				if (st.empty()) return false;
-				char top = st.top();
-				if ((ch == ')' && top == '(' || ch == '}' && top == '{' || ch == ']' && top == '['))
-					st.pop();
-				else return false;
-			}
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+	int root = 0;
+	vector<int> ans;
+
+	auto dfs = [&](auto&& self, int currNode, int parent) -> void{
+		ans.push_back(currNode);
+
+		for (int nbr : adj[currNode]){
+			if (nbr != parent)
+				self(self, nbr , currNode);
 		}
-
-		return st.empty();
 	};
 
-	cout << (isValid() ? "true" : "false") << "\n";
+	dfs(dfs, 0 , -1);
 
+	for (int x : ans)
+		cout << x + 1 << " ";
 }
 
 int main(){

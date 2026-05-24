@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       02 — PARENT ARRAY REPRESENTATION                          ║
+║       02 — PARENT ARRAY REPRESENTATION                           ║
 ║       Zero to GM Level — Tree Representations                    ║
 ╚══════════════════════════════════════════════════════════════════╝
 
@@ -132,44 +132,11 @@
 
 using namespace std;
 
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
-
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
-
 void solve() {
-    int n;
-    cin >> n;
+    int n; cin >> n;
 
     // Read parent array (par[i] for i=2..N, root=1)
-    vec<int> par(n + 1, -1);
+    vector<int> par(n + 1, -1);
     for (int i = 2; i <= n; i++) {
         cin >> par[i];
     }

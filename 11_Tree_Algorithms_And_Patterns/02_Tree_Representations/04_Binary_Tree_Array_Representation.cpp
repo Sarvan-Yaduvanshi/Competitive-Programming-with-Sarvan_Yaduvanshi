@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       04 — BINARY TREE ARRAY REPRESENTATION                     ║
+║       04 — BINARY TREE ARRAY REPRESENTATION                      ║
 ║       Zero to GM Level — Tree Representations                    ║
 ╚══════════════════════════════════════════════════════════════════╝
 

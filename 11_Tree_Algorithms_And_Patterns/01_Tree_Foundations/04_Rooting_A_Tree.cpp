@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║          04 — ROOTING A TREE (Unrooted → Rooted)                ║
+║          04 — ROOTING A TREE (Unrooted → Rooted)                 ║
 ║          Zero to GM Level — Tree Foundations                     ║
 ╚══════════════════════════════════════════════════════════════════╝
 

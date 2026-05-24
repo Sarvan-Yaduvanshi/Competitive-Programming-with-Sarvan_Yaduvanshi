@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       05 — TREE INPUT PATTERNS FOR COMPETITIVE PROGRAMMING      ║
+║       05 — TREE INPUT PATTERNS FOR COMPETITIVE PROGRAMMING       ║
 ║       Zero to GM Level — Tree Foundations                        ║
 ╚══════════════════════════════════════════════════════════════════╝
 

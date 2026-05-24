@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       01 — ADJACENCY LIST REPRESENTATION (THE CP STANDARD)      ║
+║       01 — ADJACENCY LIST REPRESENTATION (THE CP STANDARD)       ║
 ║       Zero to GM Level — Tree Representations                    ║
 ╚══════════════════════════════════════════════════════════════════╝
 
@@ -150,94 +150,48 @@ TABLE OF CONTENTS
 ═══════════════════════════════════════════════════════════════════
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
-#include <vector>
 #include <string>
 #include <algorithm>
-#include <map>
-#include <set>
 #include <queue>
 #include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
 
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
-
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
-
 void solve() {
-    int n;
-    cin >> n;
+    int n; cin >> n;
 
-    // ═══════════════════════════════════════════════════
-    // METHOD 1: Unweighted adjacency list
-    // ═══════════════════════════════════════════════════
-    vvec<int> adj(n + 1);
+    // METHOD 1: Unweighted adjacency list (1 Based Idx) -> if convert 1 Idx -> 0 Idx change(u--; v--)
+    vector<vector<int>> adj(n + 1);
 
     for (int i = 0; i < n - 1; i++) {
         int u, v;
         cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);  // UNDIRECTED: add both ways!
+        adj[u].push_back(v);
+        adj[v].push_back(u);  // UNDIRECTED: add both ways!
     }
 
     // Print adjacency list
-    cout << "Unweighted Adjacency List:" << nl;
+    cout << "Unweighted Adjacency List:" << "\n";
     for (int i = 1; i <= n; i++) {
         cout << "  " << i << " → [";
-        for (int j = 0; j < sz(adj[i]); j++) {
+        for (int j = 0; j < adj[i].size(); j++) {
             if (j > 0) cout << ", ";
             cout << adj[i][j];
         }
-        cout << "]" << nl;
+        cout << "]" << "\n";
     }
 
     // DFS traversal using adjacency list
-    cout << nl << "DFS from node 1: ";
-    vec<bool> vis(n + 1, false);
+    cout << "\n" << "DFS from node 1: ";
+    vector<bool> vis(n + 1, false);
     stack<int> stk;
     stk.push(1);
     vis[1] = true;
+
     while (!stk.empty()) {
         int v = stk.top(); stk.pop();
         cout << v << " ";
@@ -248,14 +202,15 @@ void solve() {
             }
         }
     }
-    cout << nl;
+    cout << "\n";
 
     // BFS traversal using adjacency list
     cout << "BFS from node 1: ";
-    fill(all(vis), false);
+    fill(vis.begin(), vis.end(), false);
     queue<int> q;
     q.push(1);
     vis[1] = true;
+
     while (!q.empty()) {
         int v = q.front(); q.pop();
         cout << v << " ";
@@ -266,14 +221,12 @@ void solve() {
             }
         }
     }
-    cout << nl;
+    cout << "\n";
 }
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    cout << fixed << setprecision(10);
 
     int TC = 1;
     cin >> TC;

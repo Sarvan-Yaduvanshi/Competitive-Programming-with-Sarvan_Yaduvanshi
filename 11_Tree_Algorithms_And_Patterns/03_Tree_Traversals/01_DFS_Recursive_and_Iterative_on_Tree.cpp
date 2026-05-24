@@ -137,34 +137,34 @@ TABLE OF CONTENTS
 
  Call Stack Trace:
  ┌────────────────────────────────────────────────────────────┐
- │ dfs(1, -1)                                                │
- │   Process 1 (preorder)                                    │
- │   Neighbors of 1: [2, 3]                                  │
- │     2 ≠ -1 → dfs(2, 1)                                   │
+ │ dfs(1, -1)                                                 │
+ │   Process 1 (preorder)                                     │
+ │   Neighbors of 1: [2, 3]                                   │
+ │     2 ≠ -1 → dfs(2, 1)                                     │
  │   ┌──────────────────────────────────────────────────────┐ │
  │   │ dfs(2, 1)                                            │ │
  │   │   Process 2 (preorder)                               │ │
  │   │   Neighbors of 2: [1, 4, 5]                          │ │
  │   │     1 == parent(1) → SKIP                            │ │
- │   │     4 ≠ 1 → dfs(4, 2)                               │ │
- │   │   ┌────────────────────────────────────────────────┐  │ │
- │   │   │ dfs(4, 2)                                      │  │ │
- │   │   │   Process 4 (preorder)                         │  │ │
- │   │   │   Neighbors of 4: [2]                          │  │ │
- │   │   │     2 == parent(2) → SKIP                      │  │ │
- │   │   │   Process 4 (postorder)                        │  │ │
- │   │   └────────────────────────────────────────────────┘  │ │
- │   │     5 ≠ 1 → dfs(5, 2)                               │ │
- │   │   ┌────────────────────────────────────────────────┐  │ │
- │   │   │ dfs(5, 2)                                      │  │ │
- │   │   │   Process 5 (preorder)                         │  │ │
- │   │   │   Neighbors of 5: [2]                          │  │ │
- │   │   │     2 == parent(2) → SKIP                      │  │ │
- │   │   │   Process 5 (postorder)                        │  │ │
- │   │   └────────────────────────────────────────────────┘  │ │
+ │   │     4 ≠ 1 → dfs(4, 2)                                │ │
+ │   │   ┌────────────────────────────────────────────────┐ │ │
+ │   │   │ dfs(4, 2)                                      │ │ │
+ │   │   │   Process 4 (preorder)                         │ │ │
+ │   │   │   Neighbors of 4: [2]                          │ │ │
+ │   │   │     2 == parent(2) → SKIP                      │ │ │
+ │   │   │   Process 4 (postorder)                        │ │ │
+ │   │   └────────────────────────────────────────────────┘ │ │
+ │   │     5 ≠ 1 → dfs(5, 2)                                │ │
+ │   │   ┌────────────────────────────────────────────────┐ │ │
+ │   │   │ dfs(5, 2)                                      │ │ │
+ │   │   │   Process 5 (preorder)                         │ │ │
+ │   │   │   Neighbors of 5: [2]                          │ │ │
+ │   │   │     2 == parent(2) → SKIP                      │ │ │
+ │   │   │   Process 5 (postorder)                        │ │ │
+ │   │   └────────────────────────────────────────────────┘ │ │
  │   │   Process 2 (postorder)                              │ │
  │   └──────────────────────────────────────────────────────┘ │
- │     3 ≠ -1 → dfs(3, 1)                                   │
+ │     3 ≠ -1 → dfs(3, 1)                                     │
  │   ┌──────────────────────────────────────────────────────┐ │
  │   │ dfs(3, 1)                                            │ │
  │   │   Process 3 (preorder)                               │ │
@@ -174,7 +174,7 @@ TABLE OF CONTENTS
  │   │     7 → dfs(7, 3): Process 7                         │ │
  │   │   Process 3 (postorder)                              │ │
  │   └──────────────────────────────────────────────────────┘ │
- │   Process 1 (postorder)                                   │
+ │   Process 1 (postorder)                                    │
  └────────────────────────────────────────────────────────────┘
 
  PREORDER:  1 2 4 5 3 6 7
@@ -188,7 +188,7 @@ TABLE OF CONTENTS
  │ Operation                │ Time       │ Space               │
  ├──────────────────────────┼────────────┼─────────────────────┤
  │ Recursive DFS            │ O(N)       │ O(H) call stack     │
- │ Iterative DFS            │ O(N)       │ O(N) explicit stack  │
+ │ Iterative DFS            │ O(N)       │ O(N) explicit stack │
  │ DFS on tree              │ O(N)       │ O(N) adj list       │
  └──────────────────────────┴────────────┴─────────────────────┘
 
@@ -204,68 +204,37 @@ TABLE OF CONTENTS
 ═══════════════════════════════════════════════════════════════════
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
 #include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
 
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+vector<vector<int>> adj; // declare adjacency list (2D vector)
+vector<int> ans;
 
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
-
-vvec<int> adj;
-
-// ═══════════════════════════════════════════════════════════════
 // METHOD 1: Recursive DFS (standard for tree problems)
-// ═══════════════════════════════════════════════════════════════
-vec<int> preorderResult, postorderResult;
+void dfs(int currNode, int parent){
+	// Add current node to traversal
+	ans.push_back(currNode);
 
+	// Visit all adjacent nodes
+	for (int nbr : adj[currNode]){
+		// Skip parent node to avoid going backward
+		if (nbr == parent)
+			continue;
+
+		// DFS on child node
+		dfs(nbr, currNode);
+	}
+}
+
+vector<vector<int>> preorderResult, postorderResult;
 void dfsRecursive(int v, int par) {
     preorderResult.pb(v);   // PREORDER: visit node first
 
@@ -277,28 +246,26 @@ void dfsRecursive(int v, int par) {
     postorderResult.pb(v);  // POSTORDER: visit node after all children
 }
 
-// ═══════════════════════════════════════════════════════════════
 // METHOD 2: Iterative DFS with Stack (for large trees)
-// ═══════════════════════════════════════════════════════════════
-vec<int> iterativeDFS(int root, int n) {
-    vec<int> order;
-    stack<pii> stk; // (node, parent)
-    stk.push({root, -1});
-    vec<bool> visited(n + 1, false);
+vector<int> iterativeDFS(int root, int n) {
+    vector<int> order;
+    stack<pair<int, int>> st; // (node, parent)
+    st.push({root, -1});
+    vector<bool> visited(n + 1, false);
 
-    while (!stk.empty()) {
-        auto [v, par] = stk.top();
-        stk.pop();
+    while (!st.empty()) {
+        auto [v, par] = st.top();
+        st.pop();
 
         if (visited[v]) continue;
         visited[v] = true;
         order.pb(v);
 
         // Push in reverse order so first neighbor is processed first
-        for (int i = sz(adj[v]) - 1; i >= 0; i--) {
+        for (int i = adj[v].size() - 1; i >= 0; i--) {
             int u = adj[v][i];
             if (u == par || visited[u]) continue;
-            stk.push({u, v});
+            st.push({u, v});
         }
     }
     return order;
@@ -307,26 +274,25 @@ vec<int> iterativeDFS(int root, int n) {
 // ═══════════════════════════════════════════════════════════════
 // METHOD 3: DFS with subtree size computation (very common!)
 // ═══════════════════════════════════════════════════════════════
-vec<int> subSize;
-void dfsSubtreeSize(int v, int par) {
-    subSize[v] = 1;
-    for (int u : adj[v]) {
-        if (u == par) continue;
-        dfsSubtreeSize(u, v);
-        subSize[v] += subSize[u];
+vector<int> subSize;
+void dfsSubtreeSize(int currNode, int parent) {
+    subSize[currNode] = 1;
+    for (int nbr : adj[currNode]) {
+        if (nbr == parent) continue;
+        dfsSubtreeSize(nbr, currNode);
+        subSize[currNode] += subSize[nbr];
     }
 }
 
 void solve() {
-    int n;
-    cin >> n;
+    int n; cin >> n;
 
     adj.assign(n + 1, {});
     for (int i = 0; i < n - 1; i++) {
         int u, v;
         cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
     // Recursive DFS
@@ -360,8 +326,6 @@ void solve() {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    cout << fixed << setprecision(10);
 
     int TC = 1;
     cin >> TC;

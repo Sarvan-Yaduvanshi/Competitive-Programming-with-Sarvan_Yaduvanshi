@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════╗
-║  04. THE "TAKE / NOT-TAKE" PATTERN — Most Important Pattern! 4║
+║  04. THE "TAKE / NOT-TAKE" PATTERN — Most Important Pattern! ║
 ║  Level 2 — Recursion Patterns                                ║
 ╚══════════════════════════════════════════════════════════════╝
 

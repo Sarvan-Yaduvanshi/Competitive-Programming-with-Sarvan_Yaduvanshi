@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║          03 — TYPES OF TREES (Complete Visual Guide)            ║
+║          03 — TYPES OF TREES (Complete Visual Guide)             ║
 ║          Zero to GM Level — Tree Foundations                     ║
 ╚══════════════════════════════════════════════════════════════════╝
 
