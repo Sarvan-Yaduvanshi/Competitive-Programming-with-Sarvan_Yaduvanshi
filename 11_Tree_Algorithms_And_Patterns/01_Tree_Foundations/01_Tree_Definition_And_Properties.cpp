@@ -177,11 +177,6 @@ TABLE OF CONTENTS
 ═══════════════════════════════════════════════════════════════════
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -200,49 +195,18 @@ TABLE OF CONTENTS
 
 using namespace std;
 
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+/*
+ * Function: Check if a graph with N nodes and given edges is a tree
+ * Method:   1. Check E == N-1
+ *			 2. BFS from node 1, check all nodes visited (connected)
+*/
 
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
-
-// ─────────────────────────────────────────────────────────────
-// Function: Check if a graph with N nodes and given edges is a tree
-// Method:   1. Check E == N-1
-//           2. BFS from node 1, check all nodes visited (connected)
-// ─────────────────────────────────────────────────────────────
-bool isTree(int n, vvec<int>& adj, int edgeCount) {
+bool isTree(int n, vector<vector<int>>& adj, int edgeCount) {
     // Property: A tree must have exactly N-1 edges
     if (edgeCount != n - 1) return false;
 
     // BFS to check connectivity
-    vec<bool> visited(n + 1, false);
+    vector<bool> visited(n + 1, false);
     queue<int> q;
     q.push(1);
     visited[1] = true;
@@ -269,23 +233,23 @@ void solve() {
     cin >> n >> m;
 
     // Build adjacency list
-    vvec<int> adj(n + 1);
+    vector<vector<int>> adj(n + 1);
     for (int i = 0; i < m; i++) {
         int u, v;
         cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
     if (isTree(n, adj, m)) {
-        cout << "YES — This is a tree!" << nl;
-        cout << "Nodes: " << n << ", Edges: " << m << " (= N-1 = " << n-1 << ")" << nl;
+        cout << "YES — This is a tree!" << "\n";
+        cout << "Nodes: " << n << ", Edges: " << m << " (= N-1 = " << n-1 << ")" << "\n";
     } else {
-        cout << "NO — This is NOT a tree!" << nl;
+        cout << "NO — This is NOT a tree!" << "\n";
         if (m != n - 1) {
-            cout << "Reason: Edge count " << m << " != N-1 = " << n-1 << nl;
+            cout << "Reason: Edge count " << m << " != N-1 = " << n-1 << "\n";
         } else {
-            cout << "Reason: Graph is not connected" << nl;
+            cout << "Reason: Graph is not connected" << "\n";
         }
     }
 }
@@ -293,8 +257,6 @@ void solve() {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-
-    cout << fixed << setprecision(10);
 
     int TC = 1;
     cin >> TC;
@@ -333,15 +295,12 @@ Reason: Edge count 4 != N-1 = 3
 NO — This is NOT a tree!
 Reason: Graph is not connected
 
-═══════════════════════════════════════════════════════════════════
- KEY TAKEAWAYS
-═══════════════════════════════════════════════════════════════════
- ✅ Tree = Connected + Acyclic undirected graph
- ✅ N nodes → exactly N-1 edges
- ✅ Unique path between every pair of nodes
- ✅ Removing any edge disconnects the tree
- ✅ Adding any edge creates exactly one cycle
- ✅ To verify: check E == N-1 AND connectivity (BFS/DFS)
-═══════════════════════════════════════════════════════════════════
+ KEY TAKEAWAYS:-
+	✅ Tree = Connected + Acyclic undirected graph
+	✅ N nodes → exactly N-1 edges
+	✅ Unique path between every pair of nodes
+	✅ Removing any edge disconnects the tree
+	✅ Adding any edge creates exactly one cycle
+	✅ To verify: check E == N-1 AND connectivity (BFS/DFS)
 */
 

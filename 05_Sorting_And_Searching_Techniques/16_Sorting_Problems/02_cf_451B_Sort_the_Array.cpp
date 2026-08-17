@@ -1,6 +1,6 @@
 /*
 Author: Sarvan.DP.GrandMaster
-Created : 2026-04-12 15:22:19
+Created : 2026-07-31 19:28:26
 */
 
 #ifndef __APPLE__
@@ -77,32 +77,68 @@ inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
     return res;
 }
 
-// <========= String Reversal All Concepts & Problem Solving Template =========>
-
-// LEVEL 1 → Add Simple Constraints
-/* 
-
 void solve() {
     int n; cin >> n;
+    vec<int> a(n), b(n);
+    for (int i = 0; i < n; i++){
+        cin >> a[i];
+        b[i] = a[i];
+    }
 
-    cin.ignore(); // avoid error
-    string str;
-    getline(cin, str);
+    // Sort the array than compare
+    sort(all(b));
 
+    int st_idx = -1, en_idx = -1;
+
+    // Saved first mismatch position
+    for (int i = 0; i < n; i++){
+        if (a[i] != b[i]){
+            st_idx = i;
+            break;
+        }
+    }
+
+    // Edge case: if array are sorted than print yes or indices 1 1
+    if (st_idx == -1){
+        cout << "yes" << nl;
+        cout << "1 1" << nl;
+        return;
+    }
+
+    // Saved last mismatch position
+    for (int i = n - 1; i >= 0; i--){
+        if (a[i] != b[i]){
+            en_idx = i;
+            break;
+        }
+    }
+
+    // Reverse Both element than check if a[i] == b[i] print yes and print both indices
+    reverse(a.begin() + st_idx, a.begin() + en_idx + 1);
+
+    // check both array are same if same than yes or no
+    bool flag = true;
+    for (int i = 0; i < n; i++){
+        if (a[i] != b[i])
+            flag = false;
+    }
+
+    if (flag){
+        cout << "yes" << nl;
+        cout << st_idx + 1 << " " << en_idx + 1 << nl;
+    } else
+        cout << "no" << nl;
 }
 
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
-    cout << fixed << setprecision(10);
-    
+
     // Multi-test case support (commented out for this demo)
     // int TC = 1;
     // cin >> TC;
     // while (TC--) solve();
-    
     solve();
     return 0;
 }

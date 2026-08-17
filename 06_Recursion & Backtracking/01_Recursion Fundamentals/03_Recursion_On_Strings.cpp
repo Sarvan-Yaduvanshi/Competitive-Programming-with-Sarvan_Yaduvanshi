@@ -138,7 +138,7 @@ string moveXToEnd(const string& s, int i) {
 
    Fast Power Idea:
    - If exp is even: x^n = (x^(n/2))^2
-   - If exp is odd:  x^n = x * x^(n-1)
+   - If exp is odd:  x^n = x * x^ (n-1)
 */
 
 // Naive O(n)
