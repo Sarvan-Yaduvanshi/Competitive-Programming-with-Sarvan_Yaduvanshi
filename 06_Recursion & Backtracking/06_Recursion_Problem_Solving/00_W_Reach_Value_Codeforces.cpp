@@ -3,97 +3,63 @@ Author: Sarvan.DP.GrandMaster
 Created : 2026-08-24 11:39:36
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
-#include <iomanip>
-#include <numeric>
-#include <climits>
-#include <random>
-#include <chrono>
-#include <cassert>
-
+#include<iostream>
+#include<vector>
+#include<algorithm>
 using namespace std;
 
-// --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+/*
+	Problem: W - Reach Value (Codeforces)
+	Given a number 𝑁. Initially you have a value equal 1 and you can perform one of the following operation any number of times:
+			1. Multiply the current value by 10.
+			2. Multiply the current value by 20.
+			Determine if your value can reach 𝑁 or not.
+			Note: Solve the problem using recursion and backtracking.
+    Example 1:
+    Input: 100
+    Output: YES
+    Explanation: We can reach 100 by multiplying 1 by 10 twice (1 * 10 * 10 = 100).
+    Example 2:
+    Input: 200
+    Output: YES
+    Explanation: We can reach 200 by multiplying 1 by 20 once (1 * 20 = 20) and then multiplying by 10 once (20 * 10 = 200).
+    Example 3:
+    Input: 300
+    Output: NO
+    Explanation: There is no combination of operations that can reach 300 from 1.
+*/
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
+using i64  = long long;
+static void solve() {
+    i64 n; cin >> n;
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+	auto divisible = [&](auto&& self, i64 num) -> bool{
+		// Base Case: if any number reach 1 than return true
+		if (num == 1) return true;
 
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
+		// Can I repeatedly divide num by either 10 or 20, whenever possible, and eventually reach exactly 1?
+		if (num % 10 == 0 && self(self, num / 10))
+			return true;
+		if (num % 20 == 0 && self(self, num / 20))
+			return true;
 
-// Input helper
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
+		// Condition 3: not number divisible by 10 or 20 to reached 1 so return false
+	    return false;
+	};
 
-inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
-
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-    i64 res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp & 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp >>= 1;
-    }
-    return res;
-}
-
-void solve() {
-    
+	bool ans = divisible(divisible, n);
+	cout << (ans ? "YES" : "NO") << "\n";
 }
 
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
-    cout << fixed << setprecision(10);
-    
+
     // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
-    
-    solve();
+    int TC = 1;
+    cin >> TC;
+    while (TC--) solve();
     return 0;
 }
 

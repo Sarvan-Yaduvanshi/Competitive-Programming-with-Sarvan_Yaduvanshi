@@ -3,11 +3,6 @@ Author: Sarvan.DP.GrandMaster
 Created : 2026-08-19 20:06:02
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -23,76 +18,102 @@ Created : 2026-08-19 20:06:02
 #include <random>
 #include <chrono>
 #include <cassert>
-
 using namespace std;
 
-// --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
+/*
+ * Problem: Generate Binary Strings with Exact K Set Bits
+ * Platform Equivalent: Similar to LeetCode 77 (Combinations), but applied to binary strings.
+ * Given two integers n and k, generate all unique binary strings of length n that contain exactly k set bits (the character '1').
+ * The remaining characters must be '0'.
+ * Return the strings in lexicographical order (dictionary order).
+ * Example 1:
+ * Input: n = 3, k = 2
+ * Output: ["011", "101", "110"]
+ * Explanation: These are the only length-3 binary strings with exactly two '1's.
+ * Example 2:
+ * Input: n = 4, k = 1
+ * Output: ["0001", "0010", "0100", "1000"]
+ * Explanation: These are the only length-4 binary strings with exactly one '1'.
+ * Constraints: 1 <= n <= 20, 0 <= k <= n
+ * Topics: Recursion, Backtracking, Combinatorics
+ * Expected Complexities: O(n choose k) time and O(n) space for recursion stack.
+*/
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+/*       Dry Run: n = 3, K = 2
+ *       Build Recursive Tree:
+ *
+ Level 0 (idx=0)                          [ "" ]
+                                      /          \
+                             Take '0'              Take '1'
+                            /                        \
+Level 1 (idx=1)          [ "0" ]                    [ "1" ]
+                         /     \                    /     \
+                     Take '0'  Take '1'         Take '0'  Take '1'
+                    /            \              /            \
+Level 2 (idx=2) [ "00" ]        [ "01" ]     [ "10" ]        [ "11" ]
+                   |            /     \       /     \        /     \
+             ❌ PRUNED!      T('0') T('1')  T('0') T('1')  T('0') T('1')
+             (Floor Rule:     /         \    /         \    /         \
+            Need two '1's, ["010"]  ["011"]["100"] ["101"]["110"]   ["111"]
+            but only 1        |        |      |       |      |         |
+            space left!)  ❌ PRUNED  ✅ ANS ❌ PRUNED ✅ ANS ✅ ANS  ❌ PRUNED!
+                         (Floor Rule)       (Floor)                 (Ceiling Rule:
+                                                                     ones_count > 2)
 
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
+*/
+vector<string> genersteExactSetBits(int n, int k){
+	vector<string> ans;
+	string str;
 
-// Input helper
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
+	// State tracks: current index (idx) and how many 1s we have placed (ones_count)
+	auto solver = [&](auto&& self, const int idx, const int ones_count) -> void{
+		// 1. Too many 1s placed? Stop exploring.
+		if (ones_count > k) return;
+
+		// 2. Impossible to reach k? (Not enough empty spaces left for the 1s we still need)
+		int spaces_left = n - idx;
+		int ones_needed = k - ones_count;
+		if (ones_needed > spaces_left) return;
+
+		// Base Case
+		if (idx == n){
+			ans.push_back(str);
+			return;
+		}
+
+		// ------ Recursive Choices -----
+
+		// Choice 1: Take '0'
+		str.push_back('0');
+		self(self, idx + 1, ones_count);  // ones_count stays the same!
+		str.pop_back(); // BACKTRACK
+
+		// Choice 2: Take '1'
+		str.push_back('1');
+		self(self, idx + 1, ones_count + 1);  // ones_count increases by 1!
+		str.pop_back();  // BACKTRACK
+	};
+
+	solver(solver, 0, 0); // Start at index 0, with zero '1's placed
+	return ans;
 }
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
-
-inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
-
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-    i64 res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp & 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp >>= 1;
-    }
-    return res;
-}
-
 void solve() {
-    
+    int n, k;
+	cin >> n >> k;
+
+	vector<string> ans = genersteExactSetBits(n, k);
+	cout << "[";
+	for (int i = 0; i < ans.size(); i++)
+		cout << ans[i] << (i == ans.size() - 1 ? "" : ", ");
+	cout << "]\n";
 }
 
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
-    cout << fixed << setprecision(10);
-    
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
-    
+
     solve();
     return 0;
 }

@@ -3,11 +3,6 @@ Author: Sarvan.DP.GrandMaster
 Created : 2026-08-25 17:20:41
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
@@ -23,65 +18,160 @@ Created : 2026-08-25 17:20:41
 #include <random>
 #include <chrono>
 #include <cassert>
-
 using namespace std;
 
-// --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+/*
+ * Problem: Leetcode 2044. Count Number of Maximum Bitwise-OR Subsets
+ * Difficulty: Medium
+ * Company: Amazon, Microsoft, Google, Facebook (Asked in interviews)
+ * Given an integer array nums, find the maximum possible bitwise OR of a subset of nums and return the number of different non-empty subsets with the maximum bitwise OR.
+ * An array a is a subset of an array b if a can be obtained from b by deleting some (possibly zero) elements of b.
+ * Two subsets are considered different if the indices of the elements chosen are different.
+ * The bitwise OR of an array a is equal to a[0] OR a[1] OR ... OR a[a.length - 1] (0-indexed).
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
+ * Example 1:
+ * Input: nums = [3,1]
+ * Output: 2
+ * Explanation: The maximum possible bitwise OR of any subset is 3.
+ * There are 2 subsets with a bitwise OR of 3:
+ * - [3]
+ * - [3,1]
+ *
+ * Example 2:
+ * Input: nums = [2,2,2]
+ * Output: 7
+ * Explanation: The maximum possible bitwise OR of any subset is 2.
+ * Every non-empty subset has a bitwise OR equal to 2.
+ * There are 7 total subsets.
+ *
+ * Example 3:
+ * Input: nums = [3,2,1,5]
+ * Output: 6
+ * Explanation: The maximum possible bitwise OR of any subset is 7.
+ * There are 6 subsets with a bitwise OR of 7:
+ * - [3,5]
+ * - [3,1,5]
+ * - [3,2,5]
+ * - [3,2,1,5]
+ * - [2,5]
+ * - [2,1,5]
+ *
+ * Constraints:
+ * 1 <= nums.length <= 16
+ * 1 <= nums[i] <= 10^5
+ *
+ * Approach: 1. Find the maximum bitwise OR of the entire array.
+ * 		     2. Use backtracking to generate all possible subsets of the array.
+ * 			 3. For each subset, calculate its bitwise OR and compare it with the maximum bitwise OR found in step 1.
+ * 			 4. Count the number of subsets that have the maximum bitwise OR.
+ */
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+// Approach 1: Recursion & Backtracking (Brute Force)
+// Time Complexity: O(2^n * n) — 2^n subsets, each takes O(n) to calculate OR
+// Space Complexity: O(n) — recursion depth + current subset
+static int countMaxOrSubsets(vector<int>& nums){
+	int maxVal_OR = 0;
+	for (int num : nums)
+		maxVal_OR |= num;
 
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
+	int cnt = 0;
+	vector<int> current_subset;
+	auto dfs = [&](auto&& self, const int idx) -> void{
+		// Base Case
+		if (idx == nums.size()){
+			int curr_Or = 0;
+			for (int subset : current_subset)
+				curr_Or |= subset;
+			if (curr_Or == maxVal_OR)
+				cnt++;
+			return;
+		}
 
-// Input helper
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
+		// Not take
+		self(self, idx + 1);
+
+		// Take
+		current_subset.push_back(nums[idx]);
+		self(self, idx + 1);
+		current_subset.pop_back();
+	};
+
+	dfs(dfs, 0);
+	return cnt;
 }
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
 
-inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
+/*    Approach 2: Recursion & Backtracking (Optimized with GM Pruning / Early Exit)
+===========================================================================
+  🧠 BITWISE OR SUBSETS (The GM Math Pruning / Early Exit)
+===========================================================================
 
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-    i64 res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp & 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp >>= 1;
-    }
-    return res;
+  THE CORE LOGIC:
+  Bitwise OR only turns bits ON; it can never turn them OFF. If `curr_OR`
+  reaches the maximum possible OR early, it will never change. We instantly
+  add 2^(remaining_elements) using bitwise left shift `(1 << remaining_elements)`
+  and kill the branch, skipping thousands of useless recursive calls!
+
+  COMPLEXITY ANALYSIS:
+  - Worst Case Time Complexity: O(2^n)
+	Happens if the max OR is only possible by combining every single element
+	(e.g., an array of exact powers of 2 like [1, 2, 4, 8]). The early exit
+	never triggers until the end.
+
+  - Best Case Time Complexity: O(n)
+	Happens if the very first element already equals the max OR (e.g., [7, 1, 2, 4]).
+	The "Take" branches die immediately in O(1) time, and the recursion tree
+	collapses into a single straight line of "Not Take" calls!
+
+  - Average Case Time Complexity: Sub-exponential (Significantly faster than O(2^n))
+	Highly dependent on the input array, but usually prunes massive halves of
+	the tree resulting in lightning-fast execution times.
+
+  - Space (Auxiliary) Complexity: O(n)
+	Maximum depth of the recursion tree is n. Zero extra arrays or memory used.
+===========================================================================
+*/
+static int countMaxOrSubsetsOptimal(const vector<int>& nums){
+	int maxVal_OR = 0;
+	for (int num : nums)
+		maxVal_OR |= num;
+
+	int cnt = 0;
+	int n = nums.size();
+	auto dfs = [&](auto&& self, const int idx, const int current_OR) -> void{
+		// --- GM PRUNING ---
+		// If we have already reached the maximum OR, we don't need to explore further!
+		// Any combination of the remaining elements will still yield maxVal_OR.
+		if (maxVal_OR == current_OR){
+			int remaining_elements = n - idx;
+			// 1 << remaining_elements is fast bitwise math for 2^(remaining_elements)
+			cnt += (1 << remaining_elements);
+			return;
+		}
+
+		// Base Case : // We only reach here if we NEVER hit maxVal_OR (so we don't add to cnt)
+		if (idx == n){
+			return;
+		}
+
+		// Choice 1: Take
+		self(self, idx + 1, current_OR | nums[idx]);
+
+		// Choice 2: Not Take
+		self(self, idx + 1, current_OR);
+	};
+	dfs(dfs, 0, 0);
+	return cnt;
 }
 
-void solve() {
-    
+static void solve(){
+	int n; cin >> n;
+	vector<int> arr(n);
+	for (auto &x: arr)
+		cin >> x;
+
+	cout << "The maximum possible bitwise OR of a subset is: " << countMaxOrSubsets(arr) << "\n";
+	cout << "The maximum possible bitwise OR of a subset is: " << countMaxOrSubsetsOptimal(arr) << "\n";
 }
-
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);

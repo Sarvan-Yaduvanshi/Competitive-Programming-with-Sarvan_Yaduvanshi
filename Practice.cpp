@@ -8,48 +8,84 @@
 #include <chrono>
 #include <algorithm>
 using namespace std;
-using i64 = long long;
-constexpr int MOD = 1e9 + 7;
 
-string removeStr(const string& str, const int idx, char ch){
-	// Base Case
-	if (idx == str.size()){
-		return "";
+
+// Template 1: Take or Not Take used dp 0/1 knapsack problem
+static vector<vector<int>> subsetDup(vector<int>& nums){
+	vector<vector<int>> ans;
+	vector<int> curr;
+
+	auto dfs = [&](auto&& self, int idx) -> void{
+		// Base case
+		if (idx == nums.size()){
+			ans.push_back(curr);
+			return;
+		}
+
+		// Take
+		curr.push_back(nums[idx]);
+		self(self, idx + 1);
+		curr.pop_back();
+
+		// Not take and skip all duplicates
+		int nxt_idx = idx + 1;
+		while (nxt_idx < nums.size() && nums[nxt_idx] == nums[idx])
+			nxt_idx++;
+		self(self, nxt_idx);
+	};
+
+	dfs(dfs, 0);
+	return ans;
+}
+
+static vector<vector<int>> subsetDup2(vector<int>& nums){
+	vector<vector<int>> ans;
+	vector<int> curr;
+
+	auto dfs = [&](auto&& self, int idx) -> void{
+		ans.push_back(curr);
+
+		for (int i = idx; i < nums.size(); i++){
+			if (i > idx && nums[i] == nums[i - 1])
+				continue;
+
+			curr.push_back(nums[i]);
+			self(self, i + 1); // not idx + 1
+			curr.pop_back();
+		}
+	};
+
+	dfs(dfs, 0);
+	return ans;
+}
+
+
+static void solve(){
+	int n; cin >> n;
+	vector<int> arr(n);
+	for (auto &x : arr)
+		cin >> x;
+
+	// Function one call
+	vector<vector<int>> print1 = subsetDup2(arr);
+	cout << "[";
+	for (int i = 0; i < print1.size(); i++){
+		cout << "[";
+		for (int j = 0; j < print1[i].size(); j++){
+			cout << print1[i][j];
+			if (j + 1 < print1[i].size())
+				cout << ", ";
+		}
+		cout << "]";
+		if (i + 1 < print1.size())
+			cout << ", ";
 	}
+	cout << "]\n";
 
-	string rest = removeStr(str, idx + 1, ch);
-	if (str[idx] == ch) return rest;
-	return string(1, str[idx]) + rest;
-}
-
-// 4. Replace character (pi → 3.14)
-string replace(string str, const int idx){
-	if (idx == str.size()) return "";
-	if (idx + 1 < str.size() && str[idx] == 'p' && str[idx + 1] == 'i')
-		return "3.14" + replace(str, idx + 2);
-
-	return string(1, str[idx]) + replace(str, idx + 1);
-}
-// Move all 'x' to end
-string move(string str, const int idx){
-	if (idx == str.size()) return "";
-	string rest = move(str, idx + 1);
-	if (str[idx] == 'x') return rest + 'x';
-	return string(1, str[idx]) + rest;
-}
-
-int powerFun(int base, int exp){
-	// Base Case
-	if (exp == 0) return 1;
-	return base * powerFun(base, exp - 1);
-}
-void solve(){
-	int base, exp;
-	cin >> base >> exp;
-
-	cout << "power(" << base << "^" << exp << ")" << " = " << powerFun(base, exp) << endl;
 }
 int main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+
 	solve();
-	return 0;
 }

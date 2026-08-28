@@ -23,17 +23,16 @@ using namespace std;
 
 /*
 🎯 Problems in this file:
-   1. Print ALL subsequences
-   2. Print subsequences with sum = K
-   3. Count subsequences with sum = K
-   4. Check if ANY subsequence has sum = K
-   5. Generate all subsets (Power Set) — LC 78
+   1. Print ALL subsequences (including duplicates)
+   2. Print only unique subsequences (no duplicates)
 */
 
 /*  Problem 1: Print ALL subsequences
  *  array = [3, 1, 2] (Subsequence maintain relative order)
  *  Subsequences: {} {3} {1} {2} {3,1} {3,2} {1,2} {3,1,2}
  *  Total Subsequences = 2^n = 2^3 = 8
+ *  Leaves of the recursion tree represent all possible subsequences.
+ *  leaf nodes = 2^n = 2^3 = 8
  *
  *  Recursive Tree:
  *  - At each index, we have two choices: TAKE or NOT TAKE the current element
@@ -88,6 +87,9 @@ static vector<vector<int>> printAllSubsequence(const vector<int>& arr){
 		             return a < b;
 	             });
 	 */
+	// Remove all duplicates subsequence and return sorted subsequence
+	// ranges::sort(final_output);
+	// final_output.erase(ranges::unique(final_output).begin(), final_output.end());
 	return final_output;
 }
 
