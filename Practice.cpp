@@ -11,63 +11,42 @@ using namespace std;
 
 
 // Template 1: Take or Not Take used dp 0/1 knapsack problem
-static vector<vector<int>> subsetDup(vector<int>& nums){
-	vector<vector<int>> ans;
-	vector<int> curr;
+static bool subsetDup(vector<int>& nums, int k){
+	int n = nums.size();
 
-	auto dfs = [&](auto&& self, int idx) -> void{
-		// Base case
-		if (idx == nums.size()){
-			ans.push_back(curr);
-			return;
+	vector<int> suffix_sum(n + 1, 0);
+	for (int i = n - 1; i >= 0; i--)
+		suffix_sum[i] = suffix_sum[i + 1] + nums[i];
+
+	auto dfs = [&](auto&& self, const int idx, int curr_sum) -> bool {
+		if (curr_sum > k) return false;
+		if (curr_sum + suffix_sum[idx] < k) return false;
+
+		if (idx == n){
+			if (k == curr_sum)
+				return true;
+			return false;
 		}
 
-		// Take
-		curr.push_back(nums[idx]);
-		self(self, idx + 1);
-		curr.pop_back();
-
-		// Not take and skip all duplicates
-		int nxt_idx = idx + 1;
-		while (nxt_idx < nums.size() && nums[nxt_idx] == nums[idx])
-			nxt_idx++;
-		self(self, nxt_idx);
+		if (self(self, idx + 1, curr_sum + nums[idx]) == true)
+			return true;
+		if (self(self, idx + 1, curr_sum) == true)
+			return true;
+		return false;
 	};
 
-	dfs(dfs, 0);
-	return ans;
-}
-
-static vector<vector<int>> subsetDup2(vector<int>& nums){
-	vector<vector<int>> ans;
-	vector<int> curr;
-
-	auto dfs = [&](auto&& self, int idx) -> void{
-		ans.push_back(curr);
-
-		for (int i = idx; i < nums.size(); i++){
-			if (i > idx && nums[i] == nums[i - 1])
-				continue;
-
-			curr.push_back(nums[i]);
-			self(self, i + 1); // not idx + 1
-			curr.pop_back();
-		}
-	};
-
-	dfs(dfs, 0);
-	return ans;
+	return dfs(dfs, 0, 0);
 }
 
 
 static void solve(){
-	int n; cin >> n;
+	int n, k; cin >> n >> k;
 	vector<int> arr(n);
 	for (auto &x : arr)
 		cin >> x;
 
 	// Function one call
-	vector<vector<int>> print1 = subsetDup2(arr);
+	vector<vector<int>> print1 = subsetDup(arr, k);
 	cout << "[";
 	for (int i = 0; i < print1.size(); i++){
 		cout << "[";
