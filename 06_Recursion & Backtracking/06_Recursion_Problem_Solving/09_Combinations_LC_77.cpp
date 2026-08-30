@@ -62,8 +62,7 @@ using namespace std;
 4. LIMIT — MAIN PRUNING
    limit = n - need + 1
    Meaning:
-       → Largest number we can choose while still having enough
-         numbers left to complete the combination.
+       → Largest number we can choose while still having enough numbers left to complete the combination.
    Therefore:
        → Never enter a branch that cannot possibly reach size k.
 
@@ -116,13 +115,16 @@ static vector<vector<int>> combination(const int n, const int k){
 	current.reserve(k);
 
 	auto dfs = [&](auto&& self, const int start_num) -> void{
-		// Base Case
+		// Base Case: Combination is complete. store it. return
 		if (current.size() == k){
 			ans.push_back(current);
 			return;
 		}
 
+		// How many more numbers are required?
 		int needed = k - current.size();
+
+		// Largest number we can choose while still having enough numbers left to complete the combination.
 		int limit = n - needed + 1;
 
 		for (int i = start_num; i <= limit; i++){
