@@ -108,27 +108,28 @@ Tips: MEMORY TRICK: START -> No duplicates, NEED -> How many more?, LIMIT -> Pru
 		i + 1 -> Maintain increasing order, SMALL → LARGE -> Lexicographical order, CHOOSE → EXPLORE → UNCHOOSE -> Backtracking
 */
 
+// Method 1: Without pre-allocation of answer vector (may cause reallocations)
+static vector<vector<int>> combi(const int n, const int k){
+	// Edge case safety
+	if (k < 0 || k > n)
+		return {};
 
-static vector<vector<int>> combination(const int n, const int k){
 	vector<vector<int>> ans;
 	vector<int> current;
 	current.reserve(k);
 
 	auto dfs = [&](auto&& self, const int start_num) -> void{
-		// Base Case: Combination is complete. store it. return
+		// Base Case: if current.size() == k that means done
 		if (current.size() == k){
-			ans.push_back(current);
+			ans.emplace_back(current);
 			return;
 		}
 
-		// How many more numbers are required?
-		int needed = k - current.size();
-
-		// Largest number we can choose while still having enough numbers left to complete the combination.
-		int limit = n - needed + 1;
+		const int needed = k - current.size();
+		const int limit = n - needed + 1;
 
 		for (int i = start_num; i <= limit; i++){
-			current.push_back(i);
+			current.emplace_back(i);
 			self(self, i + 1);
 			current.pop_back();
 		}
@@ -138,9 +139,58 @@ static vector<vector<int>> combination(const int n, const int k){
 	return ans;
 }
 
+// Method 2: With pre-allocation of answer vector (eliminates reallocations)
+// This is the preferred method for large n and k
+// Pre-allocate the answer vector to the exact size of nCk
+static vector<vector<int>> combination(const int n, const int k){
+	// Edge case safety
+	if (k < 0 || k > n)
+		return {};
+
+	// 1. Calculate nCr mathematically to pre-allocate the exact size of 'ans'
+	// This completely eliminates outer vector reallocations.
+	long long combinations_count = 1;
+	for (int i = 1; i <= k; i++){
+		combinations_count = combinations_count * (n - i + 1) / i;
+	}
+	vector<vector<int>> ans;
+	ans.reserve(combinations_count);
+
+	vector<int> current;
+	current.reserve(k);
+
+	// 2. Pass 'needed' directly into the lambda state
+	auto dfs = [&](auto&& self, const int start_num, const int needed) -> void{
+		// Base Case: 0 numbers needed means we are done
+		if (needed == 0){
+			ans.emplace_back(current); // emplace_back is slightly faster
+			return;
+		}
+
+		// Tree Pruning is intact, but no longer relies on .size() subtraction
+		const int limit = n - needed + 1;
+
+		for (int i = start_num; i <= limit; i++){
+			current.emplace_back(i);
+
+			// Pass (needed - 1) down to the next level
+			self(self, i + 1, needed - 1);
+			current.pop_back();
+		}
+	};
+
+	// Start with 'k' needed
+	dfs(dfs, 1, k);
+	return ans;
+}
+
 void solve() {
     int n, k; cin >> n >> k;
 
+	// Method 1: Without pre-allocation of answer vector (may cause reallocations)
+	// vector<vector<int>> print = combi(n, k);
+
+	// Method 2: With pre-allocation of answer vector (eliminates reallocations)
 	vector<vector<int>> print1 = combination(n, k);
 	cout << "[";
 	for (int i = 0; i < print1.size(); i++){

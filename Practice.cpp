@@ -9,44 +9,48 @@
 #include <algorithm>
 using namespace std;
 
+vector<vector<int>> combination(int n, int k){
+	if (k < 0 || k > n)
+		return {};
 
-// Template 1: Take or Not Take used dp 0/1 knapsack problem
-static bool subsetDup(vector<int>& nums, int k){
-	int n = nums.size();
+	long long combination_cnt = 1;
+	for (int i = 1; i <= k; i++){
+		combination_cnt = combination_cnt * (n - i + 1) / i;
+	}
+	vector<vector<int>> ans;
+	ans.reserve(combination_cnt);
 
-	vector<int> suffix_sum(n + 1, 0);
-	for (int i = n - 1; i >= 0; i--)
-		suffix_sum[i] = suffix_sum[i + 1] + nums[i];
+	vector<int> current;
+	current.reserve(k);
 
-	auto dfs = [&](auto&& self, const int idx, int curr_sum) -> bool {
-		if (curr_sum > k) return false;
-		if (curr_sum + suffix_sum[idx] < k) return false;
-
-		if (idx == n){
-			if (k == curr_sum)
-				return true;
-			return false;
+	auto dfs = [&](auto&& self, int start_num, int needed) -> void{
+		// Base Case: if needed == 0 that means done
+		if (needed == 0){
+			ans.emplace_back(current);
+			return;
 		}
 
-		if (self(self, idx + 1, curr_sum + nums[idx]) == true)
-			return true;
-		if (self(self, idx + 1, curr_sum) == true)
-			return true;
-		return false;
+		int limit = n - needed + 1;
+		for (int i = start_num; i <= limit; i++){
+			current.emplace_back(i);
+			self(self, i + 1, needed - 1);
+			current.pop_back();
+		}
 	};
 
-	return dfs(dfs, 0, 0);
+	dfs(dfs, 1, k);
+	return ans;
 }
 
 
 static void solve(){
 	int n, k; cin >> n >> k;
-	vector<int> arr(n);
-	for (auto &x : arr)
-		cin >> x;
+	// vector<int> arr(n);
+	// for (auto &x : arr)
+	// 	cin >> x;
 
 	// Function one call
-	vector<vector<int>> print1 = subsetDup(arr, k);
+	vector<vector<int>> print1 = combination(n, k);
 	cout << "[";
 	for (int i = 0; i < print1.size(); i++){
 		cout << "[";

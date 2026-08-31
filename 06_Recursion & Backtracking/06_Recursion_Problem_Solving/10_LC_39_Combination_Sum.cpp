@@ -54,25 +54,57 @@ All elements of candidates are distinct.
 */
 
 static vector<vector<int>> combinationSum(vector<int>& candidates, int target){
+    int n = candidates.size();
     vector<vector<int>> ans;
     vector<int> current;
 
-    auto dfs = [&](auto&& self, const int idx) -> void{
+    auto dfs = [&](auto&& self, const int idx, const int tar) -> void{
         // Base Case
-        if (curr_sum == target){
-            ans.push_back(current);
+        if (tar == 0){
+            ans.emplace_back(current);
             return;
         }
 
-        for (int i = idx; i < candidates.size(); i++){
-            if (candidates[i] < target){
+        // Invalid Case: if we have exhausted all candidates or the target has gone negative
+        if (idx == n || tar < 0)
+            return;
 
-            }
+        // TAKE cand[index] — stay at SAME index (can reuse!)
+        if (candidates[idx] <= tar){
+            current.emplace_back(candidates[idx]);
+            self(self, idx, tar - candidates[idx]);
+            current.pop_back();
         }
+
+        // NOT TAKE — move to next index
+        self(self, idx + 1, tar);
     };
+
+    dfs(dfs, 0, target);
+    return ans;
 }
 static void solve() {
-    
+    int n, target;
+    cin >> n >> target;
+
+    vector<int> candidates(n);
+    for (auto &x : candidates)
+        cin >> x;
+
+    vector<vector<int>> result = combinationSum(candidates, target);
+    cout << "[";
+    for (int i = 0; i < result.size(); i++){
+        cout << "[";
+        for (int j = 0; j < result[i].size(); j++){
+            cout << result[i][j];
+            if (j + 1 < result[i].size())
+                cout << ", ";
+        }
+        cout << "]";
+        if (i + 1 < result.size())
+            cout << ", ";
+    }
+    cout << "]\n";
 }
 
 
