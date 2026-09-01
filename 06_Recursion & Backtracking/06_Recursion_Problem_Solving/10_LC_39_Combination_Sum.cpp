@@ -53,6 +53,7 @@ All elements of candidates are distinct.
 1 <= target <= 500
 */
 
+// Approach 1: Take/NotTake with duplicate skipping
 static vector<vector<int>> combinationSum(vector<int>& candidates, int target){
     int n = candidates.size();
     vector<vector<int>> ans;
@@ -83,6 +84,63 @@ static vector<vector<int>> combinationSum(vector<int>& candidates, int target){
     dfs(dfs, 0, target);
     return ans;
 }
+
+/* Approach 2: Loop-based Backtracking (more common in interviews) (optimized)
+ * Core Idea:
+ * 1. Sort the candidates first. This allows us to stop early (prune) when a candidate
+ *    exceeds the remaining target, preventing useless recursive calls.
+ * 2. Use a loop-based backtracking approach instead of Take/Not-Take. We iterate from
+ *    the current 'idx' to 'n-1'.
+ * 3. At each step, if candidates[i] > target, we 'break' the loop entirely because
+ *    the array is sorted and all subsequent numbers will also be too large.
+ * 4. We pass 'i' (not i + 1) into the next recursive call to allow reusing the same element.
+ *
+ * Time Complexity: O(N^(T/M) + N log N)
+ * - N is candidates.size(), T is the target, and M is the minimum value in candidates.
+ * - N log N is for sorting.
+ * - The recursion tree can go as deep as T/M (e.g., target 10, min element 2, max depth 5).
+ * - The number of nodes in the worst case is loosely bounded by N^(T/M).
+ *
+ * Space Complexity: O(T/M)
+ * - The space is dictated by the maximum depth of the recursion tree (call stack)
+ *   and the 'current' vector storing the path. In the worst case, this is T/M.
+ * - (Note: We do not count the space used to store the final answers).
+ */
+static vector<vector<int>> combinationSumOptimized(vector<int>& candidates, int target){
+    // Sorting is the key to GM-level optimization here
+    ranges::sort(candidates);
+
+    vector<vector<int>> ans;
+    vector<int> current;
+
+    // Lambda function for DFS with loop-based backtracking
+    auto dfs = [&](auto&& self, const int start_idx, const int tar) -> void{
+        // Base Case: Target is met
+        if (tar == 0){
+            ans.emplace_back(current); // emplace_back is slightly faster than push_back
+            return;
+        }
+
+        // Loop-based exploration from start_idx to end of candidates
+        for (int i = start_idx; i < candidates.size(); i++){
+            // GM Pruning: If the current number is strictly greater than the remaining target,
+            // we can stop the loop completely because all future numbers are even bigger.
+            if (candidates[i] > tar)
+                break;
+
+            current.emplace_back(candidates[i]);
+
+            // Pass 'i' instead of 'i + 1' because we are allowed to reuse the same number
+            self(self, i, tar - candidates[i]);
+            current.pop_back(); // Backtrack to explore other combinations
+        }
+    };
+
+    dfs(dfs, 0, target);
+    return ans;
+}
+
+
 static void solve() {
     int n, target;
     cin >> n >> target;
@@ -91,7 +149,10 @@ static void solve() {
     for (auto &x : candidates)
         cin >> x;
 
-    vector<vector<int>> result = combinationSum(candidates, target);
+    // vector<vector<int>> result = combinationSum(candidates, target);
+
+    // Using the optimized version
+    vector<vector<int>> result = combinationSumOptimized(candidates, target);
     cout << "[";
     for (int i = 0; i < result.size(); i++){
         cout << "[";
