@@ -1,5 +1,5 @@
 /*
-Author: Sarvan.DP.GrandMaster
+Author: Sarvan Yaduvanshi
 Created : 2026-08-30 23:51:19
 */
 
@@ -58,11 +58,54 @@ using namespace std;
 		Topics: Backtracking, String, Hash Table, Recursion
 */
 
-static vector<string> letterCombinations(string digits){
-	
+static vector<string> letterCombinations(const string& digits){
+	// GM Fix 1: Early exit for edge case
+	if (digits.empty())
+		return {};
+
+	vector<string> ans;
+	string current_str;
+	// GM Fix 2: Pre-allocate the string capacity
+	current_str.reserve(digits.size());
+
+	// GM Fix 3: Use a static array for phoneMap to avoid repeated construction
+	string phoneMap[] = {
+		"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"
+	};
+
+	auto dfs = [&](auto&& self, const int idx) -> void{
+		// Base Case: We've picked one letter for every digit
+		if (idx == digits.size()){
+			ans.emplace_back(current_str);
+			return;
+		}
+
+		// Get the letters for the current digit
+		string& letters = phoneMap[digits[idx] - '0'];
+		for (const char ch : letters){
+			current_str.push_back(ch);
+			self(self, idx + 1);
+			current_str.pop_back();
+		}
+	};
+
+	dfs(dfs, 0);
+	return ans;
 }
-void solve() {
-    
+
+static void solve() {
+    string str;
+	cin >> str;
+
+	// Get the letter combinations for the input digits
+	vector<string> combinations = letterCombinations(str);
+	cout << "[";
+	for (size_t i = 0; i < combinations.size(); ++i){
+		cout << "\"" << combinations[i] << "\"";
+        if (i < combinations.size() - 1)
+            cout << ",";
+	}
+	cout << "]\n";
 }
 
 
