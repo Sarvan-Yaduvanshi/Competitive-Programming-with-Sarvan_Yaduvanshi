@@ -68,32 +68,61 @@ using namespace std;
 */
 
 // Idea: Think of it as “choose → go deeper → finish → undo choice → try next choice.”
+// Template 1: Take/Not Take (Binary Choice) Template
+static vector<string> binstr(const int n){
+	vector<string> ans;
+	string curr_str;
+	curr_str.reserve(n); // Pre-allocate the string capacity to avoid multiple reallocations during recursion.
 
-static vector<string> ans;
-static string str;
-vector<string> binstr(int n){
 	// Write Recursive Lambda Function to generate all binary strings of length n
 	auto generate_binstr = [&](auto&& self, const int idx) -> void{
 		// Base Case: if idx == n, add the current string to the answer and return
 		if (idx == n){
-			ans.push_back(str);
+			ans.emplace_back(curr_str);
 			return;
 		}
 
 		// Choice 1: Take '0' at idx
-		str.push_back('0'); // left branch (GO DOWN)
+		curr_str.push_back('0'); // left branch (GO DOWN)
 		self(self, idx + 1); // recursion call (EXPLORE)
-		str.pop_back(); // Backtrack (COME BACK)
+		curr_str.pop_back(); // Backtrack (COME BACK)
 
 		// Choice 2: Take '1' at idx
-		str.push_back('1'); // right branch (GO DOWN)
+		curr_str.push_back('1'); // right branch (GO DOWN)
 		self(self, idx + 1); // recursion call (EXPLORE)
-		str.pop_back(); // Backtrack (COME BACK)
+		curr_str.pop_back(); // Backtrack (COME BACK)
 	};
 
-	ans.clear();
-	str.clear();
 	generate_binstr(generate_binstr, 0);
+	return ans;
+}
+
+// Template 2: Used for for loop backtracking problems (like permutations, combinations, etc.)
+static vector<string> bin_str(const int n){
+	vector<string> ans;
+	string curr_str;
+	curr_str.reserve(n);
+
+	// Write Recursive Lambda Function to generate all binary strings of length n
+	auto dfs = [&](auto&& self, const int idx) -> void{
+		// Base Case: if idx == n, add the current string to the answer and return
+		if (idx == n){
+			ans.emplace_back(curr_str);
+			return;
+		}
+
+		// try every possible choice at idx (0 or 1)
+		for (const char ch : {'0', '1'}){
+			// Make the choice (GO DOWN)
+			curr_str.push_back(ch);
+			// Explore the next index (EXPLORE)
+			self(self, idx + 1);
+			// Undo the choice (COME BACK)
+			curr_str.pop_back();
+		}
+	};
+
+	dfs(dfs, 0);
 	return ans;
 }
 
@@ -154,10 +183,12 @@ static vector<string> withoutDuplicateBinStr(int n){
  * Topics: String, Recursion, Backtracking, Bit Manipulation
 */
 
-static vector<string> final_output;
-static string temp_str;
-
-vector<string> validStrings(int n){
+// Idea: Think of it as “choose → go deeper → finish → undo choice → try next choice.”
+// Template 1: Take/Not Take (Binary Choice) Template
+static vector<string> validStrings(const int n){
+	vector<string> final_output;
+	string temp_str;
+	temp_str.reserve(n);
 	auto dfs = [&](auto&& self, const int idx) -> void{
 		// Base Case
 		if (idx == n){
@@ -178,27 +209,81 @@ vector<string> validStrings(int n){
 		temp_str.pop_back();
 	};
 
-	final_output.clear();
-	temp_str.clear();
 	dfs(dfs, 0);
 	return final_output;
 }
-void solve(){
+
+// template 2: Used for for loop backtracking problems (like permutations, combinations, etc.)
+static vector<string> validStrings2(const int n){
+	vector<string> final_output;
+	string temp_str;
+	temp_str.reserve(n);
+
+	// Write Recursive Lambda Function to generate all valid binary strings of length n
+	auto dfs = [&](auto&& self, const int idx) -> void{
+		// Base Case: if idx == n, add the current string to the answer and return
+		if (idx == n){
+			final_output.emplace_back(temp_str);
+			return;
+		}
+
+		// Try every possible choice at idx (0 or 1)
+		for (const char ch: {'0', '1'}){
+			// skip if the current character is '0' and the last character in temp_str is also '0' to avoid adjacent zeros
+			if (ch == '0' && !temp_str.empty() && temp_str.back() == '0')
+				continue;
+
+			temp_str.push_back(ch); // Make the choice (GO DOWN)
+			self(self, idx + 1); // Explore the next index (EXPLORE)
+			temp_str.pop_back(); // Undo the choice (COME BACK) backtrack
+		}
+	};
+
+	dfs(dfs, 0);
+	return final_output;
+}
+
+static void solve(){
 	int n; cin >> n;
+
+	// function call to generate all binary strings of length n (template 1)
+	cout << "get all binary strings of length n (template 1): \n";
 	cout << "[";
 	vector<string> temp = binstr(n);
 	for (int i = 0; i < temp.size(); i++)
 		cout << temp[i] << (i == temp.size() - 1 ? "" : ", ");
 	cout << "]\n";
 
+	// function call to generate all binary strings of length n (template 2)
+	vector<string> temp4 = bin_str(n);
+	cout << "get all binary strings of length n (template 2): \n";
+	cout << "[";
+	for (int i = 0; i < temp4.size(); i++)
+		cout << temp4[i] << (i == temp4.size() - 1 ? "" : ", ");
+	cout << "]\n";
+
+	// function call to generate all binary strings of length n without duplicates (custom rule)
 	vector<string> temp2 = withoutDuplicateBinStr(n);
+	cout << "get all binary strings of length n without duplicates (custom rule): \n";
+	cout << "[";
 	for (int i = 0; i < temp2.size(); i++)
 		cout << temp2[i] << (i == temp2.size() - 1 ? "" : ", ");
 	cout << "]\n";
 
+	// function call to generate all valid binary strings of length n without adjacent zeros (template 1)
 	vector<string> temp3 = validStrings(n);
+	cout << "get all valid binary strings of length n without adjacent zeros (template 1): \n";
+	cout << "[";
 	for (int i = 0; i < temp3.size(); i++)
 		cout << temp3[i] << (i == temp3.size() - 1 ? "" : ", ");
+	cout << "]\n";
+
+	// function call to generate all valid binary strings of length n without adjacent zeros (template 2)
+	vector<string> temp5 = validStrings2(n);
+	cout << "get all valid binary strings of length n without adjacent zeros (template 2): \n";
+	cout << "[";
+	for (int i = 0; i < temp5.size(); i++)
+		cout << temp5[i] << (i == temp5.size() - 1 ? "" : ", ");
 	cout << "]\n";
 }
 int main(){
