@@ -11,7 +11,7 @@ using namespace std;
 /*
 	Problem: W - Reach Value (Codeforces)
 	Given a number 𝑁. Initially you have a value equal 1 and you can perform one of the following operation any number of times:
-			1. Multiply the current value by 10.
+			1.y the current value by 10. Multipl
 			2. Multiply the current value by 20.
 			Determine if your value can reach 𝑁 or not.
 			Note: Solve the problem using recursion and backtracking.

@@ -1,8 +1,8 @@
 /*
-╔══════════════════════════════════════════════════════════════╗
-║  06. BACKTRACKING FUNDAMENTALS — Permutations & N-Queens     ║
-║  Level 3 — Backtracking & State Space Search                 ║
-╚══════════════════════════════════════════════════════════════╝
+                    ╔══════════════════════════════════════════════════════════════╗
+                    ║  06. BACKTRACKING FUNDAMENTALS — Permutations & N-Queens     ║
+                    ║  Level 3 — Backtracking & State Space Search                 ║
+                    ╚══════════════════════════════════════════════════════════════╝
 
 ════════════════════════════════════════════════════════════════
 📖 WHAT IS BACKTRACKING?
@@ -16,42 +16,339 @@ Pattern:
     3. UN-CHOOSE — undo the option (backtrack)
     4. Try next option
 
+═════════════════════════════════════════════════════════════════════════
+🧠 THE GRANDMASTER MINDSET: PURE RECURSION VS. BACKTRACKING
+═════════════════════════════════════════════════════════════════════════
+
+ 1. THE PHILOSOPHY (Generate & Test vs. Constrain & Prune)
+ ---------------------------------------------------------
+ [Brute Force / Pure Recursion] -> "Generate and Test"
+ - Blindly explores every single path to the very bottom (leaf nodes).
+ - Only evaluates if a solution is valid AFTER generating the whole path.
+ - Wastes massive CPU cycles exploring guaranteed dead ends.
+
+ [Backtracking] -> "Constraint Satisfaction & Pruning"
+ - Evaluates the validity of the partial state AT EVERY SINGLE STEP.
+ - If the current path violates a rule, it immediately halts, UNDOES the
+   last choice (backtracks), and moves to the next option.
+ - Kills entire subtrees of useless work before they are even generated.
+
+ 2. THE STATE SPACE TREE VISUALIZATION
+ ---------------------------------------------------------
+ Example: Generate permutations of [A, B, C], but 'B' cannot be the first letter.
+
+      ❌ BRUTE FORCE TREE                       ✅ BACKTRACKING TREE
+      Generates all 15 nodes                    Generates only 7 nodes
+
+              (root)                                    (root)
+             /   |   \                                 /   |   \
+           A     B     C                             A     B     C
+          / \   / \   / \                           / \    |    / \
+         B   C A   C A   B                         B   C   |   A   B
+        /    | |   | |    \                       /    |   |   |    \
+       C     B C   A B     A                     C     B   ❌  B     A
+                                                           ^
+        (Fails at the very end)               (Pruned immediately at level 1!
+                                               Saves generating the children)
+
+ 3. WHY THIS IS MANDATORY (THE MATH OF PRUNING)
+ ---------------------------------------------------------
+ Time Complexity in combinatorics is usually O(N!) or O(2^N).
+
+ Imagine finding valid permutations of N = 12 items.
+ - Total leaf nodes = 12! = 479,001,600.
+ - Suppose your constraint makes picking item 'X' at index 0 invalid.
+ - Brute Force will pick 'X', and still generate the remaining 11! nodes
+   (39,916,800 recursive calls) just to reject them all at the bottom.
+ - Backtracking sees 'X' at index 0, marks it invalid, and PRUNES the branch.
+   You instantly save ~40 million operations in a single clock cycle.
+
+ RULE OF THUMB:
+ Recursion is just walking down the branches of a tree.
+ Backtracking is carrying an axe to chop off the dead branches early.
+═════════════════════════════════════════════════════════════════════════
+
 ════════════════════════════════════════════════════════════════
-🏗️ BACKTRACKING TEMPLATE
+🏆 TEMPLATE 1: TAKE / NOT TAKE (Standard)
+════════════════════════════════════════════════════════════════
+ Use Case: Generating all subsets, 0/1 Knapsack, standard subsequences.
+ Core Idea: At every index, make a binary choice.
+
+ Time: O(2^N) | Space: O(N) for recursion stack
 ════════════════════════════════════════════════════════════════
 
-    void backtrack(state, choices) {
-        if (goal_reached) {
-            add to results;
+void solveTakeNotTake(vector<int>& nums) {
+    vector<vector<int>> ans;
+    vector<int> current;
+
+    auto dfs = [&](auto&& self, int idx) -> void {
+        // 1. Base Case: Reached the end of the array
+        if (idx == nums.size()) {
+            ans.push_back(current);
             return;
         }
 
-        for (each choice in choices) {
-            if (isValid(choice)) {
-                make(choice);                    // CHOOSE
-                backtrack(updated_state);         // EXPLORE
-                undo(choice);                     // UN-CHOOSE
-            }
+        // 2. TAKE Branch
+        current.push_back(nums[idx]);
+        self(self, idx + 1);
+        current.pop_back(); // Backtrack
+
+        // 3. NOT TAKE Branch
+        self(self, idx + 1);
+    };
+
+    dfs(dfs, 0);
+}
+
+════════════════════════════════════════════════════════════════
+🏆 TEMPLATE 2: TAKE / NOT TAKE (Handle Duplicates)
+════════════════════════════════════════════════════════════════
+ Use Case: Subsets II (LeetCode 90)
+ Core Idea: Sort first. If we choose NOT to take a number, we must
+            skip all identical numbers that immediately follow it.
+            Otherwise, we'll just take the duplicate and form the
+            exact same subset we just tried to avoid.
+
+ Time: O(2^N) | Space: O(N)
+════════════════════════════════════════════════════════════════
+
+void solveTakeNotTakeDuplicates(vector<int>& nums) {
+    ranges::sort(nums); // REQUIRED: Group duplicates together
+
+    vector<vector<int>> ans;
+    vector<int> current;
+
+    auto dfs = [&](auto&& self, int idx) -> void {
+        if (idx == nums.size()) {
+            ans.push_back(current);
+            return;
         }
-    }
+
+        // 1. TAKE Branch
+        current.push_back(nums[idx]);
+        self(self, idx + 1);
+        current.pop_back(); // Backtrack
+
+        // 2. NOT TAKE Branch (Skip duplicates)
+        int next_idx = idx + 1;
+        while (next_idx < nums.size() && nums[next_idx] == nums[idx]) {
+            next_idx++;
+        }
+        self(self, next_idx);
+    };
+
+    dfs(dfs, 0);
+}
 
 ════════════════════════════════════════════════════════════════
-💡 BACKTRACKING vs BRUTE FORCE
+🏆 TEMPLATE 3: FOR-LOOP BACKTRACKING (Standard)
+════════════════════════════════════════════════════════════════
+ Use Case: Combinations, Permutations, Combination Sum I & III.
+ Core Idea: Instead of binary choices, iterate through all valid
+            "next steps" from the current position. Excellent for
+            length-bounded limits and target sums (allows pruning).
+
+ Note: Pass 'i + 1' to avoid reusing elements.
+       Pass 'i' if elements can be reused (like Combination Sum I).
 ════════════════════════════════════════════════════════════════
 
-Brute force: Generate ALL possibilities, then filter valid ones
-Backtracking: PRUNE invalid branches EARLY (much faster!)
+void solveForLoop(vector<int>& nums) {
+    vector<vector<int>> ans;
+    vector<int> current;
 
-                    root
-                   / | \
-                  a   b   c
-                 /|   |   |\
-                b  c  ✗   a  b    ← if 'b' is invalid, DON'T go deeper
-               /       \
-              c         ✗
+    auto dfs = [&](auto&& self, int start_idx) -> void {
+        // 1. Base Case / Capture State
+        ans.push_back(current);
+
+        // (Add specific target/length returns here if needed)
+
+        // 2. Loop through all valid choices
+        for (int i = start_idx; i < nums.size(); ++i) {
+
+            // Optional: Pruning logic goes here (e.g., if nums[i] > target)
+
+            current.push_back(nums[i]);  // CHOOSE
+
+            self(self, i + 1);           // EXPLORE (use i+1 to move forward)
+
+            current.pop_back();          // UN-CHOOSE
+        }
+    };
+
+    dfs(dfs, 0);
+}
 
 ════════════════════════════════════════════════════════════════
+🏆 TEMPLATE 4: FOR-LOOP BACKTRACKING (Handle Duplicates)
+════════════════════════════════════════════════════════════════
+ Use Case: Combination Sum II, Unique String Combinations.
+ Core Idea: Sort first. Inside the loop, check if the current
+            element is identical to the previous element AT THE
+            SAME RECURSION DEPTH. If so, skip it.
 
+ Trick: `i > start_idx` ensures we only skip horizontal duplicates
+        (same tree level), not vertical duplicates (same branch).
+════════════════════════════════════════════════════════════════
+
+void solveForLoopDuplicates(vector<int>& nums) {
+    ranges::sort(nums); // REQUIRED: Group duplicates together
+
+    vector<vector<int>> ans;
+    vector<int> current;
+
+    auto dfs = [&](auto&& self, int start_idx) -> void {
+        // 1. Base Case / Capture State
+        ans.push_back(current);
+
+        // 2. Loop through choices
+        for (int i = start_idx; i < nums.size(); ++i) {
+
+            // GM Pruning: Skip horizontal duplicates
+            if (i > start_idx && nums[i] == nums[i - 1]) {
+                continue;
+            }
+
+            current.push_back(nums[i]);  // CHOOSE
+
+            self(self, i + 1);           // EXPLORE
+
+            current.pop_back();          // UN-CHOOSE
+        }
+    };
+
+    dfs(dfs, 0);
+}
+
+════════════════════════════════════════════════════════════════
+🏆 TEMPLATE 5: PERMUTATIONS (Visited Array Method)
+════════════════════════════════════════════════════════════════
+ Use Case: Standard Permutations (LeetCode 46)
+ Core Idea: Because order matters, we always loop from 0 to N.
+            To prevent reusing the same element in the SAME branch,
+            we use a boolean `visited` array.
+
+ Pros: Maintains the original order of elements. Very readable.
+ Cons: Uses O(N) extra space for the visited array.
+════════════════════════════════════════════════════════════════
+
+void solvePermutationsVisited(vector<int>& nums) {
+    vector<vector<int>> ans;
+    vector<int> current;
+    vector<bool> visited(nums.size(), false);
+
+    // Notice: No 'start_idx' needed for permutations
+    auto dfs = [&](auto&& self) -> void {
+        // 1. Base Case: The permutation is complete
+        if (current.size() == nums.size()) {
+            ans.push_back(current);
+            return;
+        }
+
+        // 2. Loop from 0 every time
+        for (int i = 0; i < nums.size(); ++i) {
+
+            // Skip if this specific element is already in our current path
+            if (visited[i]) continue;
+
+            visited[i] = true;           // Mark as used
+            current.push_back(nums[i]);  // CHOOSE
+
+            self(self);                  // EXPLORE
+
+            current.pop_back();          // UN-CHOOSE
+            visited[i] = false;          // Unmark
+        }
+    };
+
+    dfs(dfs);
+}
+
+════════════════════════════════════════════════════════════════
+🏆 TEMPLATE 6: PERMUTATIONS (In-Place Swap Method)
+════════════════════════════════════════════════════════════════
+ Use Case: Highly optimized Standard Permutations.
+ Core Idea: Instead of building a new `current` array, we swap
+            elements in the original array. We lock in the element
+            at `idx`, and swap it with all elements to its right.
+
+ Pros: Zero extra space overhead. Blazingly fast.
+ Cons: Destroys the original sorted order of the array.
+════════════════════════════════════════════════════════════════
+
+void solvePermutationsSwap(vector<int>& nums) {
+    vector<vector<int>> ans;
+
+    auto dfs = [&](auto&& self, int idx) -> void {
+        // 1. Base Case: We've locked in all positions
+        if (idx == nums.size()) {
+            ans.push_back(nums);
+            return;
+        }
+
+        // 2. Swap the current index with itself and everything after it
+        for (int i = idx; i < nums.size(); ++i) {
+
+            swap(nums[idx], nums[i]);  // CHOOSE (Lock nums[i] into the idx position)
+
+            self(self, idx + 1);       // EXPLORE (Move to the next position to lock)
+
+            swap(nums[idx], nums[i]);  // UN-CHOOSE (Restore original array state)
+        }
+    };
+
+    dfs(dfs, 0);
+}
+
+════════════════════════════════════════════════════════════════
+🏆 TEMPLATE 7: UNIQUE PERMUTATIONS (Handle Duplicates)
+════════════════════════════════════════════════════════════════
+ Use Case: Permutations II (LeetCode 47)
+ Core Idea: Sort the array first. Use the Visited array method.
+            To avoid duplicate permutations, if the current number
+            is identical to the previous number, we ONLY use it if
+            the previous number is CURRENTLY USED in our path.
+
+ Trick: `!visited[i - 1]` means we just finished exploring the
+        branch for `nums[i - 1]`, so starting a new branch with
+        the identical `nums[i]` would create a duplicate tree.
+════════════════════════════════════════════════════════════════
+
+void solveUniquePermutations(vector<int>& nums) {
+    ranges::sort(nums);  // REQUIRED: Group duplicates together
+
+    vector<vector<int>> ans;
+    vector<int> current;
+    vector<bool> visited(nums.size(), false);
+
+    auto dfs = [&](auto&& self) -> void {
+        if (current.size() == nums.size()) {
+            ans.push_back(current);
+            return;
+        }
+
+        for (int i = 0; i < nums.size(); ++i) {
+            if (visited[i]) continue;
+
+            // GM Pruning: Skip duplicate branches at the same depth
+            if (i > 0 && nums[i] == nums[i - 1] && !visited[i - 1]) {
+                continue;
+            }
+
+            visited[i] = true;
+            current.push_back(nums[i]);
+
+            self(self);
+
+            current.pop_back();
+            visited[i] = false;
+        }
+    };
+
+    dfs(dfs);
+}
+*/
+
+/*
 🎯 Problems:
    1. Permutations — LC 46
    2. Permutations II (with duplicates) — LC 47
