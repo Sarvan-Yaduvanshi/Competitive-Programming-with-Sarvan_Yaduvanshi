@@ -6,20 +6,93 @@ Created : 2026-08-19 20:39:08
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
 #include <map>
 #include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
+#include <unordered_set>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 using namespace std;
 
+/*
+    ================================================================
+                        SUBSEQUENCE — THEORY
+    ================================================================
+
+    Definition:
+    A subsequence is formed by deleting zero or more elements from
+    the original sequence WITHOUT changing the relative order of
+    the remaining elements.
+
+    Example:
+        nums = [2, 1, 2]
+        Valid: [[], [2], [1], [2, 1], [2, 2], [1, 2], [2, 1, 2]]
+        Invalid:
+            [1, 2, 2]   // changes relative order by rearranging elements
+
+    Core Rule:
+        SUBSEQUENCE = SELECT / SKIP + ORDER PRESERVED
+
+    Formula:
+        For n elements: Number of index-based subsequences = 2^n
+        Reason:
+            Every element has 2 choices:
+                - Take
+                - Skip
+            Therefore:
+                2 × 2 × ... × 2  (n times) = 2^n
+
+    Empty subsequence:
+        [] is also a valid subsequence.
+
+    ---------------------------------------------------------------
+                         DUPLICATE SUBSEQUENCES
+    ---------------------------------------------------------------
+
+    Duplicate definition:
+    Two subsequences are duplicates when their resulting value
+    sequences are identical, even if they came from different
+    indices.
+
+    Example:
+        nums = [2, 1, 2]
+        Taking:
+            first 2
+        and:
+            second 2
+        can both produce:
+            [2]
+        These are the SAME value subsequence.
+
+    Therefore:
+        Index-based subsequences:
+            Treat different index selections as different.
+        Unique subsequences:
+            Treat identical resulting vectors as ONE subsequence.
+    Example:
+        nums = [2, 1, 2]
+        Total index-based subsequences = 2^3 = 8
+        Unique value subsequences = 7
+
+    ---------------------------------------------------------------
+                     SUBSET vs SUBSEQUENCE
+    ---------------------------------------------------------------
+
+        SUBSET: Order does NOT matter.
+            {1, 2} == {2, 1}
+        SUBSEQUENCE:
+            Relative order MUST be preserved.
+            [1, 2] != [2, 1]
+
+    Memory Trick:
+        SUBSET       → SELECT
+        SUBSEQUENCE  → SELECT + ORDER
+
+    For duplicate handling:
+        - Brute force + set  → generate duplicates, then remove them.
+        - Per-level `seen`   → prevent duplicate branches during DFS.
+    ================================================================
+*/
 
 /*
 🎯 Problems in this file:
@@ -93,84 +166,177 @@ static vector<vector<int>> printAllSubsequence(const vector<int>& arr){
 	return final_output;
 }
 
-// variant no 2: print only unique subsequence(not include duplicates)
-// example: n = 3, arr = {1, 2, 2}
-//			output : [[], [1], [1, 2], [2], [2, 2], [1, 2, 2]]
+/*	// variant no 2: print only unique subsequence(not include duplicates)
 
-// Template 1: Use the "Take / Not Take" Template for: Knapsack problems, Dynamic Programming, and True/False decisions.
-static vector<vector<int>> res;
-static vector<int> curr;
-static vector<vector<int>> subsequenceWithDup(vector<int>& arr){
-	// 1. Sort the array so duplicates are adjacent to each other
-	ranges::sort(arr);
+	Approach 1: Recursion / Backtracking + Set
+	Idea:
+	- At every index, we have 2 choices:
+		1. Take nums[idx]
+		2. Do not take nums[idx]
+	- This generates all possible subsequences.
+	- Duplicate subsequences can be generated when nums contains duplicates.
+	- Store each subsequence in set<vector<int>> to keep only unique subsequences.
+	- We DO NOT sort nums because subsequence order must remain the same.
+
+	Example:
+		nums = {2, 1, 2}
+		Unique subsequences:
+		{}, {2}, {1}, {2,1}, {2,2}, {1,2}, {2,1,2}
+
+	Why set?
+	- vector<int> has lexicographical comparison, so it can be stored directly
+	  inside std::set.
+	- Before adding to ans, check whether curr already exists.
+
+	Time Complexity:
+	- There are 2^n possible subsequences.
+	- Copying/storing a subsequence can take O(n).
+	- Set insertion/search costs O(log U), where U <= 2^n.
+	- Overall: O(n * 2^n * log(2^n))
+	  ≈ O(n^2 * 2^n)
+
+	Space Complexity:
+	- Recursion stack + curr: O(n)
+	- Set + answer storage: O(n * 2^n)
+	- Overall: O(n * 2^n)
+
+	Important:
+	- This is the simple brute-force + set approach.
+	- It is useful for learning recursion and duplicate handling.
+	- A more optimized approach avoids generating duplicates in the first place.
+*/
+static vector<vector<int>> subsequenceWithDup(vector<int>& nums){
+	vector<vector<int>> ans;
+	set<vector<int>> seen; // used to store unique subsequences
+	vector<int> curr;
+	curr.reserve(nums.size());
 
 	auto dfs = [&](auto&& self, const int idx) -> void{
-		// Base Case: Processed all element
-		if (idx == arr.size()){
-			res.push_back(curr);
+		// Base Case: If we have processed all elements
+		if (idx == nums.size()){
+			// Check if the current subsequence is already seen
+			if (!seen.contains(curr)){
+				ans.emplace_back(curr);
+				seen.insert(curr);
+			}
 			return;
 		}
 
-		// CHOICE 1: Take the current element
-		curr.push_back(arr[idx]);
+		// not take
 		self(self, idx + 1);
-		curr.pop_back();
 
-		// CHOICE 2: Not Take the current element
-		// GRANDMASTER PRUNING: If we choose NOT to take this element,
-		// we must skip ALL subsequent duplicate elements!
-		int next_idx = idx + 1;
-		while (next_idx < arr.size() && arr[next_idx] == arr[idx])
-			next_idx++;
-		self(self, next_idx);
+		// take
+		curr.emplace_back(nums[idx]); // add current element to the current subsequence
+		self(self, idx + 1); // recursive call to explore further elements
+		curr.pop_back(); // backtrack (undo the choice)
 	};
 
-	res.clear();
-	curr.clear();
-	dfs(dfs, 0);
-	return res;
-}
-
-// Template 2: Use the "For-Loop" Template for: Subsets, Combinations, and Permutations (especially when duplicates are involved!).
-static vector<vector<int>> ans;
-static vector<int> curr_sub;
-static vector<vector<int>> subsequenceWithDupTemp2(vector<int>& arr){
-	// Still MUST sort first!
-	ranges::sort(arr);
-
-	auto dfs = [&](auto&& self, const int idx) -> void{
-		// 1. In this template, EVERY recursive call represents a valid subset!
-		// So we add it to the answer immediately, without waiting for a base case.
-		ans.push_back(curr_sub);
-
-		// 2. Explore all possible elements we can add to our current subset
-		for (int i = idx; i < arr.size(); i++){
-			// --- THE MAGIC DUPLICATE SKIPPER ---
-			// If this is NOT the first element we are picking in this loop,
-			// and it is identical to the previous element, skip it!
-			if (i > idx && arr[i] == arr[i - 1])
-				continue;
-
-			curr_sub.push_back(arr[i]); // TAKE
-			self(self, i + 1);  // EXPLORE (Pass i + 1, not start_idx + 1)
-			curr_sub.pop_back();  // BACKTRACK
-		}
-	};
-
-	ans.clear();
-	curr_sub.clear();
 	dfs(dfs, 0);
 	return ans;
 }
 
-void solve() {
+/*
+    Approach 2: Backtracking + Per-Level Hash Set
+    Idea:
+    - Every element from [start ... n-1] is a possible next element.
+    - At each recursion depth, use a `seen` set to ensure the same value
+      is selected only once at that depth.
+    - If nums[i] was already used at the current depth, skip it.
+    - Different recursion depths have different `seen` sets.
+      Therefore, duplicate values can still be selected in the same subsequence.
+
+    Why seen is per recursion level:
+        nums = {2, 1, 2}
+        At depth 0:
+            seen = {}
+            choose 2  -> seen = {2}
+            choose 1  -> seen = {2,1}
+            second 2  -> already seen -> skip
+
+        But after choosing the first 2:
+            curr = [2]
+            New recursion level:
+                seen = {}
+            Now another 2 can be chosen:
+                curr = [2,2]
+        So:
+            Same value + same depth  -> skip
+            Same value + different depth -> allowed
+
+    Why this handles unique subsequences:
+    - We preserve the original array order.
+    - We never sort the array.
+    - We prevent duplicate choices at the same recursion level.
+    - Every generated subsequence is therefore unique.
+
+    Difference from Set Approach:
+        Set Approach:
+            Generate all 2^n subsequences
+            → store in set
+            → remove duplicates
+
+        This Approach:
+            Detect duplicate choices during DFS
+            → never generate those duplicate branches
+
+    Time Complexity:
+    - There can be O(2^n) unique subsequences in the worst case.
+    - Every generated subsequence/path requires O(n) work in the worst case.
+    - Average practical complexity is much better than generating duplicates
+      and inserting every result into a set.
+    - Worst case: O(n * 2^n)
+
+    Space Complexity:
+    - Recursion stack + current subsequence: O(n)
+    - `seen` sets across the recursion path: O(n) in the distinct-value case.
+    - Output is O(n * U), where U = number of unique subsequences.
+    - Auxiliary space excluding output: O(n).
+
+    Important:
+    - `seen` must be created INSIDE dfs().
+    - Do NOT use one global `seen` set.
+    - Do NOT sort nums because subsequence order matters.
+*/
+static vector<vector<int>> subsequenceWithDupOptimal(const vector<int>& nums){
+	vector<vector<int>> ans;
+	vector<int> curr;
+	curr.reserve(nums.size());
+
+	auto dfs = [&](auto&& self, const int idx) -> void{
+		// Every current path is a valid subsequence
+		ans.emplace_back(curr);
+
+		// Tracks values already chosen at THIS recursion depth
+		unordered_set<int> seen;
+
+		for (int i = idx; i < nums.size(); i++){
+			// Same value already considered at this depth
+			// Choosing it again would generate duplicate subsequences
+			if (seen.contains(nums[i]))
+				continue;
+
+			// Mark this value as used at this depth
+			seen.insert(nums[i]);
+
+			curr.emplace_back(nums[i]); // Take nums[i]
+			self(self, i + 1); // Continue with elements after i
+			curr.pop_back(); // Backtrack
+		}
+	};
+
+	dfs(dfs, 0);
+	return ans;
+}
+
+
+static void solve() {
     int n; cin >> n;
 	vector<int> arr(n);
 	for (auto &x : arr)
 		cin >> x;
 
-	// Function one call
-	vector<vector<int>> print1 = printAllSubsequence(arr);
+	// Generate all subsequences (including duplicates) -> problem 1
+	const auto print1 = printAllSubsequence(arr);
 	cout << "[";
 	for (int i = 0; i < print1.size(); i++){
 		cout << "[";
@@ -185,7 +351,7 @@ void solve() {
 	}
 	cout << "]\n";
 
-	// function two call
+	// Generate unique subsequences -> problem 2 (method 1: using set)
 	vector<vector<int>> print2 = subsequenceWithDup(arr);
 	cout << "[";
 	for (int i = 0; i < print2.size(); i++){
@@ -201,8 +367,8 @@ void solve() {
 	}
 	cout << "]\n";
 
-	// function three call
-	vector<vector<int>> print3 = subsequenceWithDupTemp2(arr);
+	// Generate unique subsequences -> problem 2 (method 2: using unordered_set)
+	vector<vector<int>> print3 = subsequenceWithDupOptimal(arr);
 	cout << "[";
 	for (int i = 0; i < print3.size(); i++){
 		cout << "[";

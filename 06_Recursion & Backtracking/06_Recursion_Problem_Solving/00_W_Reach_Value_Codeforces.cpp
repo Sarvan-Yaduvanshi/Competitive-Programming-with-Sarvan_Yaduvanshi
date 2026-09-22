@@ -6,6 +6,7 @@ Created : 2026-08-24 11:39:36
 #include<iostream>
 #include<vector>
 #include<algorithm>
+#include<stack>
 using namespace std;
 
 /*
@@ -30,6 +31,10 @@ using namespace std;
 */
 
 using i64  = long long;
+
+// Approach 1: Recursive Backtracking
+// Time Complexity: Best Case = O(1) || Worst Case = O(2^log10(N))
+// Space Complexity: O(log10(N))
 static void solve() {
     i64 n; cin >> n;
 
@@ -47,19 +52,48 @@ static void solve() {
 	    return false;
 	};
 
-	bool ans = divisible(divisible, n);
+	const bool ans = divisible(divisible, n);
 	cout << (ans ? "YES" : "NO") << "\n";
 }
 
+// Approach 2: Iterative (used stack data structure to simulate recursion)
+// Time Complexity: O(2^log10(N)) in the generic worst-case branching analysis
+// Space Complexity: O(2^log10(N)) worst-case for the explicit DFS stack
+static void solve_iterative(){
+	i64 n; cin >> n;
+
+	stack<i64> st;
+	st.push(n);
+
+	while (!st.empty()){
+		const i64 x = st.top();
+		st.pop();
+
+		if (x == 1){
+			cout << "YES\n";
+			return;
+		}
+
+		if (x % 10 == 0)
+			st.push(x / 10);
+
+		if (x % 20 == 0)
+			st.push(x / 20);
+	}
+
+	cout << "NO\n";
+}
+
+
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
 
-    // Multi-test case support (commented out for this demo)
-    int TC = 1;
-    cin >> TC;
-    while (TC--) solve();
-    return 0;
+	// Multi-test case support (commented out for this demo)
+	int TC = 1;
+	cin >> TC;
+	while (TC--) solve();
+	return 0;
 }
 

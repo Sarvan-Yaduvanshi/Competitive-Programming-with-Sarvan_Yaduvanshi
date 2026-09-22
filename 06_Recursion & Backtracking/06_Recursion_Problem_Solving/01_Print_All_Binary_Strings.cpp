@@ -69,6 +69,9 @@ using namespace std;
 
 // Idea: Think of it as “choose → go deeper → finish → undo choice → try next choice.”
 // Template 1: Take/Not Take (Binary Choice) Template
+// Time Complexity: O(2^n * n) and Space Complexity: O(n)
+// Note: The time complexity is O(2^n * n) because we generate 2^n binary strings, and each string has a length of n.
+// The space complexity is O(n) due to the recursion stack and the temporary string used to build the binary strings.
 static vector<string> binstr(const int n){
 	vector<string> ans;
 	string curr_str;
