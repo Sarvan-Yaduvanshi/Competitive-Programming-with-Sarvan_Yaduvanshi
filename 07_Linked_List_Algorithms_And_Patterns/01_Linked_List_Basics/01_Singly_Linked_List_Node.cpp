@@ -71,15 +71,12 @@ NULL POINTER:
   SAFE:   if (node->next != nullptr) { ... }
 */
 
-#include <iostream>
-using namespace std;
-
-// ═══════════════════════════════════════════════════════════════
-// SECTION 1: NODE STRUCTURE
-// ═══════════════════════════════════════════════════════════════
 /*
-  The fundamental building block of a singly linked list.
+	═══════════════════════════════════════════════════════════════
+					SECTION 1: NODE STRUCTURE
+    ═══════════════════════════════════════════════════════════════
 
+  The fundamental building block of a singly linked list.
   ┌───────────────────┐
   │    Node           │
   │  ┌──────┬───────┐ │
@@ -87,8 +84,6 @@ using namespace std;
   │  │ int  │ Node* │ │
   │  └──────┴───────┘ │
   └───────────────────┘
-*/
-
 struct Node {
     int data;       // Stores the actual value
     Node* next;     // Pointer to the next node
@@ -100,10 +95,22 @@ struct Node {
     Node(int val, Node* nxt) : data(val), next(nxt) {}
 };
 
-// ═══════════════════════════════════════════════════════════════
-// SECTION 2: CREATING NODES MANUALLY
-// ═══════════════════════════════════════════════════════════════
-/*
+A Node is a struct/class holding:
+	- data : the payload (int, or any type T in a generic version)
+	- next : a self-referential pointer to another Node of the same type
+
+  Two constructor variants a GM-level implementation typically provides:
+	a) Node(val)          → initializes data, sets next = nullptr
+							 (used for tail/leaf nodes, or single insert)
+	b) Node(val, nextPtr) → initializes data AND wires next in one shot
+							 (avoids a second statement, useful when
+							 prepending to an existing list:
+							 newNode = Node(val, head); head = newNode;)
+
+	═══════════════════════════════════════════════════════════════
+				SECTION 2: CREATING NODES MANUALLY
+    ═══════════════════════════════════════════════════════════════
+
   DRY RUN — Creating 3 nodes and linking them:
 
   Step 1: Node* a = new Node(10);
@@ -123,11 +130,8 @@ struct Node {
 
   Final:  head = a
           head ──▶ [10] ──▶ [20] ──▶ [30] ──▶ NULL
-*/
 
-void demonstrateNodeCreation() {
-    cout << "═══ SECTION 2: CREATING NODES MANUALLY ═══\n\n";
-
+STRUCTURE SKETCH (pseudo-form, not real/compilable code):
     // Method 1: Using new keyword (heap allocation)
     Node* a = new Node(10);
     Node* b = new Node(20);
@@ -168,10 +172,10 @@ void demonstrateNodeCreation() {
     cout << "\n";
 }
 
-// ═══════════════════════════════════════════════════════════════
-// SECTION 3: BUILDING A LIST FROM ARRAY
-// ═══════════════════════════════════════════════════════════════
-/*
+	═══════════════════════════════════════════════════════════════
+				SECTION 3: BUILDING A LIST FROM ARRAY
+	═══════════════════════════════════════════════════════════════
+
   DRY RUN — Building list from array [5, 10, 15, 20]:
 
   Step 1: head = new Node(5)
@@ -191,59 +195,40 @@ void demonstrateNodeCreation() {
                                                             ↑ tail
 
   Time: O(n)  Space: O(n) for n nodes
-*/
 
-Node* buildFromArray(int arr[], int n) {
-    if (n == 0) return nullptr;
+GM-LEVEL NOTES:
+  ───────────────
+  • This is the "tail pointer" technique — the single most important
+	optimization for list-building. Without maintaining `tail`, appending
+	the i-th element requires re-traversing from head each time,
+	degrading total construction to O(n²).
+  • Interview trap: if you forget to advance `tail` after each insert,
+	every new node overwrites the same `next` slot, silently corrupting
+	the list (classic off-by-one / dangling-reference bug).
+  • Edge case: building from an EMPTY array must special-case head = nullptr
+	— there is no first element to seed `head` and `tail` with.
 
-    Node* head = new Node(arr[0]);
-    Node* tail = head;
+STRUCTURE SKETCH (pseudo-form, not real/compilable code):
+  ───────────────────────────────────────────────────────
+  Node* buildFromArray(arr[], n):
+	  if n == 0: return NULL
 
-    for (int i = 1; i < n; i++) {
-        tail->next = new Node(arr[i]);
-        tail = tail->next;
-    }
-    return head;
-}
+	  head = new Node(arr[0])
+	  tail = head
 
-void printList(Node* head) {
-    Node* curr = head;
-    while (curr != nullptr) {
-        cout << curr->data;
-        if (curr->next != nullptr) cout << " -> ";
-        curr = curr->next;
-    }
-    cout << " -> NULL\n";
-}
+	  for i = 1 to n-1:
+		  tail->next = new Node(arr[i])
+		  tail = tail->next
 
-void deleteList(Node* head) {
-    while (head != nullptr) {
-        Node* temp = head;
-        head = head->next;
-        delete temp;
-    }
-}
+	  return head
 
-void demonstrateBuildFromArray() {
-    cout << "═══ SECTION 3: BUILD LIST FROM ARRAY ═══\n\n";
+Note: if you see more details code so check linked problem solving folder
+	  13_Linked_List_Problem_Solving/01_BUILDING_A_LIST_FROM_ARRAY.cpp
 
-    int arr[] = {5, 10, 15, 20, 25};
-    int n = 5;
+	═══════════════════════════════════════════════════════════════
+			 SECTION 4: HEAD POINTER & NULL HANDLING
+	═══════════════════════════════════════════════════════════════
 
-    Node* head = buildFromArray(arr, n);
-
-    cout << "Array:       [5, 10, 15, 20, 25]\n";
-    cout << "Linked List: ";
-    printList(head);
-
-    deleteList(head);
-    cout << "\n";
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SECTION 4: HEAD POINTER & NULL HANDLING
-// ═══════════════════════════════════════════════════════════════
-/*
   HEAD POINTER RULES:
   ──────────────────
   1. head == nullptr → Empty list
@@ -262,95 +247,50 @@ void demonstrateBuildFromArray() {
   │ ❌ Forgetting to set head = newNode             │
   │ ✅ Always return/update head after modification │
   └─────────────────────────────────────────────────┘
-*/
+WALKTHROUGH OF THE THREE DEMONSTRATED CASES:
+  ─────────────────────────────────────────────
+  Case 1 — Empty list:
+	head is explicitly nullptr. Any check `head == nullptr` correctly
+	identifies an empty structure. This is the base case every
+	recursive/iterative list algorithm must handle first.
 
-void demonstrateNullHandling() {
-    cout << "═══ SECTION 4: HEAD POINTER & NULL HANDLING ═══\n\n";
+  Case 2 — Single node:
+	head points to one heap-allocated node whose `next` is nullptr
+	(guaranteed by the single-arg constructor convention).
+	Printing confirms exactly one element; checking `head->next == nullptr`
+	is the standard way to detect "list has exactly one node" without
+	a separate size counter.
 
-    // Case 1: Empty list
-    Node* head = nullptr;
-    cout << "Empty list check: head is " << (head == nullptr ? "NULL" : "NOT NULL") << "\n";
+  Case 3 — Guarded second-node access:
+	Before touching `head->next->data`, first confirm `head->next` isn't
+	null. This two-level guard pattern (`curr && curr->next`) recurs
+	constantly in linked-list algorithms: reversal, cycle detection,
+	merging, middle-node finding (slow/fast pointers), etc.
 
-    // Safe access pattern
-    if (head != nullptr) {
-        cout << "Head data: " << head->data << "\n";
-    } else {
-        cout << "Cannot access data — list is empty!\n";
-    }
+  GM-LEVEL NOTE: the single most common runtime crash in linked-list
+  code across interviews is a NULL dereference from skipping exactly
+  this kind of guard — especially inside loops that advance two pointers
+  at different speeds (e.g., Floyd's cycle detection, finding the
+  middle element).
 
-    // Case 2: Single node
-    head = new Node(42);
-    cout << "\nSingle node: ";
-    printList(head);
-    cout << "head->next is " << (head->next == nullptr ? "NULL" : "NOT NULL") << "\n";
-    cout << "This is the only node in the list.\n";
+  STRUCTURE SKETCH (pseudo-form, not real/compilable code):
+  ───────────────────────────────────────────────────────
+  Node* head = NULL              // Case 1: empty list
+  if head == NULL: print "empty"
 
-    // Case 3: Check before accessing next's data
-    if (head->next != nullptr) {
-        cout << "Second node data: " << head->next->data << "\n";
-    } else {
-        cout << "No second node exists!\n";
-    }
+  head = new Node(42)            // Case 2: single node
+  if head->next == NULL: print "only one node"
 
-    delete head;
-    cout << "\n";
-}
+  if head->next != NULL:         // Case 3: guarded 2-level access
+	  print head->next->data
+  else:
+	  print "no second node"
 
-// ═══════════════════════════════════════════════════════════════
-// SECTION 5: POINTER BASICS REVISION
-// ═══════════════════════════════════════════════════════════════
-/*
-  POINTER REFRESHER:
-  ─────────────────
-  int x = 10;
-  int* p = &x;    // p stores ADDRESS of x
-  cout << *p;     // Dereference: prints VALUE at that address (10)
-  cout << p;      // Prints the ADDRESS itself (e.g., 0x7fff...)
 
-  Node* head;     // head stores ADDRESS of a Node
-  head->data;     // Same as (*head).data — access data through pointer
-  head->next;     // Same as (*head).next — access next through pointer
+	═══════════════════════════════════════════════════════════════
+			SECTION 5: DYNAMIC MEMORY ALLOCATION
+	═══════════════════════════════════════════════════════════════
 
-  new Node(10);   // Allocates memory on HEAP, returns address
-  delete ptr;     // Frees HEAP memory (prevents memory leaks!)
-
-  STACK vs HEAP:
-  ┌──────────────────────────────────────────┐
-  │ Stack:  Node n(10);    // Auto cleanup   │
-  │ Heap:   Node* p = new Node(10); // Manual│
-  │         delete p;       // Must free!    │
-  └──────────────────────────────────────────┘
-
-  For linked lists, we ALWAYS use HEAP allocation (new/delete)
-  because nodes must persist beyond function scope.
-*/
-
-void demonstratePointers() {
-    cout << "═══ SECTION 5: POINTER BASICS REVISION ═══\n\n";
-
-    // Basic pointer
-    int x = 42;
-    int* p = &x;
-    cout << "Value of x:      " << x << "\n";
-    cout << "Address of x:    " << &x << "\n";
-    cout << "Pointer p:       " << p << " (same as &x)\n";
-    cout << "Dereference *p:  " << *p << " (same as x)\n\n";
-
-    // Node pointer
-    Node* node = new Node(100);
-    cout << "Node address:    " << node << "\n";
-    cout << "node->data:      " << node->data << "\n";
-    cout << "node->next:      " << node->next << " (NULL)\n";
-    cout << "(*node).data:    " << (*node).data << " (same as node->data)\n";
-
-    delete node;
-    cout << "\n";
-}
-
-// ═══════════════════════════════════════════════════════════════
-// SECTION 6: DYNAMIC MEMORY ALLOCATION
-// ═══════════════════════════════════════════════════════════════
-/*
   WHY DYNAMIC ALLOCATION?
   ──────────────────────
   • Arrays need size at compile time → Linked list grows dynamically
@@ -371,63 +311,20 @@ void demonstratePointers() {
   │ delete a;           // ✅ Free first     │
   │ a = new Node(20);   // Then reassign     │
   └──────────────────────────────────────────┘
+
+STRUCTURE SKETCH (pseudo-form, not real/compilable code):
+  ───────────────────────────────────────────────────────
+  Node* nodes[5]
+  for i = 0 to 4:
+	  nodes[i] = new Node((i+1) * 10)
+
+  for i = 0 to 3:
+	  nodes[i]->next = nodes[i+1]
+
+  printList(nodes[0])
+
+  for i = 0 to 4:
+	  delete nodes[i]
 */
 
-void demonstrateDynamicAllocation() {
-    cout << "═══ SECTION 6: DYNAMIC MEMORY ALLOCATION ═══\n\n";
-
-    // Allocate nodes
-    cout << "Allocating 5 nodes on heap...\n";
-    Node* nodes[5];
-    for (int i = 0; i < 5; i++) {
-        nodes[i] = new Node((i + 1) * 10);
-        cout << "  Node(" << nodes[i]->data << ") allocated at: " << nodes[i] << "\n";
-    }
-
-    // Link them
-    for (int i = 0; i < 4; i++) {
-        nodes[i]->next = nodes[i + 1];
-    }
-
-    cout << "\nLinked List: ";
-    printList(nodes[0]);
-
-    // Proper cleanup
-    cout << "\nDeallocating all nodes...\n";
-    for (int i = 0; i < 5; i++) {
-        cout << "  Deleting Node(" << nodes[i]->data << ") at: " << nodes[i] << "\n";
-        delete nodes[i];
-    }
-
-    cout << "\nAll memory freed successfully!\n\n";
-}
-
-// ═══════════════════════════════════════════════════════════════
-// MAIN
-// ═══════════════════════════════════════════════════════════════
-
-int main() {
-    cout << "╔══════════════════════════════════════════════════════════╗\n";
-    cout << "║  SINGLY LINKED LIST: NODE STRUCTURE & FUNDAMENTALS       ║\n";
-    cout << "║  Author: Sarvan Yaduvanshi                               ║\n";
-    cout << "╚══════════════════════════════════════════════════════════╝\n\n";
-
-    demonstrateNodeCreation();
-    demonstrateBuildFromArray();
-    demonstrateNullHandling();
-    demonstratePointers();
-    demonstrateDynamicAllocation();
-
-    cout << "═══════════════════════════════════════════════════════════\n";
-    cout << "PRACTICE PROBLEMS:\n";
-    cout << "───────────────────\n";
-    cout << "1. Create a linked list of 10 nodes with values 1-10\n";
-    cout << "2. Print the address of each node and its next pointer\n";
-    cout << "3. Build a list from user input (until -1 is entered)\n";
-    cout << "4. Count total nodes in a linked list\n";
-    cout << "5. Find the sum of all elements in a linked list\n";
-    cout << "═══════════════════════════════════════════════════════════\n";
-
-    return 0;
-}
 
