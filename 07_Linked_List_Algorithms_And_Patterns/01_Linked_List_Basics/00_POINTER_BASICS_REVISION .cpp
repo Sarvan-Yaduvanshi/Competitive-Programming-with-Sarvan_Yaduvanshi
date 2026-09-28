@@ -34,6 +34,29 @@ TABLE OF CONTENTS:
   A1. WHAT IS A POINTER?
   ───────────────────────
   A pointer is just a variable whose VALUE is an ADDRESS.
+    1) * p = pointer / dereference
+    3) &x = address of x / int& = reference (address of variable)
+    4) && = rvalue reference
+    5) int* p = pointer to int
+    6) int& r = reference (alias) to int
+    7) int** p = pointer to pointer
+    8) int*& r = reference to pointer
+    9) int&& r = rvalue reference
+    10) int&* p = ❌ invalid C++
+    11) for(int x : a) = copy
+    12) for(int& x : a) = original element + modify
+    13) for(const int& x : a) = original element + read-only
+    14) *q = pointer one level
+    15) **q = pointer two levels
+    16) auto&& self = recursive lambda reference
+    17) const int* p = &x; Pointer can change, but value cannot be modified through p
+    18) int* const p = &x; Pointer cannot change, but value can be modified through p
+    19) const int* const p = &x; Pointer cannot change AND value cannot be modified through p
+    20) static local   = local scope + program lifetime
+    21) global         = global scope + program lifetime
+    22) global static  = file scope/linkage restriction
+    23) static member  = shared by all objects
+    24) static function= class-level function
 
     x
     ┌───────┐
@@ -656,9 +679,9 @@ TABLE OF CONTENTS:
     │  stores an address
     ▼
     ┌────────────────┐
-    │ Node            │
-    │ data            │
-    │ next ───────────┼──→ another Node
+    │ Node           │
+    │ data           │
+    │ next ──────────┼──→ another Node
     └────────────────┘
 
   Then:

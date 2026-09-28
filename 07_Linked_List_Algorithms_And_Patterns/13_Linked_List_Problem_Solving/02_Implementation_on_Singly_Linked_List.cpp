@@ -16,21 +16,25 @@ using namespace std;
     3. pop_front()           → Remove from the front
     4. pop_back()            → Remove from the back
     5. insert_at_position(int val, int pos) → Insert at a specific position
-    6. search(int key)       → Search for a value
-    7. print()                → Print the entire list
+    6. delete_at_position(int pos) → Delete at a specific position
+    7. search(int key)       → Search for a value
+    8. print()                → Print the entire list
 
-    For example, to create a list with values 1 → 2 → 3 → 5 -> 6 → NULL, you can use:
-      List ll;
-      ll.push_back(1);
-      ll.push_back(2);
-      ll.push_back(3);
-      ll.push_back(5);
-      ll.push_back(6);
-      ll.print(); // Output: 1->2->3->5->6->NULL
+  For example, the list will look like:
+    start as empty: NULL
+    operations:
+      push_back(10): 10 -> NULL
+      push_back(20): 10 -> 20 -> NULL
+      push_front(5): 5 -> 10 -> 20 -> NULL
+      insert_at_position(15, 2): 5 -> 10 -> 15 -> 20 -> NULL
+      delete_at_position(1): 5 -> 15 -> 20 -> NULL
+      search(15): returns index 1
+      print(head): 5 -> 15 -> 20 -> NULL
 */
 
 #include <iostream>
 #include <stdexcept>
+using namespace std;
 
 class List {
 private:
@@ -129,6 +133,8 @@ public:
             return;
         }
 
+        // SLL: I need the node BEFORE pos → pos - 1
+        // DLL: I can reach pos and go BACK using prev → pos
         Node* temp = head;
         for (int i = 0; i < pos - 1; i++) {
             temp = temp->next;
@@ -138,6 +144,35 @@ public:
         newNode->next = temp->next;
         temp->next = newNode;
         _size++;
+    }
+
+    void deleteAtIndex(const int pos){
+        if (pos < 0 || pos >= _size)
+            return;
+
+        // Case 1: delete head
+        if (pos == 0){
+            pop_front();
+            return;
+        }
+
+        // Case 2: delete tail
+        if (pos == _size - 1){
+            pop_back();
+            return;
+        }
+
+        // Case 3: delete middle node
+        Node* temp = head;
+        for (int i = 0; i < pos - 1; i++)
+            temp = temp->next; // update temp
+
+        // before deleting, store the node to be deleted
+        Node* deleteNode = temp->next;
+        // link the nodes before and after the node to be deleted
+        temp->next = deleteNode->next;
+        delete deleteNode; // safely delete the node
+        _size--;
     }
 
     // Marked as const because it doesn't modify the list
@@ -169,26 +204,35 @@ public:
     size_t size() const { return _size; }
 };
 
-static void solve(){
+static void solve() {
     List ll;
     int choice, val, pos;
 
     while (true) {
         cout << "\n--- Linked List Operations ---\n";
-        cout << "1. Push Front\n2. Push Back\n3. Pop Front\n4. Pop Back\n";
-        cout << "5. Insert Middle\n6. Search\n7. Print\n8. Exit\n";
+        cout << "1. Push Front\n";
+        cout << "2. Push Back\n";
+        cout << "3. Pop Front\n";
+        cout << "4. Pop Back\n";
+        cout << "5. Insert at Index\n";
+        cout << "6. Delete at Index\n";
+        cout << "7. Search\n";
+        cout << "8. Print\n";
+        cout << "9. Exit\n";
         cout << "Enter choice: ";
 
-        if (!(cin >> choice)) break;
-
+        if (!(cin >> choice))
+            break;
         try {
             switch (choice) {
             case 1:
-                cout << "Enter value: "; cin >> val;
+                cout << "Enter value: ";
+                cin >> val;
                 ll.push_front(val);
                 break;
             case 2:
-                cout << "Enter value: "; cin >> val;
+                cout << "Enter value: ";
+                cin >> val;
                 ll.push_back(val);
                 break;
             case 3:
@@ -200,29 +244,39 @@ static void solve(){
                 cout << "Popped from back.\n";
                 break;
             case 5:
-                cout << "Enter value and position: "; cin >> val >> pos;
+                cout << "Enter value and position: ";
+                cin >> val >> pos;
                 ll.insert_middle(val, pos);
                 break;
             case 6:
-                cout << "Enter value to search: "; cin >> val;
-                pos = ll.search_ll(val);
-                if (pos != -1) cout << "Found at index: " << pos << "\n";
-                else cout << "Not found.\n";
+                cout << "Enter index to delete: ";
+                cin >> pos;
+                ll.deleteAtIndex(pos);
+                cout << "Deleted index " << pos << ".\n";
                 break;
             case 7:
-                ll.print();
+                cout << "Enter value to search: ";
+                cin >> val;
+                pos = ll.search_ll(val);
+                if (pos != -1)
+                    cout << "Found at index: " << pos << "\n";
+                else
+                    cout << "Not found.\n";
                 break;
             case 8:
+                ll.print();
+                break;
+            case 9:
                 return;
             default:
                 cout << "Invalid choice!\n";
             }
-        } catch (const exception& e) {
+        }
+        catch (const exception& e) {
             cout << "Error: " << e.what() << "\n";
         }
     }
 }
-
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
