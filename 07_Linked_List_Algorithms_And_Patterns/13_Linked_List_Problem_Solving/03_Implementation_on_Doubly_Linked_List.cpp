@@ -363,7 +363,7 @@ void solve(){
 				cout << "List cleared.\n";
 				break;
 			case 13:
-				return; // Exit the program
+				return; // Exit the program  
 			default:
 				cout << "Invalid choice! Please try again.\n";
 		}

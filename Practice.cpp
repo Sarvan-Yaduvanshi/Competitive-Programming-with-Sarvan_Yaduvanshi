@@ -1,14 +1,12 @@
 #include <iostream>
 using namespace std;
 
-// Build Singly linked list
-
-class MyLinkedList{
+class myLinkedList{
 protected:
 	struct Node{
 		int data;
 		Node* next;
-		Node(int val) : data(val), next(nullptr) {}
+		Node(const int val) : data(val), next(nullptr) {}
 	};
 
 	Node* head;
@@ -16,12 +14,11 @@ protected:
 	size_t size;
 
 public:
-	MyLinkedList() : head(nullptr), tail(nullptr), size(0) {}
+	myLinkedList() : head(nullptr), tail(nullptr), size(0) {}
 
-	// Operation 1) push_front() -> insert node as front
-	void push_frontOrAddAtHead(int val){
+	// Oper 1) push_front
+	void push_front(const int val){
 		Node* newNode = new Node(val);
-
 		if (head == nullptr)
 			head = tail = newNode;
 		else{
@@ -32,10 +29,9 @@ public:
 		size++;
 	}
 
-	// Operation 2) push_back() -> insert node as back
-	void push_backOrAddAtTail(int val){
+	// Oper 2) push_back
+	void push_back(const int val){
 		Node* newNode = new Node(val);
-
 		if (head == nullptr)
 			head = tail = newNode;
 		else{
@@ -46,8 +42,8 @@ public:
 		size++;
 	}
 
-	// Operation 3) pop_front() or remove node as head
-	void pop_frontOrRemoveAtHead(){
+	// Oper 3) pop_front()
+	void pop_front(){
 		if (head == nullptr)
 			return;
 
@@ -61,56 +57,12 @@ public:
 		size--;
 	}
 
-	// Operation 4) pop_back() or remove node as tail
-	void pop_backOrRemoveAtTail(){
+	// Oper 4) pop_back()
+	void pop_back(){
 		if (head == nullptr)
 			return;
 
-		if (head == tail){
-			delete tail;
-			head = tail = nullptr;
-		} else{
-			Node* temp = head;
-			while (temp->next != nullptr)
-				temp = temp->next;
-
-			delete tail;
-			tail = temp;
-			tail->next = nullptr;
-		}
-	}
-
-	void inertAtPosition(const int val, const int pos){
-		if (pos < 0 || pos > size)
-			return;
-
-		if (pos == 1){
-			push_frontOrAddAtHead(val);
-			return;
-		}
-
-		if (pos == size){
-			push_backOrAddAtTail(val);
-			return;
-		}
-
-		Node* temp = head;
-		for (int i = 0; i < pos - 1; i++){
-			temp = temp->next;
-		}
-
-		Node* newNode = new Node(val);
-		newNode->next = temp->next;
-		temp->next = newNode;
-		size++;
-	}
-
-	int search(int val, int pos){
-		if (head == nullptr){
-			return -1;
-		}
-
-		if
+		/
 	}
 };
 
