@@ -1,348 +1,525 @@
 /*
-Author: Sarvan Yaduvanshi
-Created : 2026-09-29 14:42:59
-*/
+ * Author  : Sarvan Yaduvanshi
+ * Created : 2026-09-29 14:42:59
+ *
+ * Circular Singly Linked List (C++17)
+ * --------------------------------------------------------------------------
+ * A singly linked list whose last node points back to the first node instead
+ * of NULL. Only a tail pointer is stored: the head is always tail->next, so
+ * insertion at both ends is O(1). Because there is no NULL terminator, every
+ * traversal is bounded by the cached size rather than by a NULL check.
+ *
+ *        head                tail
+ *         |                   |
+ *        [5] -> [10] -> [15] -> [20] --+
+ *         ^                            |
+ *         +----------------------------+
+ *
+ * Supported operations
+ *   1.  push_front(val)               Insert a value at the front
+ *   2.  push_back(val)                Insert a value at the back
+ *   3.  pop_front()                   Remove the front element
+ *   4.  pop_back()                    Remove the back element
+ *   5.  insert_middle(val, pos)       Insert a value at a given index
+ *   6.  deleteAtIndex(pos)            Remove the element at a given index
+ *   7.  search_ll(key)                Return the index of a value, or -1
+ *   8.  getElementAtIndex(idx)        Return the value stored at a given index
+ *   9.  getFront() / getBack()        Peek at the first / last value
+ *   10. removeFirstOccurrence(key)    Remove the first node holding key
+ *   11. reverse()                     Reverse the list in place
+ *   12. rotate(k)                     Rotate the list left by k positions
+ *   13. print()                       Print the list
+ *   14. size() / isEmpty()            Query the number of elements
+ *   15. clear()                       Remove every element
+ *
+ * Example trace
+ *   start               : NULL
+ *   push_back(10)       : 10 -> (back to 10)
+ *   push_back(20)       : 10 -> 20 -> (back to 10)
+ *   push_front(5)       : 5 -> 10 -> 20 -> (back to 5)
+ *   insert_middle(15,2) : 5 -> 10 -> 15 -> 20 -> (back to 5)
+ *   deleteAtIndex(1)    : 5 -> 15 -> 20 -> (back to 5)
+ *   search_ll(15)       : 1
+ *   getElementAtIndex(2): 20
+ *   rotate(1)           : 15 -> 20 -> 5 -> (back to 15)
+ *   reverse()           : 5 -> 20 -> 15 -> (back to 5)
+ *
+ * Error handling
+ *   - pop / getFront / getBack on an empty list -> std::underflow_error
+ *   - invalid index in insert / delete / get    -> std::out_of_range
+ *   - negative rotation count                   -> std::invalid_argument
+ *
+ * Complexity notation: n = number of elements currently in the list.
+ * "Space" refers to auxiliary space beyond the nodes the list itself stores.
+ */
 
+#include <cstddef>
 #include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
-#include <iomanip>
-#include <numeric>
-#include <climits>
-#include <random>
-#include <chrono>
-#include <cassert>
+#include <limits>
+#include <stdexcept>
+
 using namespace std;
 
-/*
- *  <--------------------- CIRCULAR SINGLY LINKED LIST -------------------->
- *
- *  Built Circular Singly Linked List with the following operations:
- *      1. push_front(int val)  → Insert at the front
- *      2. push_back(int val)   → Insert at the back
- *      3. pop_front()           → Remove from the front
- *      4. pop_back()            → Remove from the back
- *      5. insert_at_position(int val, int pos) → Insert at a specific position
- *      6. delete_at_position(int pos) → Delete at a specific position
- *      7. search(int key)       → Search for a value
- *      8. print()                → Print the entire list
- *
- *      For example, the list will look like:
- *           start as empty: NULL
- *           operations:
- *              push_back(10): 10 -> (points back to 10)
- *              push_back(20): 10 -> 20 -> (points back to 10)
- *              push_front(5): 5 -> 10 -> 20 -> (points back to 5)
- *              insert_at_position(15, 2): 5 -> 10 -> 15 -> 20 -> (points back to 5)
- *              delete_at_position(1): 5 -> 15 -> 20 -> (points back to 5)
- *              search(15): returns index 1
- *              print(head): 5 -> 15 -> 20 -> (points back to 5)
-*/
+class CircularSinglyLinkedList {
+private:
+    // Node type is an implementation detail and is hidden from callers.
+    struct Node {
+        int   data;
+        Node* next;
+        explicit Node(int val) : data(val), next(nullptr) {}
+    };
 
-class MyCircularSinglyLinkedList{
-protected:
-	struct Node{
-		int data;
-		Node* next;
-		Node(const int val) : data(val), next(nullptr) {}
-	};
-
-	Node* tail;
-	size_t size;
+    Node*  tail;   // head is always tail->next
+    size_t _size;  // Cached size bounds every traversal and keeps checks O(1).
 
 public:
-	// Constructor: initializes tail to nullptr and size to 0
-	MyCircularSinglyLinkedList() : tail(nullptr), size(0) {}
+    CircularSinglyLinkedList() : tail(nullptr), _size(0) {}
 
-	// Destructor: cleans up all nodes to prevent memory leaks
-	~MyCircularSinglyLinkedList(){
-		clear();
-	}
+    // Owns raw heap memory, so copying would cause a double free.
+    CircularSinglyLinkedList(const CircularSinglyLinkedList&)            = delete;
+    CircularSinglyLinkedList& operator=(const CircularSinglyLinkedList&) = delete;
 
-	// checks if the list is empty
-	bool isEmpty() const{
-		return tail == nullptr;
-	}
+    // Time: O(n) | Space: O(1)
+    ~CircularSinglyLinkedList() { clear(); }
 
-	// Returns the size of the list
-	size_t getSize() const{
-		return size;
-	}
+    // Time: O(1) | Space: O(1)
+    bool isEmpty() const { return tail == nullptr; }
 
-	// return front node's value
-	int getFront() const{
-		if (isEmpty()){
-			throw runtime_error("List is empty.");
-		}
-		return tail->next->data; // front node is tail->next
-	}
+    // Time: O(1) | Space: O(1)
+    size_t size() const { return _size; }
 
-	// return back node's value
-	int getBack() const{
-		if (isEmpty()){
-			throw runtime_error("List is empty.");
-		}
-		return tail->data; // back node is tail
-	}
+    // Returns the first value. Throws std::underflow_error if empty.
+    // Time: O(1) | Space: O(1)
+    int getFront() const {
+        if (isEmpty()) {
+            throw underflow_error("Circular Linked List is empty");
+        }
+        return tail->next->data;
+    }
 
-	// print the entire list
-	void print() const{
-		if (isEmpty()){
-			cout << "List is empty.\n";
-			return;
-		}
+    // Returns the last value. Throws std::underflow_error if empty.
+    // Time: O(1) | Space: O(1)
+    int getBack() const {
+        if (isEmpty()) {
+            throw underflow_error("Circular Linked List is empty");
+        }
+        return tail->data;
+    }
 
-		Node* head = tail->next;
-		Node* temp = head;
+    // Inserts val at the front of the list.
+    // Time: O(1) | Space: O(1)
+    void push_front(const int val) {
+        Node* newNode = new Node(val);
+        if (tail == nullptr) {
+            newNode->next = newNode;  // A lone node points to itself.
+            tail = newNode;
+        } else {
+            newNode->next = tail->next;  // New node points to the old head.
+            tail->next = newNode;        // Tail now points to the new head.
+        }
+        _size++;
+    }
 
-		do{
-			cout << temp->data << "->";
-			temp = temp->next;
-		} while (temp != head);
-		cout << "nullptr\n";
-	}
+    // Inserts val at the back of the list.
+    // Time: O(1) | Space: O(1)
+    void push_back(const int val) {
+        Node* newNode = new Node(val);
+        if (tail == nullptr) {
+            newNode->next = newNode;  // A lone node points to itself.
+        } else {
+            newNode->next = tail->next;  // New node points to the head.
+            tail->next = newNode;        // Old tail points to the new node.
+        }
+        tail = newNode;  // The new node is the tail in both cases.
+        _size++;
+    }
 
-	// Insert a new node at the head of the list (front)
-	void AddAtHead(const int val){
-		Node* newNode = new Node(val);
+    // Removes the front element. Throws std::underflow_error if empty.
+    // Time: O(1) | Space: O(1)
+    void pop_front() {
+        if (tail == nullptr) {
+            throw underflow_error("Circular Linked List is empty");
+        }
+        Node* head = tail->next;
 
-		if (tail == nullptr){
-			newNode->next = newNode; // points to itself
-			tail = newNode; // update tail to new node
-			size++; // increment size
-			return;
-		} else{
-			newNode->next = tail->next; // new node points to head
-			tail->next = newNode; // tail points to new node (new head)
-		}
-		siz++;
-	}
+        if (head == tail) {
+            // Single-node list becomes empty.
+            tail = nullptr;
+        } else {
+            tail->next = head->next;  // Skip over the old head.
+        }
 
-	// Insert a new node at the tail of the list (back)
-	void AddAtTail(const int val){
-		Node* newNode = new Node(val);
+        delete head;
+        _size--;
+    }
 
-		if (tail == nullptr){
-			newNode->next = newNode; // points to itself
-			tail = newNode; // update tail to new node
-			size++;
-			return;
-		}  else{
-			newNode->next = tail->next; // new node points to head
-			tail->next = newNode; // old tail points to new node
-			tail = newNode; // new node becomes the new tail
-		}
-		size++;
-	}
+    // Removes the back element. Throws std::underflow_error if empty.
+    // Time: O(n) (must locate the second-to-last node) | Space: O(1)
+    void pop_back() {
+        if (tail == nullptr) {
+            throw underflow_error("Circular Linked List is empty");
+        }
 
-	// Pop_front: Remove the node at the head of the list
-	void pop_front(){
-		if (tail == nullptr)
-			return;
+        if (tail->next == tail) {
+            // Single-node list becomes empty.
+            delete tail;
+            tail = nullptr;
+        } else {
+            // Stop at the node whose next is the tail (NOT nullptr: the
+            // list is circular, so no node ever points to nullptr).
+            Node* prev = tail->next;
+            while (prev->next != tail) {
+                prev = prev->next;
+            }
+            prev->next = tail->next;  // Close the circle around the old tail.
+            delete tail;
+            tail = prev;
+        }
+        _size--;
+    }
 
-		Node* head = tail->next;
-		// If there's only one node, delete it and set tail to nullptr
-		if (head == tail){
-			delete head;
-			tail = nullptr;
-			size = 0;
-			return;
-		}
+    // Inserts val so that it ends up at index pos (0 <= pos <= size()).
+    // Throws std::out_of_range for any other index.
+    // Time: O(n) in general, O(1) when pos is 0 or size() | Space: O(1)
+    void insert_middle(const int val, const int pos) {
+        if (pos < 0 || static_cast<size_t>(pos) > _size) {
+            throw out_of_range("Invalid position");
+        }
 
-		// More than one node: update tali->next becomes head->next, then delete head
-		tail->next = head->next;
-		delete head;
-		size--;
-	}
+        // Boundary cases reuse the O(1) operations above.
+        if (pos == 0) {
+            push_front(val);
+            return;
+        }
+        if (static_cast<size_t>(pos) == _size) {
+            push_back(val);
+            return;
+        }
 
-	// Pop_back: Remove the node at the tail of the list
-	void pop_back(){
-		if (tail == nullptr)
-			return;
+        // A singly linked list needs the node BEFORE the target index.
+        Node* prev = tail->next;
+        for (int i = 0; i < pos - 1; i++) {
+            prev = prev->next;
+        }
 
-		// If there's only one node, delete it and set tail to nullptr
-		if (tail->next == tail){
-			delete tail;
-			tail = nullptr;
-			size = 0;
-			return;
-		}
+        Node* newNode = new Node(val);
+        newNode->next = prev->next;
+        prev->next = newNode;
+        _size++;
+    }
 
-		// More than one node: Find node before tail
-		Node* temp = tail->next;
-		while (temp->next != nullptr)
-			temp = temp->next;
+    // Removes the element at index pos (0 <= pos < size()).
+    // Throws std::out_of_range for any other index.
+    // Time: O(n) in general, O(1) when pos is 0 | Space: O(1)
+    void deleteAtIndex(const int pos) {
+        if (pos < 0 || static_cast<size_t>(pos) >= _size) {
+            throw out_of_range("Invalid position");
+        }
 
-		// Connect previous node to head
-		temp->next = tail->next;
-		delete tail; // Delete the old tail
-		// Previous node becomes new tail
-		tail = temp;
-		size--;
-	}
+        // Case 1: delete head.
+        if (pos == 0) {
+            pop_front();
+            return;
+        }
 
-	// Insert a new node at a specific position (0-based index)
-	void insert_at_position(const int val, const int pos){
-		if (pos < 0 || pos > size)
-			return;
+        // Case 2: delete tail.
+        if (static_cast<size_t>(pos) == _size - 1) {
+            pop_back();
+            return;
+        }
 
-		// single node add at head
-		if (pos == 0){
-			AddAtHead(val);
-			return;
-		}
+        // Case 3: delete a middle node; walk to the node BEFORE it.
+        Node* prev = tail->next;
+        for (int i = 0; i < pos - 1; i++) {
+            prev = prev->next;
+        }
 
-		// single node add at tail
-		if (pos == size){
-			AddAtTail(val);
-			return;
-		}
+        Node* target = prev->next;
+        prev->next = target->next;  // Unlink before freeing.
+        delete target;
+        _size--;
+    }
 
-		// before inserting find the node at position pos-1
-		Node* temp = tail->next;
-		for (int i = 0; i < pos - 1; i++)
-			temp = temp->next;
+    // Returns the index of the first node equal to key, or -1 if not found.
+    // Time: O(n) | Space: O(1)
+    int search_ll(const int key) const {
+        if (tail == nullptr) {
+            return -1;
+        }
+        const Node* cur = tail->next;
+        for (size_t i = 0; i < _size; i++) {
+            if (cur->data == key) {
+                return static_cast<int>(i);
+            }
+            cur = cur->next;
+        }
+        return -1;
+    }
 
-		Node* newNode = new Node(val);
-		newNode->next = temp->next; // new node points to the next node
-		temp->next = newNode; // previous node points to new node
-		size++;
-	}
+    // Returns the value stored at index idx (0 <= idx < size()).
+    // Throws std::out_of_range for any other index.
+    // Time: O(n) in general, O(1) for the first and last index | Space: O(1)
+    int getElementAtIndex(const int idx) const {
+        if (idx < 0 || static_cast<size_t>(idx) >= _size) {
+            throw out_of_range("Invalid index");
+        }
 
-	// Delete a node at a specific position (0-based index)
-	void delete_at_position(const int pos){
-		if (tail == nullptr || pos < 0 || pos >= size)
-			return;
+        // The tail pointer makes the last element reachable directly.
+        if (static_cast<size_t>(idx) == _size - 1) {
+            return tail->data;
+        }
 
-		if (pos == 0){
-			pop_front();
-			return;
-		}
+        const Node* cur = tail->next;
+        for (int i = 0; i < idx; i++) {
+            cur = cur->next;
+        }
+        return cur->data;
+    }
 
-		if (pos == size - 1){
-			pop_back();
-			return;
-		}
+    // Removes the first node holding key. Returns true if one was removed.
+    // Time: O(n) | Space: O(1)
+    bool removeFirstOccurrence(const int key) {
+        if (tail == nullptr) {
+            return false;
+        }
 
-		Node* temp = tail->next;
-		for (int i = 0; i < pos - 1; i++)
-			temp = temp->next;
+        Node* prev = tail;
+        Node* cur  = tail->next;
 
-		Node* deleteNode = temp->next;
-		temp->next = deleteNode->next;
-		delete deleteNode;
-		size--;
-	}
+        for (size_t i = 0; i < _size; i++) {
+            if (cur->data == key) {
+                if (_size == 1) {
+                    tail = nullptr;  // The only node is being removed.
+                } else {
+                    prev->next = cur->next;  // Bridge over the node.
+                    if (cur == tail) {
+                        tail = prev;  // Removed the tail: prev takes over.
+                    }
+                }
+                delete cur;
+                _size--;
+                return true;
+            }
+            prev = cur;
+            cur  = cur->next;
+        }
+        return false;
+    }
 
-	// Search for a value
-	bool search(const int key) const{
-		if (tail == nullptr)
-			return false;
+    // Reverses the list in place by flipping every next pointer.
+    // Time: O(n) | Space: O(1)
+    void reverse() {
+        if (tail == nullptr || tail->next == tail) {
+            return;  // Empty or single-node lists are already reversed.
+        }
 
-		Node* temp = tail->next;
-		do{
-			if (temp->data == key)
-				return true;
-			temp = temp->next;
-		} while (temp != tail->next);
+        Node* oldHead = tail->next;
+        Node* prev    = tail;
+        Node* cur     = oldHead;
 
-		return false;
-	}
+        // Flip each link exactly once; the loop stops when cur wraps to oldHead.
+        do {
+            Node* nextNode = cur->next;
+            cur->next = prev;
+            prev = cur;
+            cur  = nextNode;
+        } while (cur != oldHead);
 
-	// Remove first occurrence of a value
-	bool removeFirstOccurrence(const int key){
-		if (tail == nullptr)
-			return false;
+        // The old head is now the last node.
+        tail = oldHead;
+    }
 
-		Node* head = tail->next;
-		Node* prev = tail;
-		Node* curr = head;
+    // Rotates the list left by k positions: [1,2,3,4,5] with k = 2 becomes
+    // [3,4,5,1,2]. Throws std::invalid_argument if k is negative.
+    // Time: O(k mod n) | Space: O(1)
+    void rotate(const int k) {
+        if (k < 0) {
+            throw invalid_argument("Rotation count must be non-negative");
+        }
+        if (tail == nullptr) {
+            return;
+        }
 
-		// Traverse the list to find the key
-		do{
-			if (curr->data == key){
-				// If the node to be deleted is the head
-				if (curr == head){
-					pop_front();
-				} else if (curr == tail){ // If the node to be deleted is the tail
-					pop_back();
-				} else { // If the node to be deleted is in the middle
-					prev->next = curr->next;
-					delete curr;
-					size--;
-				}
-				return true; // key found and deleted
-			}
-			prev = curr;
-			curr = curr->next;
-		} while (curr != head);
+        // In a circular list, rotating just means moving the tail pointer.
+        const size_t steps = static_cast<size_t>(k) % _size;
+        for (size_t i = 0; i < steps; i++) {
+            tail = tail->next;
+        }
+    }
 
-		return false; // not found
-	}
+    // Prints the list as "a -> b -> c -> (back to a)".
+    // Time: O(n) | Space: O(1)
+    void print() const {
+        if (tail == nullptr) {
+            cout << "List is empty.\n";
+            return;
+        }
+        const Node* head = tail->next;
+        const Node* cur  = head;
+        for (size_t i = 0; i < _size; i++) {
+            cout << cur->data << " -> ";
+            cur = cur->next;
+        }
+        cout << "(back to " << head->data << ")\n";
+    }
 
-	// Reverse the circular singly linked list
-	void reverse(){
-		if (tail == nullptr || tail->next == tail)
-			return; // empty or single node list
+    // Removes every element and resets the list to its empty state.
+    // Time: O(n) | Space: O(1)
+    void clear() {
+        if (tail == nullptr) {
+            return;
+        }
 
-		Node* oldHead = tail->next;
-		Node* prev = tail;
-		Node* curr = oldHead;
+        Node* cur = tail->next;
+        tail->next = nullptr;  // Break the circle so the loop can terminate.
 
-		do{
-			Node* nextNode = curr->next;
-			curr->next = prev; // reverse the link
-			prev = curr;
-			curr = nextNode;
-		} while (curr != oldHead);
+        while (cur != nullptr) {
+            Node* nextNode = cur->next;
+            delete cur;
+            cur = nextNode;
+        }
 
-		// Update tail to the old head, which is now the new tail
-		tail = oldHead;
-	}
-
-	// Clear the entire list
-	void clear(){
-		if (tail == nullptr)
-			return;
-
-		Node* head = tail->next;
-
-		// Break circular connection to avoid infinite loop during deletion
-		tail->next = nullptr;
-
-		Node* temp = head;
-		while (temp != nullptr){
-			Node* nextNode = temp->next;
-			delete temp;
-			temp = nextNode;
-		}
-
-		tail = nullptr;
-		size = 0;
-	}
+        tail  = nullptr;
+        _size = 0;
+    }
 };
-static void solve(){
-	
+
+// Prints msg and reads one integer. Returns false on failure. On malformed
+// input it clears the stream, discards the line, and reports the problem;
+// on EOF it stays silent so the caller can exit via cin.eof().
+static bool prompt_int(const char* msg, int& out) {
+    cout << msg;
+    if (cin >> out) {
+        return true;
+    }
+    if (!cin.eof()) {
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Invalid input!\n";
+    }
+    return false;
 }
 
+static void solve() {
+    CircularSinglyLinkedList cll;
+    int choice = 0, val = 0, pos = 0;
 
-int main(){
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr);
+    while (true) {
+        cout << "\n--- Circular Singly Linked List Operations ---\n"
+             << "1.  Push Front\n"
+             << "2.  Push Back\n"
+             << "3.  Pop Front\n"
+             << "4.  Pop Back\n"
+             << "5.  Insert at Index\n"
+             << "6.  Delete at Index\n"
+             << "7.  Search\n"
+             << "8.  Get Element at Index\n"
+             << "9.  Get Front\n"
+             << "10. Get Back\n"
+             << "11. Remove First Occurrence\n"
+             << "12. Reverse\n"
+             << "13. Rotate Left\n"
+             << "14. Print\n"
+             << "15. Size\n"
+             << "16. Clear\n"
+             << "17. Exit\n";
 
-	cout << fixed << setprecision(10);
+        if (!prompt_int("Enter choice: ", choice)) {
+            if (cin.eof()) return;
+            continue;
+        }
 
-	// Multi-test case support (commented out for this demo)
-	// int TC = 1;
-	// cin >> TC;
-	// while (TC--) solve();
+        try {
+            switch (choice) {
+            case 1:
+                if (!prompt_int("Enter value: ", val)) break;
+                cll.push_front(val);
+                break;
+            case 2:
+                if (!prompt_int("Enter value: ", val)) break;
+                cll.push_back(val);
+                break;
+            case 3:
+                cll.pop_front();
+                cout << "Popped from front.\n";
+                break;
+            case 4:
+                cll.pop_back();
+                cout << "Popped from back.\n";
+                break;
+            case 5:
+                if (!prompt_int("Enter value: ", val)) break;
+                if (!prompt_int("Enter position: ", pos)) break;
+                cll.insert_middle(val, pos);
+                cout << "Inserted " << val << " at index " << pos << ".\n";
+                break;
+            case 6:
+                if (!prompt_int("Enter index to delete: ", pos)) break;
+                cll.deleteAtIndex(pos);
+                cout << "Deleted index " << pos << ".\n";
+                break;
+            case 7:
+                if (!prompt_int("Enter value to search: ", val)) break;
+                pos = cll.search_ll(val);
+                if (pos != -1)
+                    cout << "Found at index: " << pos << "\n";
+                else
+                    cout << "Not found.\n";
+                break;
+            case 8:
+                if (!prompt_int("Enter index: ", pos)) break;
+                cout << "Element at index " << pos << ": "
+                     << cll.getElementAtIndex(pos) << "\n";
+                break;
+            case 9:
+                cout << "Front: " << cll.getFront() << "\n";
+                break;
+            case 10:
+                cout << "Back: " << cll.getBack() << "\n";
+                break;
+            case 11:
+                if (!prompt_int("Enter value to remove: ", val)) break;
+                if (cll.removeFirstOccurrence(val))
+                    cout << "Removed first occurrence of " << val << ".\n";
+                else
+                    cout << "Value not found.\n";
+                break;
+            case 12:
+                cll.reverse();
+                cout << "List reversed.\n";
+                break;
+            case 13:
+                if (!prompt_int("Enter rotation count: ", pos)) break;
+                cll.rotate(pos);
+                cout << "Rotated left by " << pos << ".\n";
+                break;
+            case 14:
+                cll.print();
+                break;
+            case 15:
+                cout << "Size: " << cll.size() << "\n";
+                break;
+            case 16:
+                cll.clear();
+                cout << "List cleared.\n";
+                break;
+            case 17:
+                return;
+            default:
+                cout << "Invalid choice!\n";
+            }
+        } catch (const exception& e) {
+            cout << "Error: " << e.what() << "\n";
+        }
 
-	solve();
-	return 0;
+        if (cin.eof()) return;
+    }
+}
+
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    solve();
+    return 0;
 }

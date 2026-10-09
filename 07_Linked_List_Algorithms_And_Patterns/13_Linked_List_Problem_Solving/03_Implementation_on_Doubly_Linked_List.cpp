@@ -1,387 +1,464 @@
 /*
-Author: Sarvan Yaduvanshi
-Created : 2026-09-25 04:31:12
-*/
+ * Author  : Sarvan Yaduvanshi
+ * Created : 2026-09-25 04:31:12
+ *
+ * Doubly Linked List (C++17)
+ * --------------------------------------------------------------------------
+ * Every node stores its data plus pointers to BOTH its previous and next
+ * node, so the list can be traversed in either direction. The list keeps a
+ * head pointer, a tail pointer and a size counter, which makes operations at
+ * both ends (including pop_back) and all boundary checks run in O(1).
+ *
+ *           head                      tail
+ *            |                          |
+ *   NULL <- [5] <-> [10] <-> [15] <-> [20] -> NULL
+ *
+ * How it compares with a singly linked list:
+ *    * Faster pop_back: it is O(1) here, because tail->prev gives the second-to-last node directly. A singly linked list needs O(n) to find it.
+ *    * Faster middle access: you can start from whichever end is closer, so reaching an index takes at most about n/2 steps.
+ *    * Extra memory: every node stores one more pointer, and every insert or delete must update both prev and next links.
+ *
+ * Supported operations
+ *   1.  push_front(val)               Insert a value at the front
+ *   2.  push_back(val)                Insert a value at the back
+ *   3.  pop_front()                   Remove the front element
+ *   4.  pop_back()                    Remove the back element
+ *   5.  insert_middle(val, pos)       Insert a value at a given index
+ *   6.  deleteAtIndex(pos)            Remove the element at a given index
+ *   7.  search_ll(key)                Return the index of a value, or -1
+ *   8.  getElementAtIndex(idx)        Return the value stored at a given index
+ *   9.  print()                       Print the list front to back
+ *   10. printReverse()                Print the list back to front
+ *   11. size()                        Return the number of elements
+ *   12. clear()                       Remove every element
+ *
+ * Example trace
+ *   start               : NULL
+ *   push_back(10)       : 10 <-> NULL
+ *   push_back(20)       : 10 <-> 20 <-> NULL
+ *   push_front(5)       : 5 <-> 10 <-> 20 <-> NULL
+ *   insert_middle(15,2) : 5 <-> 10 <-> 15 <-> 20 <-> NULL
+ *   deleteAtIndex(1)    : 5 <-> 15 <-> 20 <-> NULL
+ *   search_ll(15)       : 1
+ *   getElementAtIndex(2): 20
+ *   printReverse()      : 20 <-> 15 <-> 5 <-> NULL
+ *
+ * Error handling
+ *   - pop_front / pop_back on an empty list  -> std::underflow_error
+ *   - invalid index in insert / delete / get -> std::out_of_range
+ *
+ * Complexity notation: n = number of elements currently in the list.
+ * "Space" refers to auxiliary space beyond the nodes the list itself stores.
+ */
 
+#include <cstddef>
 #include <iostream>
+#include <limits>
 #include <stdexcept>
 using namespace std;
 
-/*
- *  <---------- Implementation of Doubly Linked List in C++ ---------->
- *
- *  Built Doubly Linked List with the following operations:
- *		1. push_front(int val)  → Insert at the front
- *		2. push_back(int val)   → Insert at the back
- *		3. pop_front()           → Remove from the front
- *		4. pop_back()            → Remove from the back
- *		5. insert_at_position(int val, int pos) → Insert at a specific
- *		6. delete_at_position(int pos) → Delete at a specific position
- *		7. search(int key)       → Search for a value
- *		8. print()                → Print the entire list
- *
- *	For example, the list will look like:
- *		start as empty: NULL
- *		operations:
- *			push_back(10): 10 -> NULL
- *			push_back(20): 10 -> 20 -> NULL
- *			push_front(5): 5 -> 10 -> 20 -> NULL
- *			insert_at_position(15, 2): 5 -> 10 -> 15
- *			delete_at_position(1): 5 -> 15 -> 20 -> NULL
- *			search(15): returns index 1
- *			print(head): 5 -> 15 -> 20 -> NULL
-*/
-class doublyLinkedList{
-protected:
-	struct Node{
-		int data;
-		Node* prev;
-		Node* next;
-		// Constructor: initialize the values without initialize all node as garbage value
-		Node(const int val) : data(val), prev(nullptr), next(nullptr) {}
-	};
+class DoublyLinkedList {
+private:
+    // Node type is an implementation detail and is hidden from callers.
+    struct Node {
+        int   data;
+        Node* prev;
+        Node* next;
+        explicit Node(int val) : data(val), prev(nullptr), next(nullptr) {}
+    };
 
-	Node* head;
-	Node* tail;
-	size_t size;
+    Node*  head;
+    Node*  tail;
+    size_t _size;  // Cached size keeps boundary checks O(1).
+
+    // Returns the node at index idx. Precondition: idx < _size.
+    // Starts from whichever end is closer to idx.
+    // Time: O(min(idx, n - idx)), i.e. O(n) worst case | Space: O(1)
+    Node* node_at(const size_t idx) const {
+        Node* cur;
+        if (idx < _size / 2) {
+            cur = head;
+            for (size_t i = 0; i < idx; i++) {
+                cur = cur->next;
+            }
+        } else {
+            cur = tail;
+            for (size_t i = _size - 1; i > idx; i--) {
+                cur = cur->prev;
+            }
+        }
+        return cur;
+    }
 
 public:
-	doublyLinkedList() : head(nullptr), tail(nullptr), size(0) {}
+    DoublyLinkedList() : head(nullptr), tail(nullptr), _size(0) {}
 
-	// Operation 1) push_front() -> insert node as front
-	void push_frontOrAddAtHead(const int val){
-		Node* newNode = new Node(val);
+    // Owns raw heap memory, so copying would cause a double free.
+    DoublyLinkedList(const DoublyLinkedList&)            = delete;
+    DoublyLinkedList& operator=(const DoublyLinkedList&) = delete;
 
-		if (head == nullptr)
-			head = tail = nullptr;
-		else{
-			newNode->next = head;
-			head->prev = newNode;
-			head = newNode;
-		}
-		size++;
-	}
+    // Time: O(n) | Space: O(1)
+    ~DoublyLinkedList() { clear(); }
 
-	// Operation 2) push_back() -> insert node as last
-	void push_backOrAddAtTail(const int val){
-		Node* newNode = new Node(val);
+    // Inserts val at the front of the list.
+    // Time: O(1) | Space: O(1)
+    void push_front(const int val) {
+        Node* newNode = new Node(val);
 
-		if (head == nullptr)
-			head = tail = newNode;
-		else{
-			tail->next = newNode;
-			newNode->prev = tail;
-			tail = newNode;
-		}
-		size++;
-	}
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            newNode->next = head;
+            head->prev = newNode;
+            head = newNode;
+        }
+        _size++;
+    }
 
-	// Operation 3) pop_front() → Remove from the front
-	void pop_frontOrRemoveAtHead(){
-		if (head == nullptr)
-			return;
+    // Inserts val at the back of the list.
+    // Time: O(1) | Space: O(1)
+    void push_back(const int val) {
+        Node* newNode = new Node(val);
+        if (head == nullptr) {
+            head = tail = newNode;
+        } else {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+        }
+        _size++;
+    }
 
-		const Node* temp = head;
+    // Removes the front element. Throws std::underflow_error if empty.
+    // Time: O(1) | Space: O(1)
+    void pop_front() {
+        if (head == nullptr) {
+            throw underflow_error("Doubly Linked List is empty");
+        }
+        Node* temp = head;
 
-		if (head == tail)
-			head = tail = nullptr;
-		else{
-			head = head->next;
-			head->prev = nullptr;
-		}
+        if (head == tail) {
+            // Single-node list: both ends are cleared.
+            head = tail = nullptr;
+        } else {
+            head = head->next;
+            head->prev = nullptr;
+        }
 
-		delete temp;
-		size--;
-	}
+        delete temp;
+        _size--;
+    }
 
-	// Operation 4) pop_back() → Remove from the last
-	void pop_backOrRemoveAtTail(){
-		if (head != nullptr)
-			return;
+    // Removes the back element. Throws std::underflow_error if empty.
+    // Time: O(1) (tail->prev gives the new tail directly) | Space: O(1)
+    void pop_back() {
+        if (head == nullptr) {
+            throw underflow_error("Doubly Linked List is empty");
+        }
+        Node* temp = tail;
 
-		const Node* temp = tail;
+        if (head == tail) {
+            // Single-node list: both ends are cleared.
+            head = tail = nullptr;
+        } else {
+            tail = tail->prev;
+            tail->next = nullptr;
+        }
 
-		if (head == tail){
-			delete tail;
-			head = tail = nullptr;
-		}else{
-			tail = tail->prev;
-			tail->next = nullptr;
-		}
+        delete temp;
+        _size--;
+    }
 
-		delete temp;
-		size--;
-	}
+    // Inserts val so that it ends up at index pos (0 <= pos <= size()).
+    // Throws std::out_of_range for any other index.
+    // Time: O(n) in general, O(1) when pos is 0 or size() | Space: O(1)
+    void insert_middle(const int val, const int pos) {
+        if (pos < 0 || static_cast<size_t>(pos) > _size) {
+            throw out_of_range("Invalid position");
+        }
 
-	// Operation 5) insert_at_position() → Insert at a specific position
-	void insertAtIndex(const int val, const int pos){
-		if (pos < 0 || pos > size)
-			return;
+        Node* newNode  = new Node(val);
 
-		if (pos == 0){
-			push_frontOrAddAtHead(val);
-			return;
-		}
+        // Boundary cases reuse the O(1) operations above.
+        if (pos == 0) {
+            if (head == nullptr)
+                head = tail = newNode;
+            else{
+                newNode->next = head;
+                head->prev = newNode;
+                head = newNode;
+            }
+            _size++;
+            return;
+        }
+        if (static_cast<size_t>(pos) == _size) {
+            tail->next = newNode;
+            newNode->prev = tail;
+            tail = newNode;
+            _size++;
+            return;
+        }
 
-		if (pos == size){
-			push_backOrAddAtTail(val);
-			return;
-		}
+        // Unlike a singly linked list, we can stop AT pos and step back
+        // through prev, so no "node before" tracking is needed.
+        Node* nextNode = node_at(pos);
+        Node* prevNode = nextNode->prev;
 
-		// SLL: I need the node BEFORE pos → pos - 1
-		// DLL: I can reach pos and go BACK using prev → pos
-		Node* temp = head;
-		for (int i = 0; i < pos; i++)
-			temp = temp->next;
+        // Bridge the new node between its neighbours. (prevNode->newNode->nextNode)
+        prevNode->next = newNode;
+        newNode->next = nextNode;
 
-		// Node before temp
-		Node* previous = temp->prev;
-		// Create new node
-		Node* newNode = new Node(val);
+        // Bridge the new node back to its neighbours. (prevNode<-newNode<-nextNode)
+        newNode->prev = prevNode;
+        nextNode->prev = newNode;
 
-		// Connect new node
-		newNode->prev = previous; // connect new node to previous node
-		newNode->next = temp; // connect new node to next node
+        _size++;
+    }
 
-		// Connect surrounding nodes
-		previous->next = newNode; // connect previous node to new node
-		temp->prev = newNode; // connect next node to new node
+    // Removes the element at index pos (0 <= pos < size()).
+    // Throws std::out_of_range for any other index.
+    // Time: O(n) in general, O(1) when pos is 0 or size() - 1 | Space: O(1)
+    void deleteAtIndex(const int pos) {
+        if (pos < 0 || static_cast<size_t>(pos) >= _size) {
+            throw out_of_range("Invalid position");
+        }
 
-		size++;
-	}
-	// Operation 6) delete_at_position() → Delete at a specific position
-	void deleteAtIndex(const int pos){
-		if (pos < 0 || pos >= size)
-			return;
+        // Case 1: delete head.
+        if (pos == 0) {
+            Node* temp = head;
+            head = head->next;
 
-		// delete head
-		if (pos == 0){
-			pop_frontOrRemoveAtHead();
-			return;
-		}
+            if (head != nullptr)
+                head->prev = nullptr;
+            else
+                // List is now empty, so update tail as well.
+                tail = nullptr;
+            
+            delete temp;
+            _size--;
+            return;
+        }
 
-		// delete tail
-		if (pos == size - 1){
-			pop_backOrRemoveAtTail();
-			return;
-		}
+        // Case 2: delete tail.
+        if (static_cast<size_t>(pos) == _size - 1) {
+            Node* prev = tail;
+            tail = tail->prev;
+            tail->next = nullptr;
+            delete prev;
+            _size--;
+            return;
+        }
 
-		// delete middle node
-		const Node* temp = head;
-		for (int i = 0; i < pos; i++)
-			temp = temp->next;
+        // Case 3: delete a middle node; bridge its neighbours, then free it.
+        Node* target   = node_at(static_cast<size_t>(pos));
+        Node* prevNode = target->prev;
+        Node* nextNode = target->next;
 
-		// create two pointers to connect the previous and next nodes
-		Node* previous = temp->prev; // get the previous node
-		Node* next = temp->next; // get the next node
+        prevNode->next = nextNode;
+        nextNode->prev = prevNode;
 
-		previous->next = next; // connect previous node to next node n1->n2
-		next->prev = previous; // connect next node to previous node n1<-n2
+        delete target;
+        _size--;
+    }
 
-		delete temp; // delete the node at position pos than n1<-n2
-		size--;
-	}
-	// Operation 7) search() → Search for a value
-	// Basic implementation of search function in doubly linked list
-	int getElementAtIndex(const int pos){
-		if (pos < 0 | pos >= size)
-			return -1;
+    // Returns the index of the first node equal to key, or -1 if not found.
+    // Time: O(n) | Space: O(1)
+    int search_ll(const int key) const {
+        const Node* temp = head;
+        int idx = 0;
+        while (temp != nullptr) {
+            if (temp->data == key) {
+                return idx;
+            }
+            temp = temp->next;
+            idx++;
+        }
+        return -1;
+    }
 
-		const Node* temp = head;
-		for (int i = 0; i < pos; i++)
-			temp = temp->next;
+    // Returns the value stored at index idx (0 <= idx < size()).
+    // Throws std::out_of_range for any other index.
+    // Time: O(n) worst case, O(1) at either end | Space: O(1)
+    int getElementAtIndex(const int idx) const {
+        if (idx < 0 || static_cast<size_t>(idx) >= _size) {
+            throw out_of_range("Invalid index");
+        }
+        return node_at(static_cast<size_t>(idx))->data;
+    }
 
-		return temp->data;
-	}
+    // Prints the list front to back, e.g. "a <-> b <-> c <-> NULL".
+    // Time: O(n) | Space: O(1)
+    void print() const {
+        if (head == nullptr) {
+            cout << "List is empty.\n";
+            return;
+        }
+        const Node* temp = head;
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->next;
+        }
+        cout << "NULL\n";
+    }
 
-	// Operation 7) Get Element at Index
-	// DLL Can Search From Both Directions
-	int getElementAtIndexBothDirection(const int pos){
-		if (pos < 0 || pos >= size)
-			return -1;
+    // Prints the list back to front, e.g. "c <-> b <-> a <-> NULL".
+    // Time: O(n) | Space: O(1)
+    void printReverse() const {
+        if (tail == nullptr) {
+            cout << "List is empty.\n";
+            return;
+        }
+        const Node* temp = tail;
+        while (temp != nullptr) {
+            cout << temp->data << " <-> ";
+            temp = temp->prev;
+        }
+        cout << "NULL\n";
+    }
 
-		Node* temp;
-		if (pos < size / 2){
-			temp = head;
-			for (int i = 0; i < pos; i++)
-				temp = temp->next;
-		} else{
-			temp = tail;
-			for (auto i = size - 1; i > pos; i--)
-				temp = temp->prev;
-		}
+    // Time: O(1) | Space: O(1)
+    size_t size() const { return _size; }
 
-		return temp->data;
-	}
-
-	// Operation 8) search() → Search target value in the list and return index
-	int serach(const int key){
-		Node* temp = head;
-		int idx = 0;
-		while (temp != nullptr){
-			if (temp->data == key)
-				return idx;
-
-			temp = temp->next;
-			idx++;
-		}
-		return -1; // not found
-	}
-
-	// Operation 9) print() → Print the entire list
-	// Forwards Traversal of Doubly Linked List
-	void printForwards(){
-		if (head == nullptr)
-			return;
-
-		Node* temp = head;
-		while (temp != nullptr){
-			cout << temp->data << " <-> ";
-			temp = temp->next;
-		}
-		cout << "NULL\n";
-	}
-
-	// Operation 9) print() → Print the entire list
-	// Backwards Traversal of Doubly Linked List
-	void printReverse(){
-		if (tail == nullptr)
-			return;
-
-		Node* temp = tail;
-		while (temp != nullptr){
-			cout << temp->data << " <-> ";
-			temp = temp->prev;
-		}
-		cout << "NULL\n";
-	}
-
-	// Get Size of the List
-	size_t getSize() {
-		return size;
-	}
-
-	// Delete the entire linked list
-	void clear(){
-		Node* temp = head;
-		while (temp != nullptr){
-			Node* nextNode = temp->next;
-			delete temp;
-			temp = nextNode;
-		}
-		head = tail = nullptr;
-		size = 0;
-	}
-
-	// Deconstructor to free memory when the list is destroyed
-	~doublyLinkedList(){
-		clear();
-	}
-
+    // Removes every element and resets the list to its empty state.
+    // Time: O(n) | Space: O(1)
+    void clear() {
+        Node* temp = head;
+        while (temp != nullptr) {
+            Node* nextNode = temp->next;
+            delete temp;
+            temp = nextNode;
+        }
+        head = tail = nullptr;
+        _size = 0;
+    }
 };
-void solve(){
-	doublyLinkedList dll;
 
-	int choice, val, pos;
-
-	while (true){
-		cout << "\n--- Doubly Linked List Operations ---\n";
-		cout << "1. Push Front\n";
-		cout << "2. Push Back\n";
-		cout << "3. Pop Front\n";
-		cout << "4. Pop Back\n";
-		cout << "5. Insert at Index\n";
-		cout << "6. Delete at Index\n";
-		cout << "7. Get Element at Index\n";
-		cout << "8. Search\n";
-		cout << "9. Print Forward\n";
-		cout << "10. Print Reverse\n";
-		cout << "11. Get Size of the List\n";
-		cout << "12. Clear the List\n";
-		cout << "11. Exit\n";
-		cout << "Enter choice: ";
-
-		if (!(cin >> choice))
-			break;
-
-		switch (choice){
-			case 1:
-				cout << "Enter value: ";
-				cin >> val;
-				dll.push_frontOrAddAtHead(val);
-				break;
-			case 2:
-				cout << "Enter value: ";
-				cin >> val;
-				dll.push_backOrAddAtTail(val);
-				break;
-			case 3:
-				dll.pop_frontOrRemoveAtHead();
-				break;
-			case 4:
-				dll.pop_backOrRemoveAtTail();
-				break;
-			case 5:
-				cout << "Enter value and index: ";
-				cin >> val >> pos;
-				dll.insertAtIndex(val, pos);
-				break;
-			case 6:
-				cout << "Enter index to delete: ";
-				cin >> pos;
-				dll.deleteAtIndex(pos);
-				break;
-			case 7:
-				cout << "Enter index to get element: ";
-				cin >> val;
-				pos = dll.getElementAtIndexBothDirection(val);
-				if (pos != -1)
-					cout << "Value found at index: " << pos << "\n";
-				else
-					cout << "Value not found.\n";
-				break;
-			case 8:
-				cout << "Enter value to search: ";
-				cin >> val;
-				pos = dll.serach(val);
-				if (pos != -1)
-					cout << "Value found at index: " << pos << "\n";
-				else
-					cout << "Value not found.\n";
-				break;
-			case 9:
-				dll.printForwards();
-				break;
-			case 10:
-				dll.printReverse();
-				break;
-			case 11:
-				cout << "Size of the list: " << dll.getSize() << "\n";
-				break;
-			case 12:
-				dll.clear();
-				cout << "List cleared.\n";
-				break;
-			case 13:
-				return; // Exit the program  
-			default:
-				cout << "Invalid choice! Please try again.\n";
-		}
-	}
+// Reads one integer from stdin. Returns false on EOF; on malformed input it
+// clears the stream, discards the line, and sets ok to false.
+static bool read_int(int& out, bool& ok) {
+    ok = true;
+    if (cin >> out) {
+        return true;
+    }
+    if (cin.eof()) {
+        return false;
+    }
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    ok = false;
+    return true;
 }
 
+static void solve() {
+    DoublyLinkedList dll;
+    int choice = 0, val = 0, pos = 0;
+    bool ok = true;
 
-int main(){
-	ios::sync_with_stdio(false);
-	cin.tie(nullptr);
+    while (true) {
+        cout << "\n--- Doubly Linked List Operations ---\n"
+             << "1.  Push Front\n"
+             << "2.  Push Back\n"
+             << "3.  Pop Front\n"
+             << "4.  Pop Back\n"
+             << "5.  Insert at Index\n"
+             << "6.  Delete at Index\n"
+             << "7.  Search\n"
+             << "8.  Get Element at Index\n"
+             << "9.  Print Forward\n"
+             << "10. Print Reverse\n"
+             << "11. Size\n"
+             << "12. Clear\n"
+             << "13. Exit\n"
+             << "Enter choice: ";
 
-	cout << fixed << setprecision(10);
+        if (!read_int(choice, ok)) break;
+        if (!ok) {
+            cout << "Invalid input! Please enter a number.\n";
+            continue;
+        }
 
-	// Multi-test case support (commented out for this demo)
-	// int TC = 1;
-	// cin >> TC;
-	// while (TC--) solve();
+        try {
+            switch (choice) {
+            case 1:
+                cout << "Enter value: ";
+                if (!read_int(val, ok)) return;
+                if (!ok) { cout << "Invalid input!\n"; break; }
+                dll.push_front(val);
+                break;
+            case 2:
+                cout << "Enter value: ";
+                if (!read_int(val, ok)) return;
+                if (!ok) { cout << "Invalid input!\n"; break; }
+                dll.push_back(val);
+                break;
+            case 3:
+                dll.pop_front();
+                cout << "Popped from front.\n";
+                break;
+            case 4:
+                dll.pop_back();
+                cout << "Popped from back.\n";
+                break;
+            case 5:
+                cout << "Enter value and position: ";
+                if (!read_int(val, ok)) return;
+                if (ok && !read_int(pos, ok)) return;
+                if (!ok) { cout << "Invalid input!\n"; break; }
+                dll.insert_middle(val, pos);
+                cout << "Inserted " << val << " at index " << pos << ".\n";
+                break;
+            case 6:
+                cout << "Enter index to delete: ";
+                if (!read_int(pos, ok)) return;
+                if (!ok) { cout << "Invalid input!\n"; break; }
+                dll.deleteAtIndex(pos);
+                cout << "Deleted index " << pos << ".\n";
+                break;
+            case 7:
+                cout << "Enter value to search: ";
+                if (!read_int(val, ok)) return;
+                if (!ok) { cout << "Invalid input!\n"; break; }
+                pos = dll.search_ll(val);
+                if (pos != -1)
+                    cout << "Found at index: " << pos << "\n";
+                else
+                    cout << "Not found.\n";
+                break;
+            case 8:
+                cout << "Enter index: ";
+                if (!read_int(pos, ok)) return;
+                if (!ok) { cout << "Invalid input!\n"; break; }
+                cout << "Element at index " << pos << ": "
+                     << dll.getElementAtIndex(pos) << "\n";
+                break;
+            case 9:
+                dll.print();
+                break;
+            case 10:
+                dll.printReverse();
+                break;
+            case 11:
+                cout << "Size: " << dll.size() << "\n";
+                break;
+            case 12:
+                dll.clear();
+                cout << "List cleared.\n";
+                break;
+            case 13:
+                return;
+            default:
+                cout << "Invalid choice!\n";
+            }
+        } catch (const exception& e) {
+            cout << "Error: " << e.what() << "\n";
+        }
+    }
+}
 
-	solve();
-	return 0;
+int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(nullptr);
+
+    solve();
+    return 0;
 }
