@@ -38,38 +38,38 @@ This module is the **most comprehensive Linked List resource** for competitive p
 
 | # | Chapter | Key Topics | Difficulty |
 |:-:|---------|------------|:----------:|
-| 01 | [**Linked List Basics**](01_Linked_List_Basics/) | Node structure, SLL, DLL, Circular LL, Memory layout, Dynamic allocation, Head pointer, Null handling | ⭐ |
-| 02 | [**Basic Operations**](02_Basic_Operations/) | Insert (head/tail/position), Delete (head/tail/value/position), Search, Length, Print, Reverse print, Traversal | ⭐ |
+| 01 | [**Linked List Basics**](01_Linked_List_Fundamentals/) | Node structure, SLL, DLL, Circular LL, Memory layout, Dynamic allocation, Head pointer, Null handling | ⭐ |
+| 02 | [**Basic Operations**](02_Linked_List_Operations/) | Insert (head/tail/position), Delete (head/tail/value/position), Search, Length, Print, Reverse print, Traversal | ⭐ |
 
 ### 🟡 Level 2 — Intermediate (Pupil → Specialist)
 
 | # | Chapter | Key Topics | Difficulty |
 |:-:|---------|------------|:----------:|
-| 03 | [**Reversal Patterns**](03_Reversal_Patterns/) | Iterative/Recursive reverse, Reverse sublist [L,R], Reverse K-group, Alternate K, Circular reverse, DLL reverse | ⭐⭐ |
-| 04 | [**Fast & Slow Pointer Techniques**](04_Fast_Slow_Pointer_Techniques/) | Find middle, Floyd's cycle detection, Cycle start/length, Happy number, Nth from end, Palindrome check, Intersection | ⭐⭐ |
-| 05 | [**Merge & Sort Patterns**](05_Merge_And_Sort_Patterns/) | Merge 2 sorted, Merge K sorted, Merge sort on LL, Insertion sort, Partition, Remove duplicates (sorted/unsorted) | ⭐⭐⭐ |
+| 03 | [**Reversal Patterns**](04_Reversal_Patterns/) | Iterative/Recursive reverse, Reverse sublist [L,R], Reverse K-group, Alternate K, Circular reverse, DLL reverse | ⭐⭐ |
+| 04 | [**Fast & Slow Pointer Techniques**](05_Fast_Slow_Pointer_Techniques/) | Find middle, Floyd's cycle detection, Cycle start/length, Happy number, Nth from end, Palindrome check, Intersection | ⭐⭐ |
+| 05 | [**Merge & Sort Patterns**](06_Merge_And_Sort_Patterns/) | Merge 2 sorted, Merge K sorted, Merge sort on LL, Insertion sort, Partition, Remove duplicates (sorted/unsorted) | ⭐⭐⭐ |
 
 ### 🔴 Level 3 — Advanced (Specialist → Expert)
 
 | # | Chapter | Key Topics | Difficulty |
 |:-:|---------|------------|:----------:|
-| 06 | [**Structural Modification Patterns**](06_Structural_Modification_Patterns/) | Reorder list, Rotate list, Swap pairs, Swap Kth nodes, Odd-Even list, Flatten multilevel, Add/Subtract numbers | ⭐⭐⭐ |
-| 07 | [**Doubly & Circular Linked List**](07_Doubly_And_Circular_Linked_List/) | DLL operations, Circular SLL/DLL, Josephus problem, Flatten multilevel DLL | ⭐⭐⭐ |
-| 08 | [**Advanced Pointer Manipulation**](08_Advanced_Pointer_Manipulation/) | Clone with random pointer, Deep vs shallow copy, Multi-level LL, XOR linked list, Memory optimization | ⭐⭐⭐ |
+| 06 | [**Structural Modification Patterns**](07_Structural_Modification_Patterns/) | Reorder list, Rotate list, Swap pairs, Swap Kth nodes, Odd-Even list, Flatten multilevel, Add/Subtract numbers | ⭐⭐⭐ |
+| 07 | [**Doubly & Circular Linked List**](08_Doubly_And_Circular_Linked_List/) | DLL operations, Circular SLL/DLL, Josephus problem, Flatten multilevel DLL | ⭐⭐⭐ |
+| 08 | [**Advanced Pointer Manipulation**](09_Advanced_Pointer_Manipulation/) | Clone with random pointer, Deep vs shallow copy, Multi-level LL, XOR linked list, Memory optimization | ⭐⭐⭐ |
 
 ### 🟣 Level 4 — Master (Expert → Master)
 
 | # | Chapter | Key Topics | Difficulty |
 |:-:|---------|------------|:----------:|
-| 09 | [**Linked List Design Problems**](09_Linked_List_Design_Problems/) | LRU Cache, LFU Cache, Browser History, Text Editor, HashMap using LL, Skip List, Deque using DLL | ⭐⭐⭐⭐ |
-| 10 | [**Linked List With Other DS**](10_Linked_List_With_Other_Data_Structures/) | LL + Stack, LL + Queue, LL + Heap, LL + HashMap, LL cycle in graph, Polynomial representation | ⭐⭐⭐⭐ |
+| 09 | [**Linked List Design Problems**](10_Linked_List_Design_Problems/) | LRU Cache, LFU Cache, Browser History, Text Editor, HashMap using LL, Skip List, Deque using DLL | ⭐⭐⭐⭐ |
+| 10 | [**Linked List With Other DS**](11_Linked_List_With_Other_Data_Structures/) | LL + Stack, LL + Queue, LL + Heap, LL + HashMap, LL cycle in graph, Polynomial representation | ⭐⭐⭐⭐ |
 
 ### 💎 Level 5 — Grandmaster (Master → Grandmaster)
 
 | # | Chapter | Key Topics | Difficulty |
 |:-:|---------|------------|:----------:|
-| 11 | [**Advanced Linked List Tricks**](11_Advanced_Linked_List_Tricks/) | Binary search on LL, Persistent LL, Adjacency list, Euler tour, Memory-constrained problems, Pointer compression | ⭐⭐⭐⭐⭐ |
-| 12 | [**Edge Cases & Debugging**](12_Edge_Cases_And_Debugging/) | Single/Empty/Two node lists, Even/Odd length, Null pointer crashes, Infinite loops, Memory leaks, Dangling pointers | ⭐⭐⭐⭐⭐ |
+| 11 | [**Advanced Linked List Tricks**](12_Advanced_Linked_List_Tricks/) | Binary search on LL, Persistent LL, Adjacency list, Euler tour, Memory-constrained problems, Pointer compression | ⭐⭐⭐⭐⭐ |
+| 12 | [**Edge Cases & Debugging**](13_Edge_Cases_And_Debugging/) | Single/Empty/Two node lists, Even/Odd length, Null pointer crashes, Infinite loops, Memory leaks, Dangling pointers | ⭐⭐⭐⭐⭐ |
 
 ---
 

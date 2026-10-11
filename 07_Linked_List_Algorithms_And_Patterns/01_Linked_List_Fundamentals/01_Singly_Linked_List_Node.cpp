@@ -223,7 +223,7 @@ STRUCTURE SKETCH (pseudo-form, not real/compilable code):
 	  return head
 
 Note: if you see more details code so check linked problem solving folder
-	  13_Linked_List_Problem_Solving/01_BUILDING_A_LIST_FROM_ARRAY.cpp
+	  14_Linked_List_Problem_Solving/01_BUILDING_A_LIST_FROM_ARRAY.cpp
 
 	═══════════════════════════════════════════════════════════════
 			 SECTION 4: HEAD POINTER & NULL HANDLING

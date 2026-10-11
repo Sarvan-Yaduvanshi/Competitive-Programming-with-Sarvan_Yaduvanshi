@@ -233,7 +233,7 @@ public:
             else
                 // List is now empty, so update tail as well.
                 tail = nullptr;
-            
+
             delete temp;
             _size--;
             return;
