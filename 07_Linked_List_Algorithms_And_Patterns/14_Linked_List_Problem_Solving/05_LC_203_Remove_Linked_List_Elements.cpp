@@ -94,6 +94,27 @@ ListNode* removeElementsOptimal(ListNode* head, int val){
 	return head;
 }
 
+// Approach 3: Using Dummy Node Concept
+// Create a object of dummy node and point it to head of the linked list
+// Time Complexity: O(n) where n is the number of nodes in the linked list
+// Space Complexity: O(1) Because we are not using any extra space
+ListNode* removeElementsDummyNode(ListNode* head, int val){
+	// Edge Case: if head is nullptr, return nullptr
+	if (head == nullptr)
+		return nullptr;
+
+	// Step 1: Create a dummy node and point it to head of the linked list
+	ListNode dummy(0);
+	dummy.next = head; // eg : 0 -> 1 -> 2 -> 6 -> 3 -> 4 -> 5 -> 6
+
+	ListNode* temp = &dummy; // pointer to dummy node
+	while (temp->next != nullptr){
+		// if next node is target node, delete it
+		if (temp->next->val == val)
+
+	}
+}
+
 // Build linked list from vector of values
 ListNode* buildLinkedList(const vector<int>& values){
 	int n = values.size();

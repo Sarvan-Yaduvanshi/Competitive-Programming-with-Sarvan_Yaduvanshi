@@ -4,43 +4,74 @@
 using namespace std;
 
 class myLinkedList{
-protected:
+private:
 	struct Node{
-		int val;
-		Node* prev;
+		int data;
 		Node* next;
-		Node(const int val) : val(val), prev(nullptr), next(nullptr) {}
+		explicit Node(const int val) : data(val), next(nullptr) {}
 	};
 
 	Node* head;
 	Node* tail;
-	size_t size;
+	size_t sz;
 
 public:
-	myLinkedList() : head(nullptr), tail(nullptr), size(0) {}
+	myLinkedList() : head(nullptr), tail(nullptr), sz(0) {}
 
 	void push_front(const int val){
 		Node* newNode = new Node(val);
+
 		if (head == nullptr)
 			head = tail = newNode;
 		else{
 			newNode->next = head;
-			head->prev = newNode;
 			head = newNode;
 		}
-		size++;
+		sz++;
 	}
 
 	void push_back(const int val){
 		Node* newNode = new Node(val);
+
 		if (head == nullptr)
-			head = tail = newNode;
+			head = tail = nullptr;
 		else{
 			tail->next = newNode;
-			newNode->prev = tail;
 			tail = newNode;
 		}
-		size++;
+		sz++;
+	}
+
+	void addAtPos(const int val, const int pos){
+		if (pos < 0 || pos > sz)
+			return;
+
+		Node* newNode = new Node(val);
+		// Case 1: insert node at head
+		if (pos == 0){
+			newNode->next = head;
+			head = newNode;
+			sz++;
+			return;
+		}
+
+		// Case 2: insert node at tail
+		if (pos == sz){
+			tail->next = newNode;
+			tail = newNode;
+			sz++;
+			return;
+		}
+
+		// case 3: insert node at middle
+		Node* curr = head;
+		for (int i = 0; i < pos - 1; i++)
+			curr = curr->next;
+
+		curr->next = newNode; // after
+		newNode->next = curr->next; // connect first
+
+		sz++;
 	}
 
 	void pop_front(){
@@ -48,143 +79,131 @@ public:
 			return;
 
 		Node* temp = head;
-		if (head == tail)
-			head = tail = nullptr;
-		else{
-			head = head->next;
-			head->prev = nullptr;
-		}
-
+		head = head->next;
+		if (head == nullptr)
+			tail = nullptr;
 		delete temp;
-		size--;
+		sz--;
 	}
 
 	void pop_back(){
 		if (head == nullptr)
 			return;
 
-		Node* temp = tail;
-		if (head == tail){
+		// Case 1: only single node
+		if (head->next == nullptr || head == tail){
 			delete tail;
 			head = tail = nullptr;
-		} else{
-			tail = tail->prev;
+			sz--;
+			return;
+		} else{ // Case 2: if delete tail
+			Node* prev = head;
+			while (prev->next != tail)
+				prev = prev->next;
+
+			delete tail;
+			tail = prev;
 			tail->next = nullptr;
+			sz--;
+			return;
 		}
-		delete temp;
-		size--;
 	}
 
-	void addAtPos(const int val, const int idx){
-		if (idx < 0 || idx > size)
-			return;
-		Node* newNode = new Node(val);
-
-		if (idx == 0){
-			if (head == nullptr)
-				head = tail = newNode;
-			else{
-				newNode->next = head;
-				head->prev = newNode;
-				head = newNode;
-			}
-			size++;
-			return;
-		}
-
-		if (idx == size){
-			tail->next = newNode;
-			newNode->prev = tail;
-			tail = newNode;
-			size++;
-			return;
-		}
-
-		Node* temp = head;
-		for (int i = 0; i < idx; i++)
-			temp = temp->next;
-
-		Node* previous = temp->prev;
-
-		newNode->next = temp;
-		temp->prev = newNode;
-
-		previous->next = newNode;
-		newNode->prev = previous;
-		size++;
-	}
-
-	void removeAtPos(const int idx){
-		if (idx < 0 || idx >= size)
+	void popAtPos(const int pos){
+		if (head == nullptr || pos < 0 || pos > sz - 1)
 			return;
 
-		Node* temp = head;
-		if (idx == 0){
+		// Case 1: only single node remove head
+		if (pos == 0){
+			Node* prev = head;
 			head = head->next;
 			if (head == nullptr)
 				tail = nullptr;
-			delete temp;
-			size--;
+			delete prev;
+			sz--;
 			return;
 		}
 
-		if (idx == size - 1){
-			while (temp->next != tail)
-				temp = temp->next;
-			delete tail;
-			tail = temp;
-			tail->next = nullptr;
-			size--;
-			return;
-		}
+		// Case 2: remove node any pos include tail node
+		// not handle pos == sz - 1 as separate because this loop automatically handle
+		Node* prev = head;
+		for (int i = 0; i < pos - 1; i++)
+			prev = prev->next;
 
-		for (int i = 0; i < idx - 1; i++)
-			temp = temp->next;
+		Node* deleteNode = prev->next;
+		prev->next = deleteNode->next;
 
-		Node* deleteNode = temp->next;
-		temp->next = deleteNode->next;
 		delete deleteNode;
-		size--;
+		sz--;
 	}
 
-	int searchIdx(const int tar){
-		if (head == nullptr)
-			return -1;
-
-		if (head->val == tar)
-			return 0;
-
-		Node* temp = head;
-		int idx = 0;
-		while (temp != nullptr){
-			if (temp->val == tar)
-				return idx;
-			idx++;
-			temp = temp->next;
-		}
-		return -1;
-	}
-
-	size_t getSize(){
-		return size;
-	}
-
-	bool empty(){
+	bool isEmpty(){
 		return head == nullptr;
 	}
 
-	void printLL(){
-		Node* temp = head;
-		while (temp != nullptr){
-			cout << temp->val << "->";
-			temp = temp->next;
-		}
-		cout << "nullptr\n";
+	size_t getSize(){
+		return sz;
 	}
 
-	void deleteLL() {
+	void deleteNode(){
+		Node* prev = head;
 		head = head->next;
-		delete head;
+		delete prev;
+	}
+
+	int getIdx(const int val){
+		if (head->data == val)
+			return 0;
+
+		Node* curr = head->next;
+		int idx = 1;
+		while (curr != nullptr){
+			if (curr->data == val)
+				return idx;
+			idx++;
+			curr = curr->next;
+		}
+
+		return -1;
+	}
+
+	int getNodeVal(const int pos){
+		if (pos < 0)
+			return -1;
+
+		if (pos == 0)
+			return head->data;
+
+		Node* curr = head;
+		for (int i = 0; i < pos - 1; i++)
+			curr = curr->next;
+
+		return curr->next->data;
+	}
+
+	Node* sortedOrder(const int val){
+		Node* newNode = new Node(val);
+		if (head == nullptr){
+			newNode->next = head;
+			head = newNode;
+			return head;
+		}
+		if (val <= head->data){
+			newNode->next = head;
+			head = newNode;
+			return head;
+		} else{
+			Node* curr = head->next;
+			while (curr->next != nullptr && curr->next->data <= val){
+				curr = curr->next;
+			}
+
+			newNode->next = curr->next;
+			curr->next = newNode;
+		}
+
+		return head;
+
 	}
 };
 

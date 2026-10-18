@@ -50,7 +50,7 @@ private:
     struct Node {
         int   data;
         Node* next;
-        explicit Node(int val) : data(val), next(nullptr) {}
+        explicit Node(const int val) : data(val), next(nullptr) {}
     };
 
     Node*  head;
@@ -109,7 +109,7 @@ public:
         if (head == nullptr) {
             throw underflow_error("Linked List is empty");
         }
-        Node* temp = head;
+        const Node* temp = head;
         head = head->next;
 
         // The list became empty, so the tail must be reset as well.
@@ -193,7 +193,7 @@ public:
         }
 
         // create a temporary pointer to traverse the list
-        Node* temp = head;
+        const Node* temp = head;
 
         // Case 1: delete head.
         if (pos == 0) {

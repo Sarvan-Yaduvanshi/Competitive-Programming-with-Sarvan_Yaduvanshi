@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           02 — RECURSIVE REVERSAL OF LINKED LIST                           ║
-║           From Zero to Grandmaster — Core Pattern                          ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           02 — RECURSIVE REVERSAL OF LINKED LIST                             ║
+║           From Zero to Grandmaster — Core Pattern                            ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -118,8 +118,8 @@ Node* reverseTail(Node* head) {
 
 int main() {
     cout << "╔══════════════════════════════════════════════════════════╗\n";
-    cout << "║  RECURSIVE REVERSAL OF LINKED LIST                     ║\n";
-    cout << "║  Author: Sarvan Yaduvanshi                             ║\n";
+    cout << "║  RECURSIVE REVERSAL OF LINKED LIST                       ║\n";
+    cout << "║  Author: Sarvan Yaduvanshi                               ║\n";
     cout << "╚══════════════════════════════════════════════════════════╝\n\n";
 
     // Head Recursive

@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           01 — ITERATIVE REVERSAL OF LINKED LIST                           ║
-║           From Zero to Grandmaster — Core Pattern                          ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           01 — ITERATIVE REVERSAL OF LINKED LIST                             ║
+║           From Zero to Grandmaster — Core Pattern                            ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:
@@ -136,8 +136,8 @@ Node* reverseIterativeVerbose(Node* head) {
 
 int main() {
     cout << "╔══════════════════════════════════════════════════════════╗\n";
-    cout << "║  ITERATIVE REVERSAL OF LINKED LIST                     ║\n";
-    cout << "║  Author: Sarvan Yaduvanshi                             ║\n";
+    cout << "║  ITERATIVE REVERSAL OF LINKED LIST                       ║\n";
+    cout << "║  Author: Sarvan Yaduvanshi                               ║\n";
     cout << "╚══════════════════════════════════════════════════════════╝\n\n";
 
     // Normal case

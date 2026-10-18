@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           03 — REVERSE K-GROUP (LeetCode 25 — Hard)                        ║
-║           From Zero to Grandmaster — Core Pattern                          ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           03 — REVERSE K-GROUP (LeetCode 25 — Hard)                          ║
+║           From Zero to Grandmaster — Core Pattern                            ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:

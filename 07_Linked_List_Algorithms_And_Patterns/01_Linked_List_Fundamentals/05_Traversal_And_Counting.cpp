@@ -1,8 +1,8 @@
 /*
 ╔══════════════════════════════════════════════════════════════════════════════╗
-║           04 — LINKED LIST TRAVERSAL & COUNTING                            ║
-║           From Zero to Grandmaster — Complete Foundation                    ║
-║           Author: Sarvan Yaduvanshi                                        ║
+║           04 — LINKED LIST TRAVERSAL & COUNTING                              ║
+║           From Zero to Grandmaster — Complete Foundation                     ║
+║           Author: Sarvan Yaduvanshi                                          ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS:

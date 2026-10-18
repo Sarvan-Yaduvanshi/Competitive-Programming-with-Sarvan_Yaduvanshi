@@ -84,8 +84,8 @@ This module is the **most comprehensive Linked List resource** for competitive p
 │   ├── 01_Singly_Linked_List_Node.cpp         — Node struct, pointers, dynamic memory
 │   ├── 02_Doubly_Linked_List_Node.cpp         — DLL node, prev/next pointers
 │   ├── 03_Circular_Linked_List.cpp            — Circular SLL & DLL, traversal
-│   ├── 04_Traversal_And_Counting.cpp          — Iterative/recursive traversal, count
-│   └── 05_Memory_Layout_And_LL_Class.cpp      — Array vs LL, cache, OOP LL class
+│   ├── 05_Traversal_And_Counting.cpp          — Iterative/recursive traversal, count
+│   └── 06_Memory_Layout_And_LL_Class.cpp      — Array vs LL, cache, OOP LL class
 │
 ├── 02_Basic_Operations/
 │   ├── 01_Insertion_Operations.cpp            — Insert head/tail/position with dry runs
