@@ -110,9 +110,17 @@ ListNode* removeElementsDummyNode(ListNode* head, int val){
 	ListNode* temp = &dummy; // pointer to dummy node
 	while (temp->next != nullptr){
 		// if next node is target node, delete it
-		if (temp->next->val == val)
-
+		if (temp->next->val == val){
+			// Save the node to be deleted
+			ListNode* deleteNode = temp->next;
+			// Link current node to deleteNode's next node
+			temp->next = deleteNode->next;
+		} else
+			// if next node is not target node, move to next node
+			temp = temp->next;
 	}
+
+	return dummy.next; // return the new head of the linked list
 }
 
 // Build linked list from vector of values
