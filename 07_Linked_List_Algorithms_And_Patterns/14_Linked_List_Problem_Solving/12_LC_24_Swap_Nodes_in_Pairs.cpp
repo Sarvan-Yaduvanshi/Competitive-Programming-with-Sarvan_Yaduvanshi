@@ -3,95 +3,192 @@ Author: Sarvan Yaduvanshi
 Created : 2026-10-19 05:35:39
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
+/*
+Problem: Swap Nodes in Pairs (Leetcode 24)
+    Given a linked list, swap every two adjacent nodes and return its head.
+    You must solve the problem without modifying the values in the list's nodes
+    (i.e., only nodes themselves may be changed.)
 
+    Example 1:
+    Input: head = [1,2,3,4], 1 -> 2 -> 3 -> 4
+    Output: [2,1,4,3], 2 -> 1 -> 4 -> 3
+    Explanation: The pairs (1, 2) and (3, 4) are reverse pointer each other.
+
+    Example 2:
+    Input: head = [],  nullptr
+    Output: [], nullptr
+
+    Constraints:
+    The number of nodes in the list is in the range [0, 100].
+    0 <= Node.val <= 100
+*/
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
-
 using namespace std;
 
-// --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+class MyLinkedList{
+private:
+    struct ListNode{
+        int val;
+        ListNode* next;
+        explicit ListNode(const int val) : val(val), next(nullptr) {}
+    };
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
+    ListNode* head;
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+public:
+    MyLinkedList() : head(nullptr) {}
 
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
+ /*
+ * ============================================================================
+ * 24. Swap Nodes in Pairs (Optimal O(N) Time | O(1) Space)
+ * ============================================================================
+ *
+ * - Core Idea (K-Group Reversal Simplified for K = 2):
+ *   Swapping adjacent pairs is just "Reverse Nodes in K-Group" where K = 2.
+ *   Because a pair only has 2 nodes (`first` and `second`), we don't need an
+ *   inner reversal loop. We simply stand at `previous` (the node right BEFORE
+ *   the pair) and rewire 3 arrows in-place!
+ *
+ * - Key Pointers:
+ *     1. `previous` : Node right BEFORE the current pair (starts at `dummy`).
+ *     2. `first`    : 1st node of the pair (`previous->next`). Becomes 2nd after swap.
+ *     3. `second`   : 2nd node of the pair (`first->next`). Becomes 1st after swap.
+ *
+ * - Loop Condition (`while (previous->next && previous->next->next)`):
+ *   Ensures at least 2 nodes exist ahead of `previous` to form a full pair.
+ *   If only 1 node (or 0 nodes) remains, the loop stops and leaves it untouched.
+ *
+ * - The 4-Step Pointer Swap (Order Matters!):
+ *     Before : [previous] -> [first] -> [second] -> [nextPair...]
+ *
+ *     Step 1 [Link 1st to Rest] : `first->next = second->next;`
+ *            ([first] now points past [second] to [nextPair...])
+ *     Step 2 [Flip 2nd to 1st]  : `second->next = first;`
+ *            ([second] now points backward to [first])
+ *     Step 3 [Link Prev to 2nd] : `previous->next = second;`
+ *            ([previous] now connects to [second] as the new pair head)
+ *     Step 4 [Advance Anchor]   : `previous = first;`
+ *            (Since `first` is now at the END of the swapped pair, move
+ *             `previous` to `first` so it sits right before the next pair!)
+ *
+ *     After  : [previous] -> [second] -> [first] -> [nextPair...]
+ *                                           ^
+ *                                    new `previous`
+ *
+ * - Quick Dry Run: head = [1, 2, 3, 4]
+ *     Start  : [dummy] -> [1] -> [2] -> [3] -> [4] -> nullptr
+ *                 ^
+ *             previous
+ *
+ *     Pair 1 (first = [1], second = [2]):
+ *       1. [1]->next = [3]         (first->next = second->next)
+ *       2. [2]->next = [1]         (second->next = first)
+ *       3. [dummy]->next = [2]     (previous->next = second)
+ *       4. previous = [1]          (move anchor to end of swapped pair)
+ *       List : [dummy] -> [2] -> [1] -> [3] -> [4] -> nullptr
+ *                                 ^
+ *                             previous
+ *
+ *     Pair 2 (first = [3], second = [4]):
+ *       1. [3]->next = nullptr     (first->next = second->next)
+ *       2. [4]->next = [3]         (second->next = first)
+ *       3. [1]->next = [4]         (previous->next = second)
+ *       4. previous = [3]          (move anchor to end of swapped pair)
+ *       List : [dummy] -> [2] -> [1] -> [4] -> [3] -> nullptr
+ *                                               ^
+ *                                           previous
+ *
+ *     End    : `previous->next` is nullptr -> Loop terminates! Return [2].
+ *
+ * - Complexity:
+ *   Time  : O(N) — Visits each pair once in a single pass.
+ *   Space : O(1) — Pure in-place pointer manipulation.
+ * ============================================================================
+ */
+    static ListNode* swapNodesPairs(ListNode* head){
+        // Edge Case: If the list is empty or has only one node, return it as-is.
+        if (head == nullptr || head->next == nullptr)
+            return head;
 
-// Input helper
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
+        ListNode dummy(0);
+        dummy.next = head;
 
-inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
+        // `previous` always sits right before the pair we are about to swap
+        ListNode* previous = &dummy;
 
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-    i64 res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp & 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp >>= 1;
+        // Only swap if a full pair (first AND second) exists ahead
+        while (previous ->next != nullptr && previous ->next->next != nullptr){
+            ListNode* first = previous ->next; // 1st node of the pair
+            ListNode* second = first->next; // 2nd node of the pair
+
+            // Step 1-3: Rewire the 3 pointers to swap `first` and `second`
+            first->next = second->next; // Connect `first` to the node after the pair
+            second->next = first; // Flip `second` to point back to `first`
+            previous ->next = second; // Connect previous part to `second` (new pair head)
+
+            // Step 4: Move `previous` to `first` (now at the end of the swapped pair)
+            previous  = first;
+        }
+
+        return dummy.next;
     }
-    return res;
-}
 
-void solve() {
-    
-}
+    static ListNode* buildList(const vector<int>& values){
+        if (values.empty())
+            return nullptr;
 
+        ListNode* head = new ListNode(values[0]);
+        ListNode* tail = head;
+        for (int i = 1; i < values.size(); i++){
+            tail->next = new ListNode(values[i]);
+            tail = tail->next;
+        }
+
+        return head;
+    }
+
+    static void printList(const ListNode* head){
+        if (head == nullptr){
+            cout << "List is empty\n";
+            return;
+        }
+
+        const ListNode* temp = head;
+        while (temp != nullptr){
+            cout << temp->val << " -> ";
+            temp = temp->next;
+        }
+
+        cout << "nullptr\n";
+    }
+};
+
+static void solve() {
+    int n;
+    cout << "Enter the number of nodes in the linked list: ";
+    cin >> n;
+    cout << "Enter the values of the linked list nodes: ";
+    vector<int> values(n);
+    for (int& val : values)
+        cin >> val;
+
+    auto head = MyLinkedList::buildList(values);
+    cout << "Original List: ";
+    MyLinkedList::printList(head);
+
+    auto newHead = MyLinkedList::swapNodesPairs(head);
+    cout << "List after swapping nodes in pairs: ";
+    MyLinkedList::printList(newHead);
+}
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
-    cout << fixed << setprecision(10);
-    
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
     
     solve();
     return 0;
