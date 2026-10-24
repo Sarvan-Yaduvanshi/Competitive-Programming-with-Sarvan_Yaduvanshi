@@ -3,11 +3,34 @@ Author: Sarvan.DP.GrandMaster
 Created : 2026-03-16 10:46:30
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
+/*
+  Problem: Spiral Matrix IV (LeetCode 2326)
+   You are given two integers m and n, which represent the dimensions of a matrix.
+   You are also given the head of a linked list of integers.
+   Generate an m x n matrix that contains the integers in the linked list presented in spiral order (clockwise),
+   starting from the top-left of the matrix. If there are remaining empty spaces, fill them with -1.
 
+   Return the generated matrix.
+
+   Example 1:
+	   Input: m = 3, n = 5, head = [3,0,2,6,8,1,7,9,4,2,5,5,0]
+	   Output: [[3,0,2,6,8],[5,0,-1,-1,1],[5,2,4,9,7]]
+	   Explanation: top left -> right: 3, 0, 2, 6, 8
+					top right -> bottom: 1, 7, 9
+					bottom right -> left: 4, 2, 5
+					bottom left -> top: 5, 0
+					remaining empty cells are filled with -1.
+
+	  Example 2:
+	   Input: m = 1, n = 4, head = [0,1,2]
+	   Output: [[0,1,2,-1]]
+	   Explanation: The remaining empty cell is filled with -1.
+   Constraints:
+       1 <= m, n <= 10^5
+       1 <= m * n <= 10^5
+       The number of nodes in the given list is in the range [1, m * n
+       0 <= Node.val <= 1000
+*/
 #include <iostream>
 #include <vector>
 #include <string>
@@ -26,73 +49,132 @@ Created : 2026-03-16 10:46:30
 
 using namespace std;
 
-// --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+class MyLinkedList{
+private:
+	struct ListNode{
+		int val;
+		ListNode* next;
+		explicit ListNode(const int val) : val(val), next(nullptr) {}
+	};
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
+	ListNode* head;
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+public:
+	MyLinkedList() : head(nullptr) {}
 
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
+	static vector<vector<int>> spiralMatrix(const int m, const int n, ListNode* head){
+		int left = 0;
+		int right = n - 1;
+		int top = 0;
+		int bottom = m - 1;
 
-// Input helper
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
+		vector<vector<int>> matrix(m, vector<int>(n, -1));
+		ListNode* temp = head;
 
-inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
+		while (top <= bottom && left <= right){
+			for (int i = left; i <= right && temp != nullptr; i++){
+				matrix[top][i] = temp->val;
+				temp = temp->next;
+			}
+			++top;
 
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-    i64 res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp & 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp >>= 1;
-    }
-    return res;
-}
+			for (int i = top; i <= bottom && temp != nullptr; i++){
+				matrix[i][right] = temp->val;
+				temp = temp->next;
+			}
+			--right;
 
-void solve() {
-    
+			if (top <= bottom){
+				for (int i = right; i >= left && temp != nullptr; i--){
+					matrix[bottom][i] = temp->val;
+					temp = temp->next;
+				}
+				--bottom;
+			}
+
+			if (left <= right){
+				for (int i = bottom; i >= top && temp != nullptr; i--){
+					matrix[i][left] = temp->val;
+					temp = temp->next;
+				}
+				++right;
+			}
+		}
+
+		return matrix;
+	}
+
+	// Helper function to build a linked list from a vector of integers
+	static ListNode* buildList(const vector<int>& a){
+		if (a.empty())
+			return nullptr;
+
+		auto* head = new ListNode(a[0]);
+		ListNode* tail = head;
+		for (int i = 1; i < a.size(); i++){
+			tail->next = new ListNode(a[i]);
+			tail = tail->next;
+		}
+
+		return head;
+	}
+
+	// Helper function to print the linked list
+	static void printList(ListNode* head){
+		if (head == nullptr){
+			cout << "Empty List" << endl;
+			return;
+		}
+
+		ListNode* current = head;
+		while (current != nullptr){
+			cout << current->val;
+			if (current->next != nullptr)
+				cout << " -> ";
+			current = current->next;
+		}
+		cout << " -> nullptr\n";
+	}
+};
+
+static void solve() {
+    int m, n;
+	cout << "Enter the dimensions of the matrix (m n): ";
+	cin >> m >> n;
+
+	int numberOfNodes;
+	cout << "Enter the number of nodes in the linked list: ";
+	cin >> numberOfNodes;
+	vector<int> a(numberOfNodes);
+	cout << "Enter the values of the linked list nodes: ";
+	for (int& x : a)
+		cin >> x;
+
+	auto* head = MyLinkedList::buildList(a);
+	cout << "Original List: ";
+	MyLinkedList::printList(head);
+
+	auto matrix = MyLinkedList::spiralMatrix(m, n, head);
+	cout << "Spiral Matrix:\n";
+	cout << "[\n";
+	for (int i = 0; i < m; ++i) {
+		cout << "  [";
+		for (int j = 0; j < n; ++j) {
+			cout << matrix[i][j];
+			if (j < n - 1) cout << ", ";
+		}
+		cout << "]";
+		if (i < m - 1) cout << ",";
+		cout << "\n";
+	}
+	cout << "]\n";
 }
 
 
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    
-    cout << fixed << setprecision(10);
-    
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
-    
+
     solve();
     return 0;
 }

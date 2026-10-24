@@ -26,12 +26,6 @@ Created : 2026-10-20 19:57:57
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
 #include <numeric>
 #include <climits>
@@ -139,22 +133,130 @@ public:
 
 		return true;
 	}
+
+	// Follow-up: Restore the original list structure after checking for palindrome
+	// Time Complexity: O(N), Space Complexity: O(1)
+	static bool isPalindromeLinkedList(ListNode* head){
+		// Handle edge cases: empty or single node
+		if (head == nullptr || head->next == nullptr)
+			return true;
+
+		ListNode* slow = head;
+		ListNode* fast = head;
+
+		// Phase 1: Find the end of the first half using Slow and Fast pointers
+		while (fast->next != nullptr && fast->next->next != nullptr){
+			slow = slow->next;
+			fast = fast->next->next;
+		}
+
+		// Phase 2: Reverse the second half starting at `slow->next`
+		ListNode* current = slow->next;
+		ListNode* previous = nullptr;
+		while (current != nullptr){
+			ListNode* next = current->next;
+			current->next = previous;
+			previous = current;
+			current = next;
+		}
+
+		// Phase 3: Compare the first half and the reversed second half
+		ListNode* firstHalf = head;
+		ListNode* secondHalf = previous;
+		bool isPalindrome = true; // Assume the list is a palindrome until proven otherwise
+		while (secondHalf != nullptr){
+			if (firstHalf->val != secondHalf->val){
+				isPalindrome = false; // Not a palindrome
+				break; // Exit the loop early since we found a mismatch
+			}
+			firstHalf = firstHalf->next;
+			secondHalf = secondHalf->next;
+		}
+
+		// Phase 4: Restore the original list structure by reversing the second half back
+		current = previous; // Start from the head of the reversed second half
+		previous = nullptr;
+		while (current != nullptr){
+			ListNode* next = current->next;
+			current->next = previous;
+			previous = current;
+			current = next;
+		}
+
+		// Reconnect the first half with the restored second half
+		slow->next = previous; // `previous` is now the head of the restored second half
+
+		return isPalindrome; // Return whether the list is a palindrome or not
+	}
+
+	// Additional utility function to print the linked list (for debugging purposes)
+	static void printList(ListNode* head){
+		if (head == nullptr){
+			cout << "Empty List" << endl;
+			return;
+		}
+
+		ListNode* current = head;
+		while (current != nullptr){
+			cout << current->val;
+			if (current->next != nullptr)
+				cout << " -> ";
+			current = current->next;
+		}
+
+		cout << " -> nullptr\n";
+	}
+
+	// Build a linked list from a vector of integers (for testing purposes)
+	static ListNode* buildList(const vector<int>& a){
+		if (a.empty())
+			return nullptr;
+
+		ListNode* head = new ListNode(a[0]);
+		ListNode* tail = head;
+		for (int i = 1; i < a.size(); i++){
+			tail->next = new ListNode(a[i]);
+			tail = tail->next;
+		}
+
+		return head;
+	}
 };
 
-void solve(){
+static void solve(){
+	int n;
+	cout << "Enter the number of nodes in the linked list: ";
+	cin >> n;
+
+	vector<int> a(n);
+	cout << "Enter the values of the nodes: ";
+	for (int& x : a)
+		cin >> x;
+
+	auto* head = MyLinkedList::buildList(a);
+	cout << "Original Linked List: ";
+	MyLinkedList::printList(head);
+
+	// Method 1: Check if the linked list is a palindrome without restoring the original structure
+	bool isPalin = MyLinkedList::isPalindrome(head);
+	cout << "Is the linked list a palindrome? " << (isPalin ? "Yes" : "No") << endl;
+	cout << "Linked List after checking: (may be modified or incomplete) ";
+	MyLinkedList::printList(head);
+
+	// rebuild the list again for the second method since the first method modifies it
+	head = MyLinkedList::buildList(a);
+
+	// Method 2: Check if the linked list is a palindrome and restore the original structure
+	bool isPalinRestored = MyLinkedList::isPalindromeLinkedList(head);
+	cout << "Is the linked list a palindrome (with restoration)? " << (isPalinRestored ? "Yes" : "No") << endl;
+	cout << "Linked List after restoration (if modified): ";
+	MyLinkedList::printList(head);
 }
 
 
 int main(){
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr);
-
-	cout << fixed << setprecision(10);
-
-	// Multi-test case support (commented out for this demo)
-	// int TC = 1;
-	// cin >> TC;
-	// while (TC--) solve();
 
 	solve();
 	return 0;

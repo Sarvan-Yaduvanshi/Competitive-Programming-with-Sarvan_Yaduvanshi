@@ -4,7 +4,7 @@ Created : 2026-10-03 03:16:14
 */
 
 /*
- * Problem: 2095. Delete the Middle Node of a Linked List
+ * Problem: Delete the Middle Node of a Linked List (LEETCODE 2095)
  * Difficulty: Medium
  * Company: Google, Amazon, Microsoft, Apple, Facebook etc.
  * Problem statement:
@@ -15,25 +15,18 @@ Created : 2026-10-03 03:16:14
  *
  * Example 1:
  * Input: head = [1,3,4,7,1,2,6] == 1->3->4->7->1->2->6
- * Output: [1,3,4,1,2,6]
- * Explanation:
- * The above figure represents the given linked list. The indices of the nodes are written below.
- * Since n = 7, node 3 with value 7 is the middle node, which is marked in red.
- * We return the new list after removing this node.
+ * Output: [1,3,4,1,2,6]         == 1->3->4->1->2->6
+ * Explanation: middle node with value 7 is removed.
  *
  * Example 2:
- * Input: head = [1,2,3,4]
- * Output: [1,2,4]
- * Explanation:
- * The above figure represents the given linked list.
- * For n = 4, node 2 with value 3 is the middle node, which is marked in red.
+ * Input: head = [1,2,3,4], == 1->2->3->4
+ * Output: [1,2,4]          == 1->2->4
+ * Explanation: middle node with value 3 is removed.
  *
  * Example 3:
  * Input: head = [2,1]
  * Output: [2]
- * Explanation:
- * The above figure represents the given linked list.
- * For n = 2, node 0 with value 2 is the middle node as well as the only node that is not removed.
+ * Explanation: The middle node with value 1 is removed.
  *
  * Constraints:
  *		  The number of nodes in the list is in the range [1, 10^5].
@@ -43,18 +36,9 @@ Created : 2026-10-03 03:16:14
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 using namespace std;
 
 struct ListNode{
@@ -98,22 +82,54 @@ static ListNode* deleteMiddle(ListNode* head){
 	return head;
 }
 
-// Approach 2: Using two pointer technique (Fast and Slow pointer)
-// To find or delete the middle of a linked list in exactly one pass,
-// advanced programmers use the Fast and Slow Pointers technique (often called the Tortoise and Hare algorithm).
-//     * The Slow Pointer (Tortoise) moves one step at a time.
-//     * The Fast Pointer (Hare) moves two steps at a time.
-// Because the fast pointer moves exactly twice as fast, by the time it reaches the end of the list,
-// the slow pointer will be sitting exactly in the middle.
-// Time Complexity: O(n), Space Complexity: O(1)
+/*
+ * ============================================================================
+ * SLOW & FAST PATTERN 2: 2095. Delete the Middle Node (O(N) Time | O(1) Space)
+ * ============================================================================
+ *
+ * - GM Trick (Give `fast` a 2-Step Head Start Instead of Using a `prev` Pointer):
+ *   In Pattern 1 (LC 876), starting `slow = head` and `fast = head` makes `slow`
+ *   land ON the middle node.
+ *   To delete the middle node, we need `slow` to stop 1 node BEFORE the middle!
+ *   Instead of maintaining a 3rd pointer (`prev`), we give `fast` a 1-turn head
+ *   start (`fast = head->next->next`) while keeping `slow = head`.
+ *   Now `fast` finishes 1 iteration earlier, so `slow` stops 1 step before `middle`!
+ *
+ * - 3-Phase Execution:
+ *     Phase 1 [Edge Case (0 or 1 Node)] :
+ *       If `head == nullptr || head->next == nullptr`, deleting the only node
+ *       leaves an empty list -> return `nullptr` (also ensures `head->next->next`
+ *       is 100% safe to access!).
+ *
+ *     Phase 2 [Walk with `fast` Head-Start] :
+ *       Start `slow = head` and `fast = head->next->next`.
+ *       Loop while `fast != nullptr && fast->next != nullptr`.
+ *       When loop ends, `slow` sits right BEFORE the middle node (`slow->next`).
+ *
+ *     Phase 3 [Unlink & Free Memory] :
+ *       Save `middle = slow->next`, bypass it (`slow->next = middle->next`),
+ *       and free heap memory (`delete middle`).
+ *
+ * - Quick Dry Run: head = [1, 2, 3, 4, 5]
+ *     Init   : slow = [1], fast = [3]  (head->next->next)
+ *     Step 1 : slow = [2], fast = [5]
+ *     End    : `fast->next` is nullptr -> Loop stops!
+ *              `slow` is at [2] (right before middle [3]).
+ *     Delete : `middle` = [3], `[2]->next = [4]`, `delete [3]`.
+ *     Output : [1] -> [2] -> [4] -> [5]
+ *
+ * - Complexity:
+ *   Time  : O(N) — Single pass of N/2 steps.
+ *   Space : O(1) — Only 2 pointers used in-place (no extra `prev` pointer needed).
+ * ============================================================================
+ */
 static ListNode* deleteMiddleOptimal(ListNode* head){
-	// Edge case: empty list or single node
-	// If there's only 1 node, delete it and return nullptr
+	// Edge case: 0 or 1 node -> deleting middle leaves an empty list
 	if (head == nullptr || head->next == nullptr)
 		return nullptr;
 
-	ListNode* slow = head; // Slow pointer starts at the head
-	// Give fast a 2-step head start so slow stops exactly before the middle
+	// GM Trick: Start `fast` 2 steps ahead so `slow` stops 1 node BEFORE middle
+	ListNode* slow = head;
 	ListNode* fast = head->next->next;
 
 	// Traverse the list
@@ -122,16 +138,17 @@ static ListNode* deleteMiddleOptimal(ListNode* head){
 		fast = fast->next->next; // Moves 2 steps
 	}
 
-	// 'slow' is now pointing to the node right before the middle one
-	ListNode* deleteNode = slow->next;
-	slow->next = deleteNode->next; // Bypass the middle node
-	delete deleteNode; // Safely free the memory
+	// `slow->next` is the exact middle node; unlink and free it
+	ListNode* middle = slow->next;
+	slow->next = middle->next; // Bypass the middle node
+
+	delete middle; // Clean up removed node from heap memory
 
 	return head;
 }
 
 // Build a linked list from a vector of integers
-ListNode* buildLinkedList(const vector<int>& values){
+static ListNode* buildLinkedList(const vector<int>& values){
 	int n = values.size();
 	if (n == 0) return nullptr;
 
@@ -164,10 +181,11 @@ static void solve(){
 	}
 
 	ListNode* head = buildLinkedList(values);
-	// deleteMiddle(head);
-	deleteMiddleOptimal(head);
+	cout << "Original Linked List: ";
+	printLinkedList(head);
 
-	cout << "Original linked list: ";
+	head = deleteMiddleOptimal(head);
+	cout << "Linked List after deleting the middle node: ";
 	printLinkedList(head);
 }
 
@@ -175,13 +193,6 @@ static void solve(){
 int main(){
 	ios::sync_with_stdio(false);
 	cin.tie(nullptr);
-
-	cout << fixed << setprecision(10);
-
-	// Multi-test case support (commented out for this demo)
-	// int TC = 1;
-	// cin >> TC;
-	// while (TC--) solve();
 
 	solve();
 	return 0;
