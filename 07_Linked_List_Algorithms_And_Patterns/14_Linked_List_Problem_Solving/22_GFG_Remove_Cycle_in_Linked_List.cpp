@@ -91,9 +91,62 @@ private:
 public:
     MyLinkedList() : head(nullptr) {}
 
+ /*
+ * ----------------------------------------------------------------------------
+ * PATTERN 5B: Remove / Break the Cycle (O(N) Time | O(1) Space)
+ * ----------------------------------------------------------------------------
+ * - Core Idea:
+ *   To remove the cycle, we must find the LAST node of the loop and set its
+ *   `next = nullptr`.
+ *     Phase 1 : Detect cycle (`slow == fast`). If no cycle, return immediately.
+ *     Phase 2 : Reset `slow = head` and move both 1 step until `slow == fast`.
+ *               Now `slow` (and `fast`) sit directly on the Cycle Start!
+ *     Phase 3 : Keep `slow` locked on Cycle Start, and walk `fast` around the
+ *               loop while `fast->next != slow`.
+ *               When the loop ends, `fast` is sitting on the LAST node of the
+ *               cycle! Set `fast->next = nullptr` to break the loop.
+ *
+ * - Why Phase 3 (`while (fast->next != slow)`) Is GM-Level:
+ *   Many people try to stop 1 node early during Phase 2 (`while (slow->next != fast->next)`),
+ *   which FAILS when the cycle starts at `head` (e.g., [1] -> [2] -> [3] -> back to [1])
+ *   because `slow` and `fast` are already equal at `head`!
+ *   Finding Cycle Start first and then walking `while (fast->next != slow)` works
+ *   for 100% of cases (including full circular lists where Cycle Start == `head`).
+ * ============================================================================
+ */
+    static void removeLoop(ListNode* head) {
+        // Edge case: If the list is empty or has only one node, no loop can exist
+        if (head == nullptr || head->next == nullptr)
+            return;
 
+        ListNode* slow = head;
+        ListNode* fast = head;
 
+        // Phase 1: Detect cycle using Floyd's Tortoise and Hare algorithm
+        while (fast != nullptr && fast->next != nullptr){
+            slow = slow->next;
+            fast = fast->next->next;
 
+            // If slow and fast meet, a cycle is detected
+            if (slow == fast){
+                // Phase 2: Find the exact Cycle Start (Pattern 4)
+                slow = head;
+                while (slow != fast){
+                    slow = slow->next;
+                    fast = fast->next;
+                }
+
+                // Phase 3: `slow` and `fast` are both at Cycle Start.
+                // Walk `fast` to the last node of the cycle (whose next is `slow`)
+                while (fast->next != slow)
+                    fast = fast->next;
+
+                // Break the cycle!
+                fast->next = nullptr;
+                return;
+            }
+        }
+    }
     // Test function to build a linked list from a vector of integers
     static ListNode* buildList(const vector<int>& a, int pos){
         if (a.empty())
@@ -167,13 +220,10 @@ static void solve(){
     cout << "Linked List: ";
     MyLinkedList::printList(head);
 
-	// Check for cycle and print the starting node of the cycle (if any)
-	auto* cycleStart = MyLinkedList::detectCycle(head);
-	cout << "Cycle starts at node with value: ";
-	if (cycleStart != nullptr)
-		cout << cycleStart->val << "\n";
-	else
-		cout << "No cycle detected.\n";
+	// Remove the cycle if it exists
+    MyLinkedList::removeLoop(head);
+    cout << "Linked List after removing cycle: ";
+    MyLinkedList::printList(head);
 }
 
 int main(){
