@@ -47,6 +47,7 @@ public:
 			cout << current->val;
 			if (current->next != nullptr)
 				cout << " -> ";
+			current = current->next;
 		}
 		cout << " -> nullptr\n";
 	}
