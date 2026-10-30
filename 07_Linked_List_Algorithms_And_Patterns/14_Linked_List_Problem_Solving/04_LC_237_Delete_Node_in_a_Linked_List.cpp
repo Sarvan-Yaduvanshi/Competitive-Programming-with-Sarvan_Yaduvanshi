@@ -3,23 +3,6 @@ Author: Sarvan Yaduvanshi
 Created : 2026-10-02 16:19:34
 */
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
-#include <iomanip>
-#include <numeric>
-#include <climits>
-#include <random>
-#include <chrono>
-#include <cassert>
-using namespace std;
-
 /*
  * Problem: 237. Delete Node in a Linked List
 * There is a singly-linked list head and we want to delete a node node in it.
@@ -49,6 +32,15 @@ using namespace std;
     The value of each node in the list is unique.
     The node to be deleted is in the list and is not a tail node.
 */
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
+#include <random>
+#include <chrono>
+using namespace std;
+
 struct ListNode {
     int val;
     ListNode* next;
@@ -58,7 +50,53 @@ struct ListNode {
         this->next = nullptr;
     }
 };
-ListNode* buildList(const vector<int>& arr) {
+
+/*
+ * ============================================================================
+ * MATH & DELETION PATTERN 4A: 237. Delete Node in a Linked List (O(1) Time & Space)
+ * ============================================================================
+ *
+ * - Core Idea (Clone Next Node's Identity + Delete `node->next`):
+ *   To delete `node` normally, we need `prev->next = node->next`, which is
+ *   impossible without `head`.
+ *   Instead, since we CAN access `node->next`:
+ *     1. Copy `node->next->val` into `node->val`.
+ *     2. Save `nextNode = node->next`.
+ *     3. Bypass `nextNode` (`node->next = nextNode->next`).
+ *     4. Free `nextNode` (`delete nextNode`).
+ *
+ * - Classic Interview Follow-Up ("When does this trick FAIL?"):
+ *   1. If `node` is the TAIL node (`node->next == nullptr`), there is no next
+ *      node to steal from, and we cannot set `prev->next = nullptr`.
+ *   2. If external systems hold raw pointers/references to `node->next` in
+ *      memory, deleting `node->next` invalidates their pointers!
+ *
+ * - Quick Dry Run: [4] -> [5] -> [1] -> [9], node = [5]
+ *     Step 1 : `node->val = node->next->val` ==> [4] -> [1] -> [1] -> [9]
+ *     Step 2 : `nextNode = node->next`       ==> points to the 2nd [1]
+ *     Step 3 : `node->next = nextNode->next` ==> 1st [1]->next points to [9]
+ *     Step 4 : `delete nextNode`             ==> frees the 2nd [1]
+ *     Result : [4] -> [1] -> [9]
+ *
+ * - Complexity:
+ *   Time  : O(1) — Constant number of pointer/value operations.
+ *   Space : O(1) — In-place modification.
+ * ============================================================================
+ */
+
+static void deleteNode(ListNode* node) {
+    // Save the node right after `node` (guaranteed to exist since `node` != tail)
+    ListNode* nextNode = node->next;
+
+    // Copy `nextNode`'s value into `node`
+    node->val = nextNode->val;
+
+    // Bypass `nextNode` and free its heap memory
+    node->next = nextNode->next;
+    delete nextNode; // Free the memory of the next node
+}
+
+static ListNode* buildList(const vector<int>& arr) {
     if (arr.empty())
         return nullptr;
 
@@ -71,7 +109,8 @@ ListNode* buildList(const vector<int>& arr) {
     }
     return head;
 }
-void printList(ListNode* head) {
+
+static void printList(ListNode* head) {
     ListNode* temp = head;
     while (temp != nullptr) {
         cout << temp->val;
@@ -91,42 +130,6 @@ ListNode* findNode(ListNode* head, int value) {
         temp = temp->next;
     }
     return nullptr;
-}
-/*
-    IMPORTANT:
-    We DON'T have head.
-    We only have the node that needs to be deleted.
-    Example:  4 -> 5 -> 1 -> 9
-                   ^
-                  node
-    We cannot directly remove 5 because we don't know 4.
-    Instead:
-        1. Copy next node's value into current node.
-        2. Skip the next node.
-    Before:
-        4 -> [5] -> [1] -> 9
-              node
-    Copy:
-        4 -> [1] -> [1] -> 9
-    Then skip old 1:
-        4 -> 1 -> 9
-*/
-void deleteNode(ListNode* node) {
-    // Safety check
-    if (node == nullptr || node->next == nullptr)
-        return;
-
-    // Save next node
-    ListNode* nextNode = node->next;
-
-    // Copy next node's value
-    node->val = nextNode->val;
-
-    // Skip next node
-    node->next = nextNode->next;
-
-    // Free the skipped node
-    delete nextNode;
 }
 
 static void solve(){

@@ -1,7 +1,8 @@
 /*
 Author: Sarvan Yaduvanshi
-Created : 2026-10-29 00:07:15
+Created : 2026-10-29 20:29:11
 */
+
 
 #include <iostream>
 #include <vector>
@@ -55,6 +56,18 @@ public:
 			current = current->next;
 		}
 		cout << " -> nullptr\n";
+	}
+
+	ListNode* deleteNodeGivenTar(ListNode* head, const int tar){
+		if (head == nullptr)
+			return head;
+
+		head->next = deleteNodeGivenTar(head->next, tar);
+
+		if (head->val == tar)
+			return head->next;
+
+		return head;
 	}
 };
 

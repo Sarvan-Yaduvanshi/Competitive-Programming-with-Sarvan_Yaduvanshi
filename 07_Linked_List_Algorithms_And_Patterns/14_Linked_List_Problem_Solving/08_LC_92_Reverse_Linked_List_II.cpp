@@ -147,6 +147,45 @@ public:
 
 		return dummy.next;
 	}
+
+	// Approach 2: Recursion
+	// Time Complexity  : O(N) — Each node creates exactly one recursive call and performs constant work while the call stack unwinds.
+	// Space Complexity : O(N) auxiliary space for the recursion call stack. No extra linked
+	static Node* reverseBetweenRecursive(Node* head, const int left, const int right) {
+		// Base case: if left is 1, we can reverse the first right nodes
+		if (head == nullptr || left == right)
+			return head;
+
+		Node* successor = nullptr; // This will hold the (right+1)th node after reversal
+
+		// Helper function to reverse the first n nodes of the list
+		auto reverseN = [&](auto&& self, Node* currHead, int n) -> Node* {
+			// Base case: if n is 1, we have reached the end of the reversal segment
+			if (n == 1) {
+				successor = currHead->next; // Save the (n+1)th node
+				return currHead; // Return the new head of the reversed sublist
+			}
+
+			// Recursively reverse the next n-1 nodes
+			Node* newHead = self(self, head->next, n - 1);
+
+			// Reverse the current node's next pointer to point back to the current head
+			head->next->next = head;
+			head->next = successor; // Connect the last node of reversed part to successor
+
+			return newHead;
+		};
+
+		// Helper function: Reversal starts at the current head.
+		if (left == 1)
+			return reverseN(reverseN, head, right);
+
+
+		// Preserve this node and recursively process the suffix.
+		head->next = reverseBetweenRecursive(head->next, left - 1, right - 1);
+		return head;
+	}
+
 	// Build a linked list from a array of values
 	static Node* buildList(const vector<int>& values){
 		if (values.empty())
@@ -195,6 +234,14 @@ static void solve(){
 	head = ListNode::reverseBetween(head, left, right);
 	cout << "Reversed List (from position " << left << " to " << right << "): ";
     ListNode::printList(head);
+
+	// Reset the list for recursive reversal
+	head = ListNode::buildList(values);
+
+	// Recursive reversal
+	head = ListNode::reverseBetweenRecursive(head, left, right);
+	cout << "Reversed List using Recursion (from position " << left << " to " << right << "): ";
+	ListNode::printList(head);
 }
 int main(){
 	ios::sync_with_stdio(false);
