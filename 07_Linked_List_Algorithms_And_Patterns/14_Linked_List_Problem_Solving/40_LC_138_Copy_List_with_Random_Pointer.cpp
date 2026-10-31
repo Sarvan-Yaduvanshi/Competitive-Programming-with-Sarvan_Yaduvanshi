@@ -99,19 +99,10 @@ Created : 2026-10-30 12:24:29
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
 #include <unordered_map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
 
@@ -128,6 +119,160 @@ public:
 	ListNode* head;
 public:
 	myLinkedList() : head(nullptr) {}
+
+	/*
+ * ============================================================================
+ * MATH & DELETION PATTERN 5: 138. Copy List with Random Pointer (O(1) Aux Space)
+ * ============================================================================
+ *
+ * - Core Idea (The 3-Pass Interweaving Clone Engine — No Hash Map!):
+ *   Instead of using an O(N) `unordered_map<Node*, Node*>` to map each original
+ *   node to its clone, we temporarily store each clone at `original->next`!
+ *
+ *     Pass 1 [Interweave Clones Into Original List] :
+ *       For each original node `curr`, create `clone = new Node(curr->val)` and
+ *       insert it right after `curr`:
+ *         `clone->next = curr->next;`
+ *         `curr->next  = clone;`
+ *       List becomes: Orig1 -> Clone1 -> Orig2 -> Clone2 -> Orig3 -> Clone3
+ *
+ *     Pass 2 [Assign `random` Pointers Using the Interwoven Lookup] :
+ *       Since every original node `X` has its clone sitting at `X->next`, the
+ *       clone of `curr->random` is sitting right at `curr->random->next`!
+ *       So for each original node `curr`:
+ *         `if (curr->random != nullptr)`
+ *             `curr->next->random = curr->random->next;`
+ *
+ *     Pass 3 [Unweave / Separate Original and Cloned Lists] :
+ *       Use a `dummy` + `cloneTail` builder to extract all `Clone` nodes while
+ *       restoring `curr->next` back to its original next node:
+ *         `Node* clone = curr->next;`
+ *         `curr->next = clone->next;`       // Restore Original list!
+ *         `cloneTail->next = clone;`        // Append to Cloned list!
+ *
+ * - CRITICAL TRAP (Why Pass 2 and Pass 3 CANNOT Be Merged Into One Loop):
+ *   Suppose `Orig3->random` points backward to `Orig1`. If you unweave `Orig1`
+ *   and `Clone1` while processing `Orig1`, then by the time you reach `Orig3`,
+ *   `Orig1->next` is `Orig2` (NO LONGER `Clone1`!), breaking `curr->random->next`!
+ *   Therefore, ALL `random` links must be wired in Pass 2 before unweaving in Pass 3.
+ *
+ * - Quick Dry Run: [7 (rand: null)] -> [13 (rand: 7)]
+ *     Pass 1 (Interweave):
+ *       [7] -> [7'] -> [13] -> [13'] -> nullptr
+ *     Pass 2 (Wire `random`):
+ *       - At [7]  : `7->random` is nullptr -> `7'->random` stays nullptr.
+ *       - At [13] : `13->random` is [7]    -> `13'->random = 7->next` ([7'])!
+ *     Pass 3 (Unweave):
+ *       - Original restored : [7] -> [13] -> nullptr
+ *       - Clone extracted   : [7' (rand: null)] -> [13' (rand: 7')] -> nullptr
+ *
+ * - Complexity:
+ *   Time  : O(N) — 3 linear passes (2N steps each) = O(N) total time.
+ *   Space : O(1) — Zero auxiliary memory (no `unordered_map` allocated!).
+ * ============================================================================
+ */
+	static ListNode* copyRandomListInterleaved(ListNode* head){
+		// handle edge case of empty list
+		if (head == nullptr)
+			return nullptr;
+
+		// Pass 1: Create cloned nodes and weave them right after each original node
+		// eg: Original: A -> B -> C should become: A -> A' -> B -> B' -> C -> C'
+		ListNode* curr = head;
+		while (curr != nullptr){
+			// Create a clone of the current node
+			ListNode* clone = new ListNode(curr->val);
+
+			clone->next = curr->next; // clone now points to the next original node (eg: A' -> B)
+			curr->next = clone; // curr now points to its clone eg: A -> A'
+
+			// Jump 2 steps to the next original node (eg: B)
+			curr = clone->next;
+		}
+
+		// Pass 2: Connect `random` pointers for all cloned nodes
+		curr = head;
+		while (curr != nullptr){
+			// check if the original node has a random pointer
+			if (curr->random != nullptr)
+				// `curr->next` is `curr`'s clone; `curr->random->next` is `random`'s clone!
+				// eg: if A.random = C, then A'.random = C'
+				curr->next->random = curr->random->next;
+
+			curr = curr->next->next; // Jump 2 steps to the next original node
+		}
+
+		// Pass 3: Unweave the lists (restore original list & extract cloned list)
+		ListNode dummy(0);
+		ListNode* cloneTail = &dummy;
+		curr = head;
+
+		while (curr != nullptr){
+			// 1. Extract the clone node (eg: A -> A' -> B becomes A' for the cloned list)
+			ListNode* clone = curr->next;
+
+			// 2. Restore the original node's `next` pointer (eg: A -> A' -> B becomes A -> B)
+			curr->next = clone->next;
+
+			// 3. Attach `clone` to our extracted clone list (eg: dummy -> A' -> B')
+			cloneTail->next = clone;
+			cloneTail = clone; // Move the tail pointer forward to the newly added clone
+
+			// 4. Move `curr` to the next original node (eg: A -> B)
+			curr = curr->next;
+		}
+
+		// Return the head of the cloned list (skipping the dummy node)
+		return dummy.next;
+	}
+
+	/*
+	 * HASH MAP APPROACH:
+	 * Create every copy first and store original -> copy in a hash map.
+	 * Then use the map to connect each copied random pointer.
+	 *
+	 * Example:
+	 *   Original: [7] -> [13], random(13) = 7
+	 *   Map:      7 -> 7', 13 -> 13'
+	 *   Copy:     [7'] -> [13'], random(13') = 7'
+	 *
+	 * Time: O(N) — two traversals of the list.
+	 * Space: O(N) — the map stores N node relationships.
+	 */
+	static ListNode* copyRandomList(ListNode* head){
+		if (head == nullptr)
+			return nullptr;
+
+		unordered_map<ListNode*, ListNode*> copies;
+
+		// Pass 1: create copies and connect the ordinary `next` pointers.
+		ListNode* original = head;
+		ListNode* copyHead = new ListNode(head->val);
+		ListNode* copyTail = copyHead;
+		copies[head] = copyHead;
+
+		original = head->next;
+		while (original != nullptr) {
+			ListNode* copy = new ListNode(original->val);
+			copyTail->next = copy;
+			copyTail = copy;
+			copies[original] = copy;
+			original = original->next;
+		}
+
+		// Pass 2: connect copied `random` pointers through the map.
+		original = head;
+		ListNode* copy = copyHead;
+		while (original != nullptr) {
+			if (original->random != nullptr)
+				copy->random = copies[original->random];
+
+			original = original->next;
+			copy = copy->next;
+		}
+
+		return copyHead;
+	}
 
 	// Input format: values[0..n-1] and random indices[0..n-1].
 	// A random index of -1 represents a null random pointer.
@@ -181,112 +326,6 @@ public:
 			delete head;
 			head = next;
 		}
-	}
-
-	/*
- * ============================================================================
- * MATH & DELETION PATTERN 5: 138. Copy List with Random Pointer (O(1) Aux Space)
- * ============================================================================
- *
- * - Core Idea (The 3-Pass Interweaving Clone Engine — No Hash Map!):
- *   Instead of using an O(N) `unordered_map<Node*, Node*>` to map each original
- *   node to its clone, we temporarily store each clone at `original->next`!
- *
- *     Pass 1 [Interweave Clones Into Original List] :
- *       For each original node `curr`, create `clone = new Node(curr->val)` and
- *       insert it right after `curr`:
- *         `clone->next = curr->next;`
- *         `curr->next  = clone;`
- *       List becomes: Orig1 -> Clone1 -> Orig2 -> Clone2 -> Orig3 -> Clone3
- *
- *     Pass 2 [Assign `random` Pointers Using the Interwoven Lookup] :
- *       Since every original node `X` has its clone sitting at `X->next`, the
- *       clone of `curr->random` is sitting right at `curr->random->next`!
- *       So for each original node `curr`:
- *         `if (curr->random != nullptr)`
- *             `curr->next->random = curr->random->next;`
- *
- *     Pass 3 [Unweave / Separate Original and Cloned Lists] :
- *       Use a `dummy` + `cloneTail` builder to extract all `Clone` nodes while
- *       restoring `curr->next` back to its original next node:
- *         `Node* clone = curr->next;`
- *         `curr->next = clone->next;`       // Restore Original list!
- *         `cloneTail->next = clone;`        // Append to Cloned list!
- *
- * - CRITICAL TRAP (Why Pass 2 and Pass 3 CANNOT Be Merged Into One Loop):
- *   Suppose `Orig3->random` points backward to `Orig1`. If you unweave `Orig1`
- *   and `Clone1` while processing `Orig1`, then by the time you reach `Orig3`,
- *   `Orig1->next` is `Orig2` (NO LONGER `Clone1`!), breaking `curr->random->next`!
- *   Therefore, ALL `random` links must be wired in Pass 2 before unweaving in Pass 3.
- *
- * - Quick Dry Run: [7 (rand: null)] -> [13 (rand: 7)]
- *     Pass 1 (Interweave):
- *       [7] -> [7'] -> [13] -> [13'] -> nullptr
- *     Pass 2 (Wire `random`):
- *       - At [7]  : `7->random` is nullptr -> `7'->random` stays nullptr.
- *       - At [13] : `13->random` is [7]    -> `13'->random = 7->next` ([7'])!
- *     Pass 3 (Unweave):
- *       - Original restored : [7] -> [13] -> nullptr
- *       - Clone extracted   : [7' (rand: null)] -> [13' (rand: 7')] -> nullptr
- *
- * - Complexity:
- *   Time  : O(N) — 3 linear passes (2N steps each) = O(N) total time.
- *   Space : O(1) — Zero auxiliary memory (no `unordered_map` allocated!).
- * ============================================================================
- */
-	static ListNode* copyRandomList(ListNode* head){
-		// handle edge case of empty list
-		if (head == nullptr)
-			return nullptr;
-
-		// Pass 1: Create cloned nodes and weave them right after each original node
-		// eg: Original: A -> B -> C should become: A -> A' -> B -> B' -> C -> C'
-		ListNode* curr = head;
-		while (curr != nullptr){
-			// Create a clone of the current node
-			ListNode* clone = new ListNode(curr->val);
-
-			clone->next = curr->next; // clone now points to the next original node (eg: A' -> B)
-			curr->next = clone; // curr now points to its clone eg: A -> A'
-
-			// Jump 2 steps to the next original node (eg: B)
-			curr = clone->next;
-		}
-
-		// Pass 2: Connect `random` pointers for all cloned nodes
-		curr = head;
-		while (curr != nullptr){
-			// check if the original node has a random pointer
-			if (curr->random != nullptr)
-				// `curr->next` is `curr`'s clone; `curr->random->next` is `random`'s clone!
-				// eg: if A.random = C, then A'.random = C'
-				curr->next->random = curr->random->next;
-
-			curr = curr->next->next; // Jump 2 steps to the next original node
-		}
-
-		// Pass 3: Unweave the lists (restore original list & extract cloned list)
-		ListNode dummy(0);
-		ListNode* cloneTail = &dummy;
-		curr = head;
-
-		while (curr != nullptr){
-			// 1. Extract the clone node (eg: A -> A' -> B becomes A' for the cloned list)
-			ListNode* clone = curr->next;
-
-			// 2. Restore the original node's `next` pointer (eg: A -> A' -> B becomes A -> B)
-			curr->next = clone->next;
-
-			// 3. Attach `clone` to our extracted clone list (eg: dummy -> A' -> B')
-			cloneTail->next = clone;
-			cloneTail = clone; // Move the tail pointer forward to the newly added clone
-
-			// 4. Move `curr` to the next original node (eg: A -> B)
-			curr = curr->next;
-		}
-
-		// Return the head of the cloned list (skipping the dummy node)
-		return dummy.next;
 	}
 };
 
