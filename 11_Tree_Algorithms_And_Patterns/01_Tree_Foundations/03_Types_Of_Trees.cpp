@@ -217,8 +217,8 @@ TABLE OF CONTENTS
  ┌───────────────┬────────────┬────────────┬──────────────────────┐
  │ Type          │ Max Height │ Min Height │ When you see it      │
  ├───────────────┼────────────┼────────────┼──────────────────────┤
- │ Perfect       │ log₂(N+1) │ log₂(N+1)  │ Theoretical ideal    │
- │ Complete      │ ⌊log₂N⌋   │ ⌊log₂N⌋    │ Binary heaps         │
+ │ Perfect       │ log₂(N+1) │ log₂(N+1)  │ Theoretical ideal     │
+ │ Complete      │ ⌊log₂N⌋   │ ⌊log₂N⌋    │ Binary heaps          │
  │ Balanced      │ O(log N)   │ O(log N)   │ AVL, Red-Black       │
  │ Full          │ N/2        │ log₂(N+1)  │ Expression trees     │
  │ General binary│ N-1        │ ⌊log₂N⌋    │ Any binary tree      │

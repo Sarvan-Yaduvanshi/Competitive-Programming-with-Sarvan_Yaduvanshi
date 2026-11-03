@@ -3,10 +3,131 @@ Author: Sarvan Yaduvanshi
 Created : 2026-11-01 23:30:38
 */
 
-#ifndef __APPLE__
-#pragma GCC optimize("Ofast")
-#pragma GCC optimize("unroll-loops")
-#endif
+/*
+ * ============================================================================
+ *  2296. Design a Text Editor
+ * ============================================================================
+ *  Platform   : LeetCode
+ *  Problem No : 2296
+ *  Difficulty : Hard
+ *  Topics     : Linked List, String, Stack, Design, Simulation,
+ *               Doubly-Linked List
+ *  Companies  : Amazon, Microsoft, Google, Meta, Apple, Bloomberg, Uber
+ * ----------------------------------------------------------------------------
+ *
+ *  Problem Statement:
+ *  Design a text editor with a cursor that can do the following:
+ *
+ *      - Add text to where the cursor is.
+ *      - Delete text from where the cursor is (simulating the backspace
+ *        key).
+ *      - Move the cursor either left or right.
+ *
+ *  When deleting text, only characters to the left of the cursor will be
+ *  deleted. The cursor will also remain within the actual text and cannot be
+ *  moved beyond it. More formally, we have that
+ *  0 <= cursor.position <= currentText.length always holds.
+ *
+ *  Implement the TextEditor class:
+ *
+ *      - TextEditor()
+ *            Initializes the object with empty text.
+ *
+ *      - void addText(string text)
+ *            Appends text to where the cursor is. The cursor ends to the
+ *            right of text.
+ *
+ *      - int deleteText(int k)
+ *            Deletes k characters to the left of the cursor. Returns the
+ *            number of characters actually deleted.
+ *
+ *      - string cursorLeft(int k)
+ *            Moves the cursor to the left k times. Returns the last
+ *            min(10, len) characters to the left of the cursor, where len
+ *            is the number of characters to the left of the cursor.
+ *
+ *      - string cursorRight(int k)
+ *            Moves the cursor to the right k times. Returns the last
+ *            min(10, len) characters to the left of the cursor, where len
+ *            is the number of characters to the left of the cursor.
+ *
+ * ----------------------------------------------------------------------------
+ *  Example 1:
+ *
+ *      Input
+ *      ["TextEditor", "addText", "deleteText", "addText", "cursorRight",
+ *       "cursorLeft", "deleteText", "cursorLeft", "cursorRight"]
+ *      [[], ["leetcode"], [4], ["practice"], [3], [8], [10], [2], [6]]
+ *
+ *      Output
+ *      [null, null, 4, null, "etpractice", "leet", 4, "", "practi"]
+ *
+ *  Explanation:
+ *      TextEditor textEditor = new TextEditor();
+ *          // The current text is "|". (The '|' character represents the
+ *          // cursor)
+ *      textEditor.addText("leetcode");
+ *          // The current text is "leetcode|".
+ *      textEditor.deleteText(4);
+ *          // return 4
+ *          // The current text is "leet|".
+ *          // 4 characters were deleted.
+ *      textEditor.addText("practice");
+ *          // The current text is "leetpractice|".
+ *      textEditor.cursorRight(3);
+ *          // return "etpractice"
+ *          // The current text is "leetpractice|".
+ *          // The cursor cannot be moved beyond the actual text and thus
+ *          // did not move.
+ *          // "etpractice" is the last 10 characters to the left of the
+ *          // cursor.
+ *      textEditor.cursorLeft(8);
+ *          // return "leet"
+ *          // The current text is "leet|practice".
+ *          // "leet" is the last min(10, 4) = 4 characters to the left of
+ *          // the cursor.
+ *      textEditor.deleteText(10);
+ *          // return 4
+ *          // The current text is "|practice".
+ *          // Only 4 characters were deleted.
+ *      textEditor.cursorLeft(2);
+ *          // return ""
+ *          // The current text is "|practice".
+ *          // The cursor cannot be moved beyond the actual text and thus
+ *          // did not move.
+ *          // "" is the last min(10, 0) = 0 characters to the left of the
+ *          // cursor.
+ *      textEditor.cursorRight(6);
+ *          // return "practi"
+ *          // The current text is "practi|ce".
+ *          // "practi" is the last min(10, 6) = 6 characters to the left
+ *          // of the cursor.
+ *
+ * ----------------------------------------------------------------------------
+ *  Picture (| = cursor):
+ *
+ *      new            :  |
+ *      addText leetcode :  leetcode|
+ *      deleteText(4)  :  leet|            returns 4
+ *      addText practice:  leetpractice|
+ *      cursorRight(3) :  leetpractice|    no move, returns "etpractice"
+ *      cursorLeft(8)  :  leet|practice    returns "leet"
+ *      deleteText(10) :  |practice        returns 4 (only 4 existed)
+ *      cursorLeft(2)  :  |practice        no move, returns ""
+ *      cursorRight(6) :  practi|ce        returns "practi"
+ *
+ * ----------------------------------------------------------------------------
+ *  Constraints:
+ *      - 1 <= text.length, k <= 40
+ *      - text consists of lowercase English letters.
+ *      - At most 2 * 10^4 calls in total will be made to addText,
+ *        deleteText, cursorLeft and cursorRight.
+ *
+ * ----------------------------------------------------------------------------
+ *  Follow-up: Could you find a solution with time complexity of O(k) per
+ *  call?
+ * ============================================================================
+ */
 
 #include <iostream>
 #include <vector>
@@ -26,61 +147,9 @@ Created : 2026-11-01 23:30:38
 
 using namespace std;
 
-// --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld = long double;
-template<class T>
-using vec = vector<T>;
-template<class T>
-using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD = 1'000'000'007LL;
-constexpr i64 MOD9 = 998'244'353LL;
-constexpr ld PI = 3.14159265358979323846;
+static void solve(){
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-// Input helper
-template<class T>
-void read(vec<T>& v){
-	for (auto& x : v) cin >> x;
-}
-
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
-
-inline i64 gcd(i64 a, i64 b){ return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b){ return (a / std::gcd(a, b)) * b; }
-
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD){
-	i64 res = 1;
-	base %= mod;
-	while (exp > 0){
-		if (exp & 1) res = (res * base) % mod;
-		base = (base * base) % mod;
-		exp >>= 1;
-	}
-	return res;
-}
-
-void solve(){
 }
 
 

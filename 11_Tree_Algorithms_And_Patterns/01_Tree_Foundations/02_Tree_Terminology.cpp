@@ -18,27 +18,27 @@
     /
    7                ← LEAF                 depth=3
 
- ┌───────────────────────────────────────────────────────────────┐
- │ Term              │ Definition              │ Example         │
- ├───────────────────┼─────────────────────────┼─────────────────┤
- │ ROOT              │ Topmost node            │ Node 1          │
- │ LEAF              │ Node with no children   │ 5, 6, 7         │
- │ INTERNAL NODE     │ Node with ≥1 child      │ 1, 2, 3, 4      │
- │ PARENT of v       │ Node directly above v   │ par(4)=2        │
- │ CHILD of v        │ Node directly below v   │ children(2)={4,5}│
- │ SIBLINGS          │ Same parent             │ 4 and 5         │
+ ┌───────────────────────────────────────────────────────────────------┐
+ │ Term              │ Definition              │ Example               │
+ ├───────────────────┼─────────────────────────┼─────────────────------┤
+ │ ROOT              │ Topmost node            │ Node 1                │
+ │ LEAF              │ Node with no children   │ 5, 6, 7               │
+ │ INTERNAL NODE     │ Node with ≥1 child      │ 1, 2, 3, 4            │
+ │ PARENT of v       │ Node directly above v   │ par(4)=2              │
+ │ CHILD of v        │ Node directly below v   │ children(2)={4,5}     │
+ │ SIBLINGS          │ Same parent             │ 4 and 5               │
  │ ANCESTOR of v     │ v, parent, grandparent..│ ancestors(7)={7,4,2,1}│
- │ DESCENDANT of v   │ v and all below         │ desc(2)={2,4,5,7}│
+ │ DESCENDANT of v   │ v and all below         │ desc(2)={2,4,5,7}     │
  │ SUBTREE of v      │ v + all descendants     │ subtree(2) has 4 nodes│
- │ DEPTH of v        │ # edges from root to v  │ depth(7)=3      │
- │ HEIGHT of v       │ # edges to deepest leaf  │ height(2)=2     │
- │ HEIGHT of tree    │ Height of root          │ height(1)=3     │
- │ DEGREE of v       │ # children of v         │ degree(2)=2     │
- │ LEVEL             │ Set of nodes at same depth│ level 2={4,5,6}│
- │ EDGE              │ Connection between nodes │ (1,2), (2,4)... │
- │ PATH              │ Sequence of edges       │ 7→4→2→1→3→6    │
- │ DIAMETER          │ Longest path in tree    │ 7→4→2→1→3→6 = 5│
- └───────────────────┴─────────────────────────┴─────────────────┘
+ │ DEPTH of v        │ # edges from root to v  │ depth(7)=3            │
+ │ HEIGHT of v       │ # edges to deepest leaf │ height(2)=2           │
+ │ HEIGHT of tree    │ Height of root          │ height(1)=3           │
+ │ DEGREE of v       │ # children of v         │ degree(2)=2           │
+ │ LEVEL             │ Set of nodes at same depth│ level 2={4,5,6}     │
+ │ EDGE              │ Connection between nodes │ (1,2), (2,4)...      │
+ │ PATH              │ Sequence of edges       │ 7→4→2→1→3→6           │
+ │ DIAMETER          │ Longest path in tree    │ 7→4→2→1→3→6 = 5       │
+ └───────────────────┴─────────────────────────┴─────────────────------┘
 
 ═══════════════════════════════════════════════════════════════════
  CODE — Compute all properties
