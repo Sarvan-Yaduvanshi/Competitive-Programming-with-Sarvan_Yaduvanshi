@@ -3,97 +3,269 @@ Author: Sarvan Yaduvanshi
 Created : 2026-11-03 23:22:16
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
+/*
+ * ============================================================================
+ *  107. Binary Tree Level Order Traversal II
+ * ============================================================================
+ *  Platform   : LeetCode
+ *  Problem No : 107
+ *  Difficulty : Medium
+ *  Topics     : Tree, Breadth-First Search, Binary Tree
+ *  Companies  : Amazon, Microsoft, Google, Meta, Apple, Bloomberg, Adobe
+ * ----------------------------------------------------------------------------
+ *
+ *  Problem Statement:
+ *  Given the root of a binary tree, return the bottom-up level order
+ *  traversal of its nodes' values. (i.e., from left to right, level by level
+ *  from leaf to root).
+ *
+ * ----------------------------------------------------------------------------
+ *  Example 1:
+ *
+ *          3
+ *         / \
+ *        9   20
+ *           /  \
+ *          15   7
+ *
+ *  Input  : root = [3,9,20,null,null,15,7]
+ *  Output : [[15,7],[9,20],[3]]
+ *  Explanation: Levels top-down are [3], [9,20], [15,7]. Reverse the order
+ *               of levels: deepest level first, root level last. Inside each
+ *               level, still left to right.
+ *
+ * ----------------------------------------------------------------------------
+ *  Example 2:
+ *
+ *      1
+ *
+ *  Input  : root = [1]
+ *  Output : [[1]]
+ *
+ * ----------------------------------------------------------------------------
+ *  Example 3:
+ *
+ *      (empty tree)
+ *
+ *  Input  : root = []
+ *  Output : []
+ *
+ * ----------------------------------------------------------------------------
+ *  Constraints:
+ *      - The number of nodes in the tree is in the range [0, 2000].
+ *      - -1000 <= Node.val <= 1000
+ * ============================================================================
+ */
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <set>
 #include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
-
 using namespace std;
 
 // --- Type Definitions ---
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
+struct TreeNode{
+	int val;
+	TreeNode* left;
+	TreeNode* right;
 
-// --- Constants ---
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
+	// Constructor initializes the node with a value and sets left and right children to nullptr
+	explicit TreeNode(const int v) : val(v), left(nullptr), right(nullptr) {}
+};
 
-// --- Random Number Generator ---
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
+// Approach: Level Order Traversal (BFS) with Reversal
+// Time Complexity: O(n) - Each node is visited once
+// Space Complexity: O(n) - The queue can hold up to n/2 nodes in the worst case (for a complete binary tree)
+static vector<vector<int>> levelOrderBottom(TreeNode* root){
+	vector<vector<int>> ans;
 
-// --- Macros ---
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
+	// Edge case: empty tree
+	if (root == nullptr)
+		return ans;
 
-// Input helper
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
-#define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
+	// Use a queue to perform level order traversal (BFS)
+	queue<TreeNode*> q;
+	q.push(root); // Add Level 0 (root) to the queue
 
-inline i64 gcd(i64 a, i64 b) { return std::gcd(a, b); }
-inline i64 lcm(i64 a, i64 b) { return (a / std::gcd(a, b)) * b; }
+	// Process each level of the tree
+	while (!q.empty()){
+		// Get the number of nodes at the current level
+		const size_t level_size = q.size();
+		vector<int> current_level;
+		current_level.reserve(level_size); // Reserve space for efficiency
 
-inline i64 modpow(i64 base, i64 exp, i64 mod = MOD) {
-    i64 res = 1;
-    base %= mod;
-    while (exp > 0) {
-        if (exp & 1) res = (res * base) % mod;
-        base = (base * base) % mod;
-        exp >>= 1;
-    }
-    return res;
-}
+		// Process all nodes at the current level
+		for (size_t i = 0; i < level_size; i++){
+			TreeNode* current_node = q.front(); // Get the front node in the queue
+			q.pop(); // Remove it from the queue
 
-void solve() {
-    
-}
+			// Add the current node's value to the current level's list
+			current_level.emplace_back(current_node->val);
 
+			// Add the left child to the queue if it exists
+			if (current_node->left != nullptr)
+				q.push(current_node->left);
 
-int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
-    
-    cout << fixed << setprecision(10);
-    
-    // Multi-test case support (commented out for this demo)
-    // int TC = 1;
-    // cin >> TC;
-    // while (TC--) solve();
-    
-    solve();
-    return 0;
+			// Add the right child to the queue if it exists
+			if (current_node->right != nullptr)
+				q.push(current_node->right);
+		}
+
+		// Add the current level's values to the answer list
+		ans.emplace_back(std::move(current_level));
+	}
+
+	// Reverse the order of levels to get bottom-up traversal
+	ranges::reverse(ans);
+	return ans;
 }
 
+// Approach 2: Using Depth-First Search (DFS) with Level Tracking
+// Time Complexity: O(n) - Each node is visited once
+// Space Complexity: O(n) - The recursion stack can hold up to n nodes in the worst case (for a skewed tree)
+static vector<vector<int>> levelOrderBottomUseDFS(TreeNode* root){
+	vector<vector<int>> ans;
+
+	// Edge case: empty tree
+	if (root == nullptr)
+		return ans;
+
+	// Lambda function for DFS traversal
+	auto dfs = [&](auto&& self, TreeNode* node, const int depth) -> void{
+		// Base case: if the current node is null, return
+		if (node == nullptr)
+			return;
+
+		// If we reach a new depth level, add a new vector for that level
+		if (depth == ans.size())
+			ans.emplace_back();
+
+		// Add the current node's value to the corresponding depth level
+		ans[depth].emplace_back(node->val);
+
+		// Recursively call DFS for the left and right children, increasing the depth by 1
+		self(self, node->left, depth + 1); // left child
+		self(self, node->right, depth + 1); // right child
+	};
+
+	dfs(dfs, root, 0);
+	ranges::reverse(ans); // Reverse the order of levels to get bottom-up traversal
+	return ans;
+}
+
+// Function to build a binary tree from a vector of values (for testing purposes)
+TreeNode* buildTree(const vector<int>& values){
+	int n = values.size();
+
+	// Edge case: empty tree or root is null
+	if (n == 0 || values[0] == -1)
+		return nullptr;
+
+	TreeNode* root = new TreeNode(values[0]);
+
+	queue<TreeNode*> q;
+	q.push(root);
+
+	int idx = 1;
+	while (!q.empty() && idx < n){
+		TreeNode* current = q.front();
+		q.pop();
+
+		// Left child
+		if (idx < n && values[idx] != -1){
+			current->left = new TreeNode(values[idx]);
+            q.push(current->left);
+		}
+
+		// Move to the next index for the right child
+		idx++;
+
+		// Right child
+		if (idx < n && values[idx] != -1){
+			current->right = new TreeNode(values[idx]);
+			q.push(current->right);
+		}
+
+		idx++;
+	}
+
+	return root;
+}
+
+// Function to print traversal result
+static void printTraversal(const vector<int>& traversal){
+	cout << "[";
+	for (size_t i = 0; i < traversal.size(); ++i){
+		cout << traversal[i];
+        if (i < traversal.size() - 1)
+            cout << " ";
+	}
+	cout << "]\n";
+}
+
+static void solve(){
+	int n;
+	cout << "Enter number of nodes in the tree: ";
+	cin >> n;
+
+	vector<int> values(n);
+	cout << "Enter the values of the nodes (space-separated): ";
+	for (int& val : values)
+		cin >> val;
+
+	// Print original tree values
+	cout << "Original tree values: [";
+	for (size_t i = 0; i < values.size(); ++i){
+		cout << values[i];
+        if (i < values.size() - 1)
+            cout << " ";
+	}
+	cout << "]\n";
+
+	// Build the binary tree from the input values
+	TreeNode* root = buildTree(values);
+
+	// Approach 1: Level Order Traversal (BFS) with Reversal
+	vector<vector<int>> bfs_result = levelOrderBottom(root);
+	cout << "BFS Level Order Traversal (grouped by levels):\n[";
+	for (size_t i = 0; i < bfs_result.size(); ++i){
+		cout << "[";
+		for (size_t j = 0; j < bfs_result[i].size(); ++j){
+			cout << bfs_result[i][j];
+			if (j < bfs_result[i].size() - 1)
+				cout << " ";
+		}
+		cout << "]";
+		if (i < bfs_result.size() - 1)
+			cout << ", ";
+	}
+	cout << "]\n";
+
+	// Approach 2: Using Depth-First Search (DFS) with Level Tracking
+	vector<vector<int>> resultDFS = levelOrderBottomUseDFS(root);
+	cout << "DFS Level Order Traversal (grouped by levels):\n[";
+	for (size_t i = 0; i < resultDFS.size(); ++i){
+		cout << "[";
+        for (size_t j = 0; j < resultDFS[i].size(); ++j){
+            cout << resultDFS[i][j];
+            if (j < resultDFS[i].size() - 1)
+                cout << " ";
+        }
+        cout << "]";
+        if (i < resultDFS.size() - 1)
+            cout << ", ";
+	}
+	cout << "]\n";
+}
+
+
+int main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+
+	solve();
+	return 0;
+}
