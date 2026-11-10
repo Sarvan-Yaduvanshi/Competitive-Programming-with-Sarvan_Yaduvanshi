@@ -234,80 +234,37 @@ TABLE OF CONTENTS
 ═══════════════════════════════════════════════════════════════════
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
-
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
-
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
 #define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
 
 // ─────────────────────────────────────────────────────────────
 // Given a rooted tree (adjacency list, root = 1),
 // determine which types apply.
 // ─────────────────────────────────────────────────────────────
 
-vvec<int> adj;
-vec<int> childCount;   // number of children
-vec<int> dep;          // depth
-vec<int> ht;           // height
-bool isBinary;
-bool isFull;
-bool isBalanced;
+static vector<vector<int>> adj;
+static vector<int> childCount;   // number of children
+static vector<int> dep;          // depth
+static vector<int> ht;           // height
+static bool isBinary;
+static bool isFull;
+static bool isBalanced;
 
-void dfs(int v, int p, int d) {
+static void dfs(const int v, const int p, const int d) {
     dep[v] = d;
     ht[v] = 0;
     childCount[v] = 0;
 
-    for (int u : adj[v]) {
+    for (const int u : adj[v]) {
         if (u == p) continue;
         childCount[v]++;
         dfs(u, v, d + 1);
@@ -324,7 +281,7 @@ void dfs(int v, int p, int d) {
     // Check balanced: |left_height - right_height| ≤ 1
     if (childCount[v] == 2) {
         int h1 = -1, h2 = -1;
-        for (int u : adj[v]) {
+        for (const int u : adj[v]) {
             if (u == p) continue;
             if (h1 == -1) h1 = ht[u];
             else h2 = ht[u];
@@ -333,7 +290,7 @@ void dfs(int v, int p, int d) {
     }
 }
 
-void solve() {
+static void solve() {
     int n;
     cin >> n;
 
@@ -345,8 +302,8 @@ void solve() {
     for (int i = 0; i < n - 1; i++) {
         int u, v;
         cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
     isBinary = true;

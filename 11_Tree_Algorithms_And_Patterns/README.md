@@ -13,8 +13,8 @@
 |---|---------|-------|--------|
 | 01 | [Tree Foundations](01_Tree_Foundations/) | 7 | What is a tree, terminology, types, properties, rooting, input patterns |
 | 02 | [Tree Representations](02_Tree_Representations/) | 5 | Adj list, parent array, edge list, array BT, node struct |
-| 03 | [Tree Traversals](03_Tree_Traversals/) | 6 | DFS, BFS, preorder/inorder/postorder, zigzag, boundary, tin/tout, diameter |
-| 04 | [Binary Tree Problems](04_Binary_Tree_Problems/) | 5 | Depth, diameter, path sum, symmetric, construct from traversals |
+| 03 | [Tree Traversals](03_Binary_Tree_Traversals/) | 6 | DFS, BFS, preorder/inorder/postorder, zigzag, boundary, tin/tout, diameter |
+| 04 | [Binary Tree Problems](04_N_Ary_Tree_Foundations/) | 5 | Depth, diameter, path sum, symmetric, construct from traversals |
 | 05 | [Binary Search Tree](05_Binary_Search_Tree/) | 5 | Insert/delete/search, validate, floor/ceil/kth, sorted→BST, BST iterator |
 
 ### 🟡 INTERMEDIATE (Path Problems & Construction)

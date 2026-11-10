@@ -18,7 +18,7 @@ struct TreeNode{
 };
 
 // Function to build a binary tree from a vector of values (for testing purposes)
-TreeNode* buildTree(const vector<int>& values){
+static TreeNode* buildTree(const vector<int>& values){
 	int n = values.size();
 
 	// Edge case: empty tree or root is null

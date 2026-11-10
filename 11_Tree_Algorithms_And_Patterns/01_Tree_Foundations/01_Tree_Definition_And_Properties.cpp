@@ -1,8 +1,8 @@
 /*
-╔══════════════════════════════════════════════════════════════════╗
-║          01 — WHAT IS A TREE? DEFINITION & PROPERTIES            ║
-║          Zero to GM Level — Tree Foundations                     ║
-╚══════════════════════════════════════════════════════════════════╝
+                       ╔══════════════════════════════════════════════════════════════════╗
+                       ║          01 — WHAT IS A TREE? DEFINITION & PROPERTIES            ║
+                       ║          Zero to GM Level — Tree Foundations                     ║
+                       ╚══════════════════════════════════════════════════════════════════╝
 
 TABLE OF CONTENTS
 ─────────────────
@@ -173,25 +173,41 @@ TABLE OF CONTENTS
    Because in a tree, E = N-1 → O(N + N-1) = O(N)
 
 ═══════════════════════════════════════════════════════════════════
- 7. CODE: CHECK IF A GRAPH IS A TREE
+ KEY PROPERTIES (MEMORIZE!)
+═══════════════════════════════════════════════════════════════════
+
+ ┌───────────────────────────────────────────────────────────────┐
+ │ Property                           │ Value                    │
+ ├────────────────────────────────────┼──────────────────────────┤
+ │ Number of edges                    │ ALWAYS N - 1             │
+ │ Number of paths between u and v    │ ALWAYS exactly 1         │
+ │ Removing any edge                  │ Disconnects into 2 parts │
+ │ Adding any edge                    │ Creates exactly 1 cycle  │
+ │ Minimum leaves (N≥2)               │ At least 2               │
+ │ Sum of all degrees                 │ 2 × (N-1) = 2N - 2       │
+ └────────────────────────────────────┴──────────────────────────┘
+
+═══════════════════════════════════════════════════════════════════
+ TREE vs FOREST vs GRAPH
+═══════════════════════════════════════════════════════════════════
+
+ TREE:   Connected, acyclic (one component)
+ FOREST: Acyclic but possibly disconnected (multiple trees)
+         K components → N nodes, N-K edges
+ GRAPH:  May have cycles, may be disconnected
+
+═══════════════════════════════════════════════════════════════════
+ CODE — Verify if a given graph is a tree
 ═══════════════════════════════════════════════════════════════════
 */
 
 #include <iostream>
 #include <vector>
 #include <string>
-#include <algorithm>
-#include <map>
-#include <set>
 #include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
 
@@ -201,7 +217,7 @@ using namespace std;
  *			 2. BFS from node 1, check all nodes visited (connected)
 */
 
-bool isTree(int n, vector<vector<int>>& adj, int edgeCount) {
+static bool isTree(const int n, const vector<vector<int>>& adj, const int edgeCount) {
     // Property: A tree must have exactly N-1 edges
     if (edgeCount != n - 1) return false;
 
@@ -228,7 +244,7 @@ bool isTree(int n, vector<vector<int>>& adj, int edgeCount) {
     return count == n;
 }
 
-void solve() {
+static void solve() {
     int n, m;
     cin >> n >> m;
 

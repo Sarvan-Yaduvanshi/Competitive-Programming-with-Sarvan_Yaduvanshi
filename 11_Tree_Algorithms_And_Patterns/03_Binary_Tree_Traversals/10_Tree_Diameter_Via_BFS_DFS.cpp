@@ -1,6 +1,6 @@
 /*
 ╔══════════════════════════════════════════════════════════════════╗
-║       06 — TREE DIAMETER (Two-BFS & DFS Methods)                ║
+║       06 — TREE DIAMETER (Two-BFS & DFS Methods)                 ║
 ║       Zero to GM Level — Tree Traversals                         ║
 ╚══════════════════════════════════════════════════════════════════╝
 
@@ -136,13 +136,8 @@
 #include <string>
 #include <algorithm>
 #include <map>
-#include <set>
 #include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
 #include <cassert>
@@ -230,7 +225,7 @@ int diameterTwoBFS(int n) {
 int diameterDFS_ans;
 
 // Returns the depth of the deepest path going down from v
-int dfsForDiameter(int v, int par) {
+static int dfsForDiameter(int v, int par) {
     int d1 = 0, d2 = 0; // two deepest paths among children
 
     for (int u : adj[v]) {

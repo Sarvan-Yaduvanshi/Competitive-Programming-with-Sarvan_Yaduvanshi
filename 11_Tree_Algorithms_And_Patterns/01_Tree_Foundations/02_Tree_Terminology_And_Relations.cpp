@@ -210,83 +210,40 @@ TABLE OF CONTENTS
 ═══════════════════════════════════════════════════════════════════
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
-
-using i64 = long long;
-using u64 = unsigned long long;
-using ld  = long double;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-using pii = pair<int, int>;
-using pll = pair<i64, i64>;
-
-constexpr i64 INF64 = 4e18;
-constexpr int INF32 = 2e9;
-constexpr i64 MOD   = 1'000'000'007LL;
-constexpr i64 MOD9  = 998'244'353LL;
-constexpr ld PI     = 3.14159265358979323846;
-
-mt19937_64 rng(chrono::steady_clock::now().time_since_epoch().count());
-
-#define all(x) (x).begin(), (x).end()
-#define rall(x) (x).rbegin(), (x).rend()
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define eb emplace_back
-#define fi first
-#define se second
-
-template<class T>
-void read(vec<T> &v) {
-    for (auto &x : v) cin >> x;
-}
 #define nl '\n'
-#define YES cout << "YES" << nl
-#define NO cout << "NO" << nl
 
 // ─────────────────────────────────────────────────────────────
 // Global arrays to store all tree properties
 // ─────────────────────────────────────────────────────────────
-const int MAXN = 200005;
-vvec<int> adj;
-vec<int> par;       // parent of each node (-1 for root)
-vec<int> depth_arr; // depth of each node
-vec<int> height_arr;// height of each node
-vec<int> sub_size;  // subtree size of each node
-vec<int> degree_arr;// number of children
+constexpr int MAXN = 200005;
+static vector<vector<int>> adj;
+static vector<int> par;       // parent of each node (-1 for root)
+static vector<int> depth_arr; // depth of each node
+static vector<int> height_arr;// height of each node
+static vector<int> sub_size;  // subtree size of each node
+static vector<int> degree_arr;// number of children
 
 // ─────────────────────────────────────────────────────────────
 // DFS to compute depth, parent, subtree size, degree
 // ─────────────────────────────────────────────────────────────
-void dfs(int v, int p, int d) {
+static void dfs(const int v, const int p, const int d) {
     par[v] = p;
     depth_arr[v] = d;
     sub_size[v] = 1;
     degree_arr[v] = 0;
     height_arr[v] = 0;
 
-    for (int u : adj[v]) {
+    for (const int u : adj[v]) {
         if (u == p) continue;  // don't go back to parent
         degree_arr[v]++;       // u is a child
         dfs(u, v, d + 1);
@@ -295,7 +252,7 @@ void dfs(int v, int p, int d) {
     }
 }
 
-void solve() {
+static void solve() {
     int n;
     cin >> n;
 
@@ -310,8 +267,8 @@ void solve() {
     for (int i = 0; i < n - 1; i++) {
         int u, v;
         cin >> u >> v;
-        adj[u].pb(v);
-        adj[v].pb(u);
+        adj[u].push_back(v);
+        adj[v].push_back(u);
     }
 
 
@@ -324,9 +281,9 @@ void solve() {
     cout << "Height of tree = " << height_arr[root] << nl;
     cout << nl;
 
-    cout << "┌──────┬────────┬───────┬────────┬────────┬──────────────┐" << nl;
-    cout << "│ Node │ Parent │ Depth │ Height │ Degree │ Subtree Size │" << nl;
-    cout << "├──────┼────────┼───────┼────────┼────────┼──────────────┤" << nl;
+    cout << "┌──────┬───────┬───────┬────────┬────────┬──────────────┐" << nl;
+    cout << "│ Node │ Parent│ Depth │ Height │ Degree │ Subtree Size │" << nl;
+    cout << "├──────┼───────┼───────┼────────┼────────┼──────────────┤" << nl;
 
     for (int i = 1; i <= n; i++) {
         cout << "│  " << i << "   │  ";
@@ -335,7 +292,7 @@ void solve() {
         cout << "│   " << depth_arr[i] << "   │   " << height_arr[i]
              << "    │   " << degree_arr[i] << "    │      " << sub_size[i] << "       │" << nl;
     }
-    cout << "└──────┴────────┴───────┴────────┴────────┴──────────────┘" << nl;
+    cout << "└──────┴───────┴───────┴────────┴────────┴──────────────┘" << nl;
 
     // Find and print leaves
     cout << nl << "Leaves: ";

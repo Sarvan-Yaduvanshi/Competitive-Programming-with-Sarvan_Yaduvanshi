@@ -45,47 +45,32 @@
 ═══════════════════════════════════════════════════════════════════
 */
 
-#ifndef __APPLE__
-    #pragma GCC optimize("Ofast")
-    #pragma GCC optimize("unroll-loops")
-#endif
-
 #include <iostream>
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <map>
-#include <set>
-#include <queue>
-#include <stack>
-#include <cmath>
 #include <iomanip>
-#include <numeric>
-#include <climits>
 #include <random>
 #include <chrono>
-#include <cassert>
 
 using namespace std;
-using i64 = long long;
-template<class T> using vec = vector<T>;
-template<class T> using vvec = vector<vector<T>>;
-#define sz(x) ((int)(x).size())
-#define pb push_back
-#define nl '\n'
+#define nl "\n";
 
-vvec<int> adj;
-vec<int> parent_arr, depth_arr, height_arr, degree_arr, subtree_size;
+static vector<vector<int>> adj;
+static vector<int> parent_arr, depth_arr, height_arr, degree_arr, subtree_size;
 
-void dfs(int v, int par, int d) {
+static void dfs(const int v, const int par, const int d) {
     parent_arr[v] = par;
     depth_arr[v] = d;
     subtree_size[v] = 1;
     degree_arr[v] = 0;
     int maxChildH = -1;
 
-    for (int u : adj[v]) {
-        if (u == par) continue;
+    for (const int u : adj[v]) {
+        if (u == par)
+        	continue;
+
         degree_arr[v]++;
         dfs(u, v, d + 1);
         subtree_size[v] += subtree_size[u];
@@ -94,7 +79,7 @@ void dfs(int v, int par, int d) {
     height_arr[v] = maxChildH + 1;
 }
 
-void solve() {
+static void solve() {
     int n; cin >> n;
     adj.assign(n + 1, {});
     parent_arr.assign(n + 1, 0);
@@ -105,7 +90,8 @@ void solve() {
 
     for (int i = 0; i < n - 1; i++) {
         int u, v; cin >> u >> v;
-        adj[u].pb(v); adj[v].pb(u);
+        adj[u].push_back(v);
+    	adj[v].push_back(u);
     }
 
     dfs(1, 0, 0);
@@ -135,8 +121,12 @@ void solve() {
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
-    int TC = 1; cin >> TC;
-    while (TC--) solve();
+
+    int TC = 1;
+	cin >> TC;
+
+    while (TC--)
+    	solve();
     return 0;
 }
 
@@ -144,4 +134,7 @@ int main() {
  Input: 1\n7\n1 2\n1 3\n2 4\n2 5\n3 6\n4 7
  Output shows complete properties for every node.
 */
+
+
+
 
