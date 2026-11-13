@@ -133,164 +133,110 @@ Created : 2026-11-07 19:29:53
  * ============================================================================
  */
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <queue>
-#include <iomanip>
-#include <random>
-#include <chrono>
-using namespace std;
+#include "../00_Tree_Utilities/01_BinaryTree.h"
+#include "../00_Tree_Utilities/02_Print_BinaryTree.h"
+/*
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *   int val;
+ *   TreeNode *left;
+ *   TreeNode *right;
+ *   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 
-// --- Type Definitions ---
-struct TreeNode{
-	int val;
-	TreeNode* left;
-	TreeNode* right;
+class Solution{
+public:
+	// Approach 1: Recursive DFS (Cal left and right subtrees, count nodes)
+	// Time Complexity: O(n) where n is the number of nodes in the tree
+	// Space Complexity: O(h) where h is the height of the tree (due to recursion stack)
+	static int countNodes(const TreeNode* root){
+		// empty tree case
+		if (root == nullptr)
+			return 0;
 
-	// Constructor initializes the node with a value and sets left and right children to nullptr
-	explicit TreeNode(const int v) : val(v), left(nullptr), right(nullptr) {}
+		const int leftCount = countNodes(root->left); // Count nodes in left subtree
+		const int rightCount = countNodes(root->right); // Count nodes in right subtree
+
+		return 1 + leftCount + rightCount; // (1(count parent node) + left child + right right child)
+	}
+
+	// Approach 2: Use BFS (Level Order Traversal) to count nodes
+	// Time Complexity: O(n) where n is the number of nodes in the tree
+	// Space Complexity: O(w) where w is the maximum width of the tree (due to queue)
+	static int countNodesBFS(const TreeNode* root){
+		// empty tree case
+		if (root == nullptr)
+			return 0;
+
+		queue<const TreeNode*> q;
+		q.push(root);
+		int count_num_of_nodes = 0;
+
+		while (!q.empty()){
+			const TreeNode* current = q.front();
+			q.pop();
+			count_num_of_nodes++; // Increment count for the current node
+
+			// Enqueue left child if it exists
+			if (current->left != nullptr)
+				q.push(current->left);
+
+			// Enqueue right child if it exists
+			if (current->right != nullptr)
+				q.push(current->right);
+		}
+		return count_num_of_nodes; // Return the total count of nodes
+	}
+
+	// Approach 3: Use complete-tree properties to count nodes
+	// Time Complexity: O(log(n)) for a perfect tree; O(n) in this implementation's
+	//             unequal-height fallback case
+	// Space Complexity: O(1) (constant space)
+	static int countNodesMath(const TreeNode* root){
+		// empty tree case
+		if (root == nullptr)
+			return 0;
+
+		// Helper function to count the height of the leftmost path
+		// Time Complexity: O(log(n)) where n is the number of nodes in the tree
+		auto count_left_height = [&](const TreeNode* node) -> int{
+			int height = 0;
+			while (node != nullptr){
+				height++;
+				node = node->left;
+			}
+
+			return height;
+		};
+
+		// Helper function to count the height of the rightmost path
+		// Time Complexity: O(log(n)) where n is the number of nodes in the tree
+		auto count_right_height = [&](const TreeNode* node) -> int{
+			int height = 0;
+			while (node != nullptr){
+				height++;
+				node = node->right;
+			}
+
+			return height;
+		};
+
+		// Calculate the heights of the leftmost and rightmost paths
+		const int left_height = count_left_height(root);
+		const int right_height = count_right_height(root);
+
+		// Case 1: If the left and right heights are equal, the tree is a perfect binary tree
+		// The number of nodes in a perfect binary tree is given by the formula: 2^height - 1
+		if (left_height == right_height)
+			return (1 << left_height) - 1;
+
+		// Case 2: If the heights are not equal, recursively count the nodes in the left and right subtrees
+		return 1 + countNodes(root->left) + countNodes(root->right);
+	}
 };
-
-// Approach 1: Recursive DFS (Cal left and right subtrees, count nodes)
-// Time Complexity: O(n) where n is the number of nodes in the tree
-// Space Complexity: O(h) where h is the height of the tree (due to recursion stack)
-static int countNodes(const TreeNode* root){
-	// empty tree case
-	if (root == nullptr)
-		return 0;
-
-	const int leftCount = countNodes(root->left);   // Count nodes in left subtree
-	const int rightCount = countNodes(root->right); // Count nodes in right subtree
-
-	return 1 + leftCount + rightCount; // (1(count parent node) + left child + right right child)
-}
-
-// Approach 2: Use BFS (Level Order Traversal) to count nodes
-// Time Complexity: O(n) where n is the number of nodes in the tree
-// Space Complexity: O(w) where w is the maximum width of the tree (due to queue)
-static int countNodesBFS(const TreeNode* root){
-	// empty tree case
-	if (root == nullptr)
-		return 0;
-
-	queue<const TreeNode*> q;
-	q.push(root);
-	int count_num_of_nodes = 0;
-
-	while (!q.empty()){
-		const TreeNode* current = q.front();
-		q.pop();
-		count_num_of_nodes++; // Increment count for the current node
-
-		// Enqueue left child if it exists
-		if (current->left != nullptr)
-			q.push(current->left);
-
-		// Enqueue right child if it exists
-		if (current->right != nullptr)
-			q.push(current->right);
-	}
-	return count_num_of_nodes; // Return the total count of nodes
-}
-
-// Approach 3: Use complete-tree properties to count nodes
-// Time Complexity: O(log(n)) for a perfect tree; O(n) in this implementation's
-//             unequal-height fallback case
-// Space Complexity: O(1) (constant space)
-static int countNodesMath(const TreeNode* root){
-	// empty tree case
-	if (root == nullptr)
-		return 0;
-
-	// Helper function to count the height of the leftmost path
-	// Time Complexity: O(log(n)) where n is the number of nodes in the tree
-	auto count_left_height = [&](const TreeNode* node) -> int{
-		int height = 0;
-		while (node != nullptr){
-			height++;
-			node = node->left;
-		}
-
-		return height;
-	};
-
-	// Helper function to count the height of the rightmost path
-	// Time Complexity: O(log(n)) where n is the number of nodes in the tree
-	auto count_right_height = [&](const TreeNode* node) -> int{
-		int height = 0;
-		while (node != nullptr){
-			height++;
-			node = node->right;
-		}
-
-		return height;
-	};
-
-	// Calculate the heights of the leftmost and rightmost paths
-	const int left_height = count_left_height(root);
-	const int right_height = count_right_height(root);
-
-	// Case 1: If the left and right heights are equal, the tree is a perfect binary tree
-	// The number of nodes in a perfect binary tree is given by the formula: 2^height - 1
-	if (left_height == right_height)
-		return (1 << left_height) - 1;
-
-	// Case 2: If the heights are not equal, recursively count the nodes in the left and right subtrees
-	return 1 + countNodes(root->left) + countNodes(root->right);
-}
-
-
-
-// Function to build a binary tree from a vector of values (for testing purposes)
-static TreeNode* buildTree(const vector<int>& values){
-	int n = values.size();
-
-	// Edge case: empty tree or root is null
-	if (n == 0 || values[0] == -1)
-		return nullptr;
-
-	TreeNode* root = new TreeNode(values[0]);
-
-	queue<TreeNode*> q;
-	q.push(root);
-
-	int idx = 1;
-	while (!q.empty() && idx < n){
-		TreeNode* current = q.front();
-		q.pop();
-
-		// Left child
-		if (idx < n && values[idx] != -1){
-			current->left = new TreeNode(values[idx]);
-            q.push(current->left);
-		}
-
-		// Move to the next index for the right child
-		idx++;
-
-		// Right child
-		if (idx < n && values[idx] != -1){
-			current->right = new TreeNode(values[idx]);
-			q.push(current->right);
-		}
-
-		idx++;
-	}
-
-	return root;
-}
-
-// Function to print traversal result
-static void printTraversal(const vector<int>& traversal){
-	cout << "Output: \n[";
-	for (size_t i = 0; i < traversal.size(); ++i){
-		cout << traversal[i];
-        if (i < traversal.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-}
 
 static void solve(){
 	int n;
@@ -302,32 +248,21 @@ static void solve(){
 	for (int& val : values)
 		cin >> val;
 
-	// Print original tree values
-	cout << "Original tree values: [";
-	for (size_t i = 0; i < values.size(); ++i){
-		cout << values[i];
-        if (i < values.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-
-	// Build the binary tree from the input values
 	TreeNode* root = buildTree(values);
-
+	TreeVisualization::printTree(root); // Visualize the binary tree structure
 
 	// Approach 1: Count nodes using recursive DFS
-	const int count_dfs = countNodes(root);
+	const int count_dfs = Solution::countNodes(root);
 	cout << "Count of nodes (DFS): " << count_dfs << "\n";
 
 	// Approach 2: Count nodes using BFS
-	const int count_bfs = countNodesBFS(root);
+	const int count_bfs = Solution::countNodesBFS(root);
 	cout << "Count of nodes (BFS): " << count_bfs << "\n";
 
 	// Approach 3: Count nodes using complete-tree properties
-	const int count_math = countNodesMath(root);
+	const int count_math = Solution::countNodesMath(root);
 	cout << "Count of nodes (Math): " << count_math << "\n";
 }
-
 
 int main(){
 	ios::sync_with_stdio(false);

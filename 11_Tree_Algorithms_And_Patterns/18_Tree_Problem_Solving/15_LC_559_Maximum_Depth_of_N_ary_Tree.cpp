@@ -79,3 +79,108 @@ Created : 2026-11-08 05:29:56
  *      - The depth of the n-ary tree is less than or equal to 1000.
  * ============================================================================
  */
+
+#include "../00_Tree_Utilities/03_NaryTree.h"
+#include "../00_Tree_Utilities/04_PrintNaryTree.h"
+/*
+ * Definition for a Node.
+ * class Node {
+ * public:
+ *     int val;
+ *     vector<Node*> children;
+ *
+ *     Node() {}
+ *
+ *     Node(int _val) {
+ *         val = _val;
+ *     }
+ *
+ *     Node(int _val, vector<Node*> _children) {
+ *         val = _val;
+ *         children = _children;
+ *     }
+ * };
+ */
+
+class Solution {
+public:
+	// Approach 1: Use DFS to find the maximum depth of the N-ary tree
+	static int maxDepthDFS(Node* root){
+		// Base case: if the node is null, return depth 0
+		if (root == nullptr)
+			return 0;
+
+		// Initialize maximum depth
+		int max_depth = 0;
+
+		// Recursively find the maximum depth among all children
+		for (Node* child : root->children)
+			max_depth = max(max_depth, maxDepthDFS(child));
+
+		return max_depth + 1; // Add 1 for the current node
+	}
+
+	// Approach 2: Use BFS to find the maximum depth of the N-ary tree
+	static int maxDepthBFS(Node* root){
+		// Base case: if the node is null, return depth 0
+		if (root == nullptr)
+			return 0;
+
+		queue<Node*> q;
+		q.push(root);
+		int depth = 0;
+
+		// Perform level-order traversal
+		while (!q.empty()){
+			int size = q.size();
+			for (int i = 0; i < size; ++i){
+				Node* current = q.front();
+				q.pop();
+
+				// Add all children of the current node to the queue
+				for (Node* child : current->children){
+					if (child != nullptr)
+						q.push(child);
+				}
+			}
+			depth++; // Increment depth after processing each level
+		}
+
+		return depth;
+	}
+
+};
+
+static void solve(){
+	int n;
+	cout << "Enter number of nodes in the tree: ";
+	cin >> n;
+
+	vector<int> values(n);
+	cout << "Enter the values of the nodes (space-separated): ";
+	for (int& val : values)
+		cin >> val;
+
+	// Build the N-ary tree from the level-order values and -1 separators
+	Node* root = buildNaryTree(values);
+	N_ary_TreeVisualization::printNAryTree<Node>(
+		root,
+		"N-ary Tree Visualization"
+	);
+
+
+	// Approach 1: Preorder Traversal using Recursion
+	int depthDFS = Solution::maxDepthDFS(root);
+	cout << "Maximum Depth (DFS): " << depthDFS << "\n";
+
+	// Approach 2: Level Order Traversal using Queue
+	const int depthBFS = Solution::maxDepthBFS(root);
+	cout << "Maximum Depth (BFS): " << depthBFS << "\n";
+}
+int main(){
+	ios::sync_with_stdio(false);
+	cin.tie(nullptr);
+
+	solve();
+	return 0;
+}

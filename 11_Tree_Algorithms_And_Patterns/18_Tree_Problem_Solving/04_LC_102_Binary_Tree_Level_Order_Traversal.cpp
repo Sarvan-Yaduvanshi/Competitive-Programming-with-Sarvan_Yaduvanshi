@@ -55,118 +55,98 @@ Created : 2026-11-03 23:03:27
  * ============================================================================
  */
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <queue>
-#include <iomanip>
-#include <random>
-#include <chrono>
+#include "../00_Tree_Utilities/01_BinaryTree.h"
+#include "../00_Tree_Utilities/02_Print_BinaryTree.h"
+/*
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *   int val;
+ *   TreeNode *left;
+ *   TreeNode *right;
+ *   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 
-using namespace std;
+class Solution{
+public:
+	// 1. Standard Level-by-Level BFS (Returns 2D vector grouped by levels)
+	// Time Complexity: O(n) - Each node is processed once.
+	// Space Complexity: O(n) - The queue can hold up to n/2 nodes in the worst case (for a complete binary tree).
+	static vector<vector<int>> levelOrderOrBFS(TreeNode* root) {
+		vector<vector<int>> ans;
 
-struct TreeNode{
-	int val;
-	TreeNode* left;
-	TreeNode* right;
+		// Edge case: empty tree
+		if (root == nullptr)
+			return ans;
 
-	explicit TreeNode(const int v) : val(v), left(nullptr), right(nullptr) {}
-};
+		// Use queue for BFS traversal(queue properties: FIFO, first in first out)
+		queue<TreeNode*> q;
+		q.push(root); // Step 1: Push Level 0 (Root) into the FIFO queue
 
-// 1. Standard Level-by-Level BFS (Returns 2D vector grouped by levels)
-// Time Complexity: O(n) - Each node is processed once.
-// Space Complexity: O(n) - The queue can hold up to n/2 nodes in the worst case (for a complete binary tree).
-static vector<vector<int>> levelOrderOrBFS(TreeNode* root) {
-	vector<vector<int>> ans;
+		// Step 2: Process each level until the queue is empty
+		while (!q.empty()){
+			// Step 2: Take a snapshot of how many nodes are in the current level
+			size_t level_size = q.size();
+			vector<int> current_level;
+			current_level.reserve(level_size);
 
-	// Edge case: empty tree
-	if (root == nullptr)
+			// Step 3: Process ONLY the nodes belonging to the current level
+			for (int i = 0; i < level_size; i++){
+				TreeNode* current_node = q.front(); // Get the front node in the queue (FIFO)
+				q.pop(); // Remove the front node from the queue after processing
+
+				// Step 4: Add the current node's value to the current level's result
+				current_level.emplace_back(current_node->val);
+
+				// Step 5: Push left children to the BACK of the queue for the next level
+				if (current_node->left != nullptr)
+					q.push(current_node->left);
+
+				// Step 6: Push right children to the BACK of the queue for the next level
+				if (current_node->right != nullptr)
+					q.push(current_node->right);
+			}
+
+			// Step 7: Current level is completely finished; store it!
+			ans.emplace_back(current_level);
+		}
+
 		return ans;
-
-	// Use queue for BFS traversal(queue properties: FIFO, first in first out)
-	queue<TreeNode*> q;
-	q.push(root); // Step 1: Push Level 0 (Root) into the FIFO queue
-
-	// Step 2: Process each level until the queue is empty
-	while (!q.empty()){
-		// Step 2: Take a snapshot of how many nodes are in the current level
-		size_t level_size = q.size();
-		vector<int> current_level;
-		current_level.reserve(level_size);
-
-		// Step 3: Process ONLY the nodes belonging to the current level
-		for (int i = 0; i < level_size; i++){
-			TreeNode* current_node = q.front(); // Get the front node in the queue (FIFO)
-			q.pop(); // Remove the front node from the queue after processing
-
-			// Step 4: Add the current node's value to the current level's result
-			current_level.emplace_back(current_node->val);
-
-			// Step 5: Push left children to the BACK of the queue for the next level
-			if (current_node->left != nullptr)
-				q.push(current_node->left);
-
-			// Step 6: Push right children to the BACK of the queue for the next level
-			if (current_node->right != nullptr)
-				q.push(current_node->right);
-		}
-
-		// Step 7: Current level is completely finished; store it!
-		ans.emplace_back(current_level);
 	}
 
-	return ans;
-}
+	// Alternative approach: DFS with depth tracking (not implemented here)
+	static vector<vector<int>> levelOrderOrDFS(TreeNode* root) {
+		vector<vector<int>> ans;
 
-// Function to build a binary tree from a vector of values (for testing purposes)
-static TreeNode* buildTree(const vector<int>& values){
-	size_t n = values.size();
+		if (root == nullptr)
+			return ans;
 
-	// Edge case: empty tree or root is null
-	if (n == 0 || values[0] == -1)
-		return nullptr;
+		// Lambda function for DFS traversal
+		auto dfs = [&](auto&& self, TreeNode* node, int depth) -> void {
+			// Base case: if the node is null, return
+			if (node == nullptr)
+				return;
 
-	auto* root = new TreeNode(values[0]);
+			// If this is the first time visiting this depth, create a new level
+			if (depth == ans.size())
+				ans.emplace_back();
 
-	queue<TreeNode*> q;
-	q.push(root);
+			// Add the current node's value to the corresponding depth level
+			ans[depth].emplace_back(node->val);
 
-	int idx = 1;
-	while (!q.empty() && idx < n){
-		TreeNode* current = q.front();
-		q.pop();
+			// Recursively visit left and right children
+			if (node->left != nullptr)
+				self(self, node->left, depth + 1);
+			if (node->right != nullptr)
+				self(self, node->right, depth + 1);
+		};
 
-		// Left child
-		if (idx < n && values[idx] != -1){
-			current->left = new TreeNode(values[idx]);
-			q.push(current->left);
-		}
-
-		// Move to the next index for the right child
-		idx++;
-
-		// Right child
-		if (idx < n && values[idx] != -1){
-			current->right = new TreeNode(values[idx]);
-			q.push(current->right);
-		}
-
-		idx++;
+		dfs(dfs, root, 0);
+		return ans;
 	}
-
-	return root;
-}
-
-// Function to print traversal result
-static void printTraversal(const vector<int>& traversal){
-	cout << "Output: [";
-	for (size_t i = 0; i < traversal.size(); ++i){
-		cout << traversal[i];
-		if (i < traversal.size() - 1)
-			cout << " ";
-	}
-	cout << "]\n";
-}
+};
 
 static void solve(){
 	int n;
@@ -178,20 +158,11 @@ static void solve(){
 	for (int& val : values)
 		cin >> val;
 
-	// Print original tree values
-	cout << "Original tree values: [";
-	for (size_t i = 0; i < values.size(); ++i){
-		cout << values[i];
-		if (i < values.size() - 1)
-			cout << " ";
-	}
-	cout << "]\n";
-
-	// Build the binary tree from the input values
 	TreeNode* root = buildTree(values);
+	TreeVisualization::printTree(root); // Visualize the binary tree structure
 
 	// Perform BFS Level Order Traversal
-	vector<vector<int>> bfs_result = levelOrderOrBFS(root);
+	vector<vector<int>> bfs_result = Solution::levelOrderOrBFS(root);
 	cout << "BFS Level Order Traversal (grouped by levels):\n[";
 	for (size_t i = 0; i < bfs_result.size(); ++i){
 		cout << "[";
@@ -205,7 +176,6 @@ static void solve(){
 			cout << ", ";
 	}
 	cout << "]\n";
-
 }
 
 int main() {

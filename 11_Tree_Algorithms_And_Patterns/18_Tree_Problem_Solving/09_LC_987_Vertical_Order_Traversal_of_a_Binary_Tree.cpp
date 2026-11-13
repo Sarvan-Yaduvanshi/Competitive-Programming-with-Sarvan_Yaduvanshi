@@ -112,32 +112,7 @@ Created : 2026-11-07 04:47:24
  *      - The number of nodes in the tree is in the range [1, 1000].
  *      - 0 <= Node.val <= 1000
  * ============================================================================
- */
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <map>
-#include <unordered_map>
-#include <queue>
-#include <iomanip>
-#include <random>
-#include <chrono>
-#include <ranges>
-using namespace std;
-
-// --- Type Definitions ---
-struct TreeNode{
-	int val;
-	TreeNode* left;
-	TreeNode* right;
-
-	// Constructor initializes the node with a value and sets left and right children to nullptr
-	explicit TreeNode(const int v) : val(v), left(nullptr), right(nullptr) {}
-};
-
-/*
- * ============================================================================
+ *
  *  APPROACH 1: BFS + Unordered Map + Pair Sorting
  * ============================================================================
  *
@@ -244,110 +219,78 @@ struct TreeNode{
  *      store the seen columns separately and sort only those column keys.
  * ============================================================================
  */
-static vector<vector<int>> verticalTraversal(TreeNode* root){
-	// Edge case: if the root is null, return an empty vector
-	if (root == nullptr)
-		return {};
 
-	// Use an unordered_map to store three things: {column -> vector of pairs (row, value)}
-	unordered_map<int, vector<pair<int, int>>> map;
-	int minCol = 0; // Track the minimum column index
-	int maxCol = 0; // Track the maximum column index
+#include "../00_Tree_Utilities/01_BinaryTree.h"
+#include "../00_Tree_Utilities/02_Print_BinaryTree.h"
+/*
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *   int val;
+ *   TreeNode *left;
+ *   TreeNode *right;
+ *   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 
-	// Use a queue to perform BFS, storing tuples of (node, row, column)
-	queue<tuple<TreeNode*, int, int>> q;
-	q.emplace(root, 0, 0); // Start with the root node at row 0, column 0
+class Solution{
+public:
+	static vector<vector<int>> verticalTraversal(TreeNode* root){
+		// Edge case: if the root is null, return an empty vector
+		if (root == nullptr)
+			return {};
 
-	while (!q.empty()){
-		// Dequeue the front element of the queue
-		auto [node, row, col] = q.front();
-		q.pop();
+		// Use an unordered_map to store three things: {column -> vector of pairs (row, value)}
+		unordered_map<int, vector<pair<int, int>>> map;
+		int minCol = 0; // Track the minimum column index
+		int maxCol = 0; // Track the maximum column index
 
-		// Store the current node's value along with its row in the map for the corresponding column
-		map[col].emplace_back(row, node->val);
+		// Use a queue to perform BFS, storing tuples of (node, row, column)
+		queue<tuple<TreeNode*, int, int>> q;
+		q.emplace(root, 0, 0); // Start with the root node at row 0, column 0
 
-		// Left child: if it exists, enqueue it with updated row and column values
-		if (node->left != nullptr){
-			minCol = min(minCol, col - 1);
-			q.emplace(node->left, row + 1, col - 1);
+		while (!q.empty()){
+			// Dequeue the front element of the queue
+			auto [node, row, col] = q.front();
+			q.pop();
+
+			// Store the current node's value along with its row in the map for the corresponding column
+			map[col].emplace_back(row, node->val);
+
+			// Left child: if it exists, enqueue it with updated row and column values
+			if (node->left != nullptr){
+				minCol = min(minCol, col - 1);
+				q.emplace(node->left, row + 1, col - 1);
+			}
+
+			// Right child: if it exists, enqueue it with updated row and column values
+			if (node->right != nullptr){
+				maxCol = max(maxCol, col + 1);
+				q.emplace(node->right, row + 1, col + 1);
+			}
 		}
 
-		// Right child: if it exists, enqueue it with updated row and column values
-		if (node->right != nullptr){
-			maxCol = max(maxCol, col + 1);
-			q.emplace(node->right, row + 1, col + 1);
-		}
-	}
+		// Prepare the final answer by iterating through the columns from minCol to maxCol
+		vector<vector<int>> ans;
+		for (int col = minCol; col <= maxCol; col++){
+			// Sort the vector of pairs (row, value) for the current column
+			auto& node = map[col];
+			// c++ pair sorts lexicographically, so it will sort by row first, then by value if rows are equal
+			ranges::sort(node);
 
-	// Prepare the final answer by iterating through the columns from minCol to maxCol
-	vector<vector<int>> ans;
-	for (int col = minCol; col <= maxCol; col++){
-		// Sort the vector of pairs (row, value) for the current column
-		auto& node = map[col];
-		// c++ pair sorts lexicographically, so it will sort by row first, then by value if rows are equal
-		ranges::sort(node);
+			// Extract the values from the sorted pairs and add them to the answer
+			vector<int> curr;
+			for (auto& [row, val] : node)
+				curr.emplace_back(val);
 
-		// Extract the values from the sorted pairs and add them to the answer
-		vector<int> curr;
-		for (auto& [row, val] : node)
-			curr.emplace_back(val);
-
-		// Add the current column's values to the final answer
-		ans.emplace_back(std::move(curr));
-	}
-
-	return ans;
-}
-
-// Function to build a binary tree from a vector of values (for testing purposes)
-TreeNode* buildTree(const vector<int>& values){
-	int n = values.size();
-
-	// Edge case: empty tree or root is null
-	if (n == 0 || values[0] == -1)
-		return nullptr;
-
-	TreeNode* root = new TreeNode(values[0]);
-
-	queue<TreeNode*> q;
-	q.push(root);
-
-	int idx = 1;
-	while (!q.empty() && idx < n){
-		TreeNode* current = q.front();
-		q.pop();
-
-		// Left child
-		if (idx < n && values[idx] != -1){
-			current->left = new TreeNode(values[idx]);
-            q.push(current->left);
+			// Add the current column's values to the final answer
+			ans.emplace_back(std::move(curr));
 		}
 
-		// Move to the next index for the right child
-		idx++;
-
-		// Right child
-		if (idx < n && values[idx] != -1){
-			current->right = new TreeNode(values[idx]);
-			q.push(current->right);
-		}
-
-		idx++;
+		return ans;
 	}
-
-	return root;
-}
-
-// Function to print traversal result
-static void printTraversal(const vector<int>& traversal){
-	cout << "Output: \n[";
-	for (size_t i = 0; i < traversal.size(); ++i){
-		cout << traversal[i];
-        if (i < traversal.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-}
+};
 
 static void solve(){
 	int n;
@@ -359,20 +302,11 @@ static void solve(){
 	for (int& val : values)
 		cin >> val;
 
-	// Print original tree values
-	cout << "Original tree values: [";
-	for (size_t i = 0; i < values.size(); ++i){
-		cout << values[i];
-        if (i < values.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-
-	// Build the binary tree from the input values
 	TreeNode* root = buildTree(values);
+	TreeVisualization::printTree(root); // Visualize the binary tree structure::
 
 	// Approach 1: BFS + Unordered Map
-	vector<vector<int>> result1 = verticalTraversal(root);
+	const auto result1 = Solution::verticalTraversal(root);
 	cout << "Vertical Order Traversal (BFS + unordered_map):\n";
 	cout << "[";
 	for (size_t i = 0; i < result1.size(); ++i){
@@ -388,7 +322,6 @@ static void solve(){
 	}
 	cout << "]\n";
 }
-
 
 int main(){
 	ios::sync_with_stdio(false);

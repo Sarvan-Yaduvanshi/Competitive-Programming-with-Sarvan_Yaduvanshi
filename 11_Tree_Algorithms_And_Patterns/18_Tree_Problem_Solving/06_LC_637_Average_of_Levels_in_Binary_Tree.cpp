@@ -132,159 +132,108 @@ Created : 2026-11-04 01:44:03
  * ============================================================================
  */
 
-#include <iostream>
-#include <vector>
-#include <string>
-#include <queue>
 #include <iomanip>
-#include <random>
-#include <chrono>
-using namespace std;
+#include "../00_Tree_Utilities/01_BinaryTree.h"
+#include "../00_Tree_Utilities/02_Print_BinaryTree.h"
+/*
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *   int val;
+ *   TreeNode *left;
+ *   TreeNode *right;
+ *   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 
-// --- Type Definitions ---
-struct TreeNode{
-	int val;
-	TreeNode* left;
-	TreeNode* right;
+class Solution{
+public:
+	// Approach 1: Breadth-First Search (BFS / Level Order Traversal)
+	static vector<double> averageOfLevels(TreeNode* root){
+		vector<double> ans;
 
-	// Constructor initializes the node with a value and sets left and right children to nullptr
-	explicit TreeNode(const int v) : val(v), left(nullptr), right(nullptr) {}
+		// Handle empty tree case
+		if (root == nullptr)
+			return ans;
+
+		// Use a queue for level order traversal
+		queue<TreeNode*> q;
+		q.push(root); // Start with the root node
+
+		// Process each level of the tree
+		while (!q.empty()){
+			// Get the number of nodes at the current level
+			size_t level_size = q.size();
+			long long sum = 0; // Use long long to avoid overflow for large sums
+
+			// Process all nodes at the current level
+			for (size_t i = 0; i < level_size; i++){
+				// Get the front node from the queue
+				TreeNode* curr_node = q.front();
+				q.pop(); // Remove the node from the queue
+
+				sum += curr_node->val; // Add the node's value to the sum for this level
+
+				// Add the left and right children of the current node to the queue for the next level
+				if (curr_node->left != nullptr)
+					q.push(curr_node->left); // left child
+
+				if (curr_node->right != nullptr)
+					q.push(curr_node->right); // right child
+			}
+
+			// Calculate the average for the current level and add it to the result vector
+			ans.emplace_back(static_cast<double>(sum) / level_size);
+		}
+
+		return ans;
+	}
+
+	// Approach 2: Using Depth-First Search (DFS) with Recursion
+	// Time Complexity: O(n) - Each node is visited once
+	// Space Complexity: O(h) - The recursion stack can hold up to n nodes in the worst case (for a skewed tree), where h is the height of the tree
+	static vector<double> averageOfLevelsUseDFS(TreeNode* root){
+		// Used two vectors to store the sum of values and count of nodes at each level
+		vector<long long> sum;
+		vector<int> level_count;
+
+		// Lambda function for DFS traversal
+		auto dfs = [&](auto&& self, const TreeNode* node, const int depth) -> void{
+			// Base case: if the current node is null, return
+			if (node == nullptr)
+				return;
+
+			// If we reach a new depth level, add a new entry for that level
+			if (depth == sum.size()){
+				sum.emplace_back(0);
+				level_count.emplace_back(0);
+			}
+
+			sum[depth] += node->val; // Add the current node's value to the sum for this level
+			level_count[depth]++; // Increment the count of nodes at this level
+
+			// Recursively call DFS for the left and right children, increasing the depth by 1
+			self(self, node->left, depth + 1); // left child
+			self(self, node->right, depth + 1); // right child
+		};
+
+		// Start DFS traversal from the root at depth 0
+		dfs(dfs, root, 0);
+
+		vector<double> ans;
+
+		// Handle empty tree case
+		if (root == nullptr)
+			return ans;
+
+		// Calculate the average for each level and store it in the result vector
+		for (size_t i = 0; i < sum.size(); i++)
+			ans.emplace_back(static_cast<double>(sum[i]) / level_count[i]);
+
+		return ans;
+	}
 };
-
-// Approach 1: Breadth-First Search (BFS / Level Order Traversal)
-static vector<double> averageOfLevels(TreeNode* root){
-	vector<double> ans;
-
-	// Handle empty tree case
-	if (root == nullptr)
-		return ans;
-
-	// Use a queue for level order traversal
-	queue<TreeNode*> q;
-	q.push(root); // Start with the root node
-
-	// Process each level of the tree
-	while (!q.empty()){
-		// Get the number of nodes at the current level
-		size_t level_size = q.size();
-		long long sum = 0; // Use long long to avoid overflow for large sums
-
-		// Process all nodes at the current level
-		for (size_t i = 0; i < level_size; i++){
-			// Get the front node from the queue
-			TreeNode* curr_node = q.front();
-			q.pop(); // Remove the node from the queue
-
-			sum += curr_node->val; // Add the node's value to the sum for this level
-
-			// Add the left and right children of the current node to the queue for the next level
-			if (curr_node->left != nullptr)
-				q.push(curr_node->left); // left child
-
-			if (curr_node->right != nullptr)
-				q.push(curr_node->right); // right child
-		}
-
-		// Calculate the average for the current level and add it to the result vector
-		ans.emplace_back(static_cast<double>(sum) / level_size);
-	}
-
-	return ans;
-}
-
-// Approach 2: Using Depth-First Search (DFS) with Recursion
-// Time Complexity: O(n) - Each node is visited once
-// Space Complexity: O(h) - The recursion stack can hold up to n nodes in the worst case (for a skewed tree), where h is the height of the tree
-static vector<double> averageOfLevelsUseDFS(TreeNode* root) {
-	// Used two vectors to store the sum of values and count of nodes at each level
-	vector<long long> sum;
-	vector<int> level_count;
-
-	// Lambda function for DFS traversal
-	auto dfs = [&](auto&& self, const TreeNode* node, const int depth) -> void {
-		// Base case: if the current node is null, return
-		if (node == nullptr)
-			return;
-
-		// If we reach a new depth level, add a new entry for that level
-		if (depth == sum.size()) {
-			sum.emplace_back(0);
-			level_count.emplace_back(0);
-		}
-
-		sum[depth] += node->val; // Add the current node's value to the sum for this level
-		level_count[depth]++;    // Increment the count of nodes at this level
-
-		// Recursively call DFS for the left and right children, increasing the depth by 1
-		self(self, node->left, depth + 1); // left child
-		self(self, node->right, depth + 1); // right child
-	};
-
-	// Start DFS traversal from the root at depth 0
-	dfs(dfs, root, 0);
-
-	vector<double> ans;
-
-	// Handle empty tree case
-	if (root == nullptr)
-		return ans;
-
-	// Calculate the average for each level and store it in the result vector
-	for (size_t i = 0; i < sum.size(); i++)
-		ans.emplace_back(static_cast<double>(sum[i]) / level_count[i]);
-
-	return ans;
-}
-
-// Function to build a binary tree from a vector of values (for testing purposes)
-TreeNode* buildTree(const vector<int>& values){
-	int n = values.size();
-
-	// Edge case: empty tree or root is null
-	if (n == 0 || values[0] == -1)
-		return nullptr;
-
-	TreeNode* root = new TreeNode(values[0]);
-
-	queue<TreeNode*> q;
-	q.push(root);
-
-	int idx = 1;
-	while (!q.empty() && idx < n){
-		TreeNode* current = q.front();
-		q.pop();
-
-		// Left child
-		if (idx < n && values[idx] != -1){
-			current->left = new TreeNode(values[idx]);
-            q.push(current->left);
-		}
-
-		// Move to the next index for the right child
-		idx++;
-
-		// Right child
-		if (idx < n && values[idx] != -1){
-			current->right = new TreeNode(values[idx]);
-			q.push(current->right);
-		}
-
-		idx++;
-	}
-
-	return root;
-}
-
-// Function to print a vector in LeetCode-style format
-static void printAverages(const vector<double>& averages){
-	cout << "Output: [";
-	for (size_t i = 0; i < averages.size(); ++i){
-		cout << fixed << setprecision(5) << averages[i];
-		if (i + 1 < averages.size())
-			cout << ", ";
-	}
-	cout << "]\n";
-}
 
 static void solve(){
 	int n;
@@ -296,29 +245,31 @@ static void solve(){
 	for (int& val : values)
 		cin >> val;
 
-	// Print original tree values
-	cout << "Original tree values: [";
-	for (size_t i = 0; i < values.size(); ++i){
-		cout << values[i];
-        if (i < values.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-
-	// Build the binary tree from the input values
 	TreeNode* root = buildTree(values);
+	TreeVisualization::printTree(root);
 
 	// Approach 1: Using BFS to calculate the average of levels in the binary tree
 	cout << "Approach 1: Using BFS to calculate the average of levels in the binary tree\n";
-	vector<double> averages = averageOfLevels(root);
-	printAverages(averages);
+	const vector<double> averages_bfs = Solution::averageOfLevels(root);
+	cout << "Output: [";
+	for (size_t i = 0; i < averages_bfs.size(); ++i){
+		cout << fixed << setprecision(5) << averages_bfs[i];
+		if (i < averages_bfs.size() - 1)
+			cout << ", ";
+	}
+	cout << "]\n";
 
 	// Approach 2: Using DFS to calculate the average of levels in the binary tree
 	cout << "Approach 2: Using DFS to calculate the average of levels in the binary tree\n";
-	vector<double> averages_dfs = averageOfLevelsUseDFS(root);
-	printAverages(averages_dfs);
+	const vector<double> averages_dfs = Solution::averageOfLevelsUseDFS(root);
+	cout << "Output: [";
+	for (size_t i = 0; i < averages_dfs.size(); ++i){
+		cout << fixed << setprecision(5) << averages_dfs[i];
+		if (i < averages_dfs.size() - 1)
+			cout << ", ";
+	}
+	cout << "]\n";
 }
-
 
 int main(){
 	ios::sync_with_stdio(false);

@@ -90,32 +90,6 @@ Created : 2026-11-07 00:56:23
  *      - The number of nodes in the tree is in the range [0, 100].
  *      - -100 <= Node.val <= 100
  * ============================================================================
- */
-
-#include <iostream>
-#include <vector>
-#include <string>
-#include <map>
-#include <unordered_map>
-#include <queue>
-#include <iomanip>
-#include <random>
-#include <chrono>
-#include <ranges>
-using namespace std;
-
-// --- Type Definitions ---
-struct TreeNode{
-	int val;
-	TreeNode* left;
-	TreeNode* right;
-
-	// Constructor initializes the node with a value and sets left and right children to nullptr
-	explicit TreeNode(const int v) : val(v), left(nullptr), right(nullptr) {}
-};
-
-/*
- * ============================================================================
  *  APPROACH 1: BFS + Ordered Map
  * ============================================================================
  *
@@ -181,193 +155,161 @@ struct TreeNode{
  *      - Space: O(N) for the queue, map, and answer.
  * ============================================================================
  */
-static vector<vector<int>> verticalOrder(TreeNode* root){
-	// Edge case: empty tree
-	if (root == nullptr)
-		return {};
 
-	// Use map to store nodes in vertical order (column -> list of node values)
-	map<int, vector<int>> map;
-
-	// Use queue pair to perform BFS (node, column index)
-	queue<pair<TreeNode*, int>> q;
-	q.emplace(root, 0); // Start with root at column 0
-
-	while (!q.empty()){
-		// Get the front node and its column index
-		auto [node, col] = q.front();
-		q.pop();
-
-		// Store the node's value in the corresponding column in the map
-		map[col].emplace_back(node->val);
-
-		// If the left child exists, enqueue it with column index - 1
-		if (node->left != nullptr)
-			q.emplace(node->left, col - 1);
-
-		// If the right child exists, enqueue it with column index + 1
-		if (node->right != nullptr)
-			q.emplace(node->right, col + 1);
-	}
-
-	vector<vector<int>> ans;
-	ans.reserve(map.size()); // avoid reallocation
-	for (auto& [col, node] : map)
-		ans.emplace_back(std::move(node));
-
-	return ans;
-}
-
+#include "../00_Tree_Utilities/01_BinaryTree.h"
+#include "../00_Tree_Utilities/02_Print_BinaryTree.h"
 /*
- * ============================================================================
- *  APPROACH 2: BFS + Unordered Map + Column Range
- * ============================================================================
- *
- *  Core idea:
- *      Keep the same BFS traversal and the same column assignment as Approach
- *      1, but replace the ordered map with an unordered_map.
- *
- *      Because an unordered_map does not sort its keys, maintain:
- *          minCol = smallest column seen so far
- *          maxCol = largest column seen so far
- *
- *      After BFS, iterate from minCol to maxCol to rebuild the answer from
- *      leftmost column to rightmost column.
- *
- *  Why the node order is still correct:
- *      Changing map type does not change BFS. Values are appended to each
- *      column's vector in the same top-to-bottom, left-to-right order.
- *
- *  Step-by-step:
- *      1. Return immediately for an empty tree.
- *      2. Put (root, 0) in the queue and initialize minCol/maxCol to 0.
- *      3. For every visited node, append its value to map[column].
- *      4. Enqueue children with column - 1 and column + 1.
- *      5. Update minCol/maxCol whenever a child column is created.
- *      6. Read buckets from minCol through maxCol.
- *
- *  DRY RUN:
- *      For the same tree:
- *
- *          map[-1] = [9]
- *          map[0]  = [3,15]
- *          map[1]  = [20]
- *          map[2]  = [7]
- *          minCol = -1, maxCol = 2
- *
- *      The final loop reads -1, 0, 1, 2 and returns:
- *          [[9], [3,15], [20], [7]]
- *
- *  Complexity:
- *      - Time : O(N) average for unordered_map operations, plus O(W) for the
- *               final column-range loop, where W = maxCol - minCol + 1.
- *               Since W can be O(N), this is O(N) average overall.
- *      - Space: O(N) for the queue, unordered_map, and answer.
- *
- *  Important correctness note about this exact implementation:
- *      The loop from minCol to maxCol assumes every integer column in that
- *      range exists. A sparse tree can have a missing column, and map[col]
- *      will then create an empty vector; that would add an empty column to
- *      the output. For completely general input, Approach 1 is safer, or
- *      this approach should store the seen columns and sort only those keys.
- * ============================================================================
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *   int val;
+ *   TreeNode *left;
+ *   TreeNode *right;
+ *   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
  */
-static vector<vector<int>> verticalOrderOptimal(TreeNode* root){
-	// Edge case: empty tree
-	if (root == nullptr)
-		return {};
 
-	// Use unordered_map to store nodes in vertical order (column -> list of node values)
-	unordered_map<int, vector<int>> map;
-	int minCol = 0; // Track minimum column index
-	int maxCol = 0; // Track maximum column index
+class Solution{
+public:
+	// Approach 1: BFS + Map
+	static vector<vector<int>> verticalOrder(TreeNode* root){
+		// Edge case: empty tree
+		if (root == nullptr)
+			return {};
 
-	// Use queue pair to perform BFS (node, column index)
-	queue<pair<TreeNode*, int>> q;
-	q.emplace(root, 0); // Start with root at column 0
+		// Use map to store nodes in vertical order (column -> list of node values)
+		map<int, vector<int>> map;
 
-	while (!q.empty()){
-		// Get the front node and its column index
-		auto [node, col] = q.front();
-		q.pop();
+		// Use queue pair to perform BFS (node, column index)
+		queue<pair<TreeNode*, int>> q;
+		q.emplace(root, 0); // Start with root at column 0
 
-		// Store the node's value in the corresponding column in the unordered_map
-		map[col].emplace_back(node->val);
+		while (!q.empty()){
+			// Get the front node and its column index
+			auto [node, col] = q.front();
+			q.pop();
 
-		// Explore left child (column index - 1)
-		if (node->left != nullptr){
-			minCol = min(minCol, col - 1); // Update minimum column index
-			q.emplace(node->left, col - 1); // Enqueue left child with column index - 1
+			// Store the node's value in the corresponding column in the map
+			map[col].emplace_back(node->val);
+
+			// If the left child exists, enqueue it with column index - 1
+			if (node->left != nullptr)
+				q.emplace(node->left, col - 1);
+
+			// If the right child exists, enqueue it with column index + 1
+			if (node->right != nullptr)
+				q.emplace(node->right, col + 1);
 		}
 
-		// Explore right child (column index + 1)
-		if (node->right != nullptr){
-			maxCol = max(maxCol, col + 1); // Update maximum column index
-			q.emplace(node->right, col + 1); // Enqueue right child with column index + 1
-		}
+		vector<vector<int>> ans;
+		ans.reserve(map.size()); // avoid reallocation
+		for (auto& [col, node] : map)
+			ans.emplace_back(std::move(node));
+
+		return ans;
 	}
 
-	// Prepare the result vector based on the range of column indices
-	vector<vector<int>> ans;
-	ans.reserve(map.size()); // avoid reallocation
+	/*
+	 * ============================================================================
+	 *  APPROACH 2: BFS + Unordered Map + Column Range
+	 * ============================================================================
+	 *
+	 *  Core idea:
+	 *      Keep the same BFS traversal and the same column assignment as Approach
+	 *      1, but replace the ordered map with an unordered_map.
+	 *
+	 *      Because an unordered_map does not sort its keys, maintain:
+	 *          minCol = smallest column seen so far
+	 *          maxCol = largest column seen so far
+	 *
+	 *      After BFS, iterate from minCol to maxCol to rebuild the answer from
+	 *      leftmost column to rightmost column.
+	 *
+	 *  Why the node order is still correct:
+	 *      Changing map type does not change BFS. Values are appended to each
+	 *      column's vector in the same top-to-bottom, left-to-right order.
+	 *
+	 *  Step-by-step:
+	 *      1. Return immediately for an empty tree.
+	 *      2. Put (root, 0) in the queue and initialize minCol/maxCol to 0.
+	 *      3. For every visited node, append its value to map[column].
+	 *      4. Enqueue children with column - 1 and column + 1.
+	 *      5. Update minCol/maxCol whenever a child column is created.
+	 *      6. Read buckets from minCol through maxCol.
+	 *
+	 *  DRY RUN:
+	 *      For the same tree:
+	 *
+	 *          map[-1] = [9]
+	 *          map[0]  = [3,15]
+	 *          map[1]  = [20]
+	 *          map[2]  = [7]
+	 *          minCol = -1, maxCol = 2
+	 *
+	 *      The final loop reads -1, 0, 1, 2 and returns:
+	 *          [[9], [3,15], [20], [7]]
+	 *
+	 *  Complexity:
+	 *      - Time : O(N) average for unordered_map operations, plus O(W) for the
+	 *               final column-range loop, where W = maxCol - minCol + 1.
+	 *               Since W can be O(N), this is O(N) average overall.
+	 *      - Space: O(N) for the queue, unordered_map, and answer.
+	 *
+	 *  Important correctness note about this exact implementation:
+	 *      The loop from minCol to maxCol assumes every integer column in that
+	 *      range exists. A sparse tree can have a missing column, and map[col]
+	 *      will then create an empty vector; that would add an empty column to
+	 *      the output. For completely general input, Approach 1 is safer, or
+	 *      this approach should store the seen columns and sort only those keys.
+	 * ============================================================================
+	 */
+	static vector<vector<int>> verticalOrderOptimal(TreeNode* root){
+		// Edge case: empty tree
+		if (root == nullptr)
+			return {};
 
-	// Traverse from minCol to maxCol and collect the node values for each column
-	for (int col = minCol; col <= maxCol; col++)
-		ans.emplace_back(std::move(map[col]));
+		// Use unordered_map to store nodes in vertical order (column -> list of node values)
+		unordered_map<int, vector<int>> map;
+		int minCol = 0; // Track minimum column index
+		int maxCol = 0; // Track maximum column index
 
-	return ans;
-}
+		// Use queue pair to perform BFS (node, column index)
+		queue<pair<TreeNode*, int>> q;
+		q.emplace(root, 0); // Start with root at column 0
 
+		while (!q.empty()){
+			// Get the front node and its column index
+			auto [node, col] = q.front();
+			q.pop();
 
-// Function to build a binary tree from a vector of values (for testing purposes)
-TreeNode* buildTree(const vector<int>& values){
-	int n = values.size();
+			// Store the node's value in the corresponding column in the unordered_map
+			map[col].emplace_back(node->val);
 
-	// Edge case: empty tree or root is null
-	if (n == 0 || values[0] == -1)
-		return nullptr;
+			// Explore left child (column index - 1)
+			if (node->left != nullptr){
+				minCol = min(minCol, col - 1); // Update minimum column index
+				q.emplace(node->left, col - 1); // Enqueue left child with column index - 1
+			}
 
-	TreeNode* root = new TreeNode(values[0]);
-
-	queue<TreeNode*> q;
-	q.push(root);
-
-	int idx = 1;
-	while (!q.empty() && idx < n){
-		TreeNode* current = q.front();
-		q.pop();
-
-		// Left child
-		if (idx < n && values[idx] != -1){
-			current->left = new TreeNode(values[idx]);
-            q.push(current->left);
+			// Explore right child (column index + 1)
+			if (node->right != nullptr){
+				maxCol = max(maxCol, col + 1); // Update maximum column index
+				q.emplace(node->right, col + 1); // Enqueue right child with column index + 1
+			}
 		}
 
-		// Move to the next index for the right child
-		idx++;
+		// Prepare the result vector based on the range of column indices
+		vector<vector<int>> ans;
+		ans.reserve(map.size()); // avoid reallocation
 
-		// Right child
-		if (idx < n && values[idx] != -1){
-			current->right = new TreeNode(values[idx]);
-			q.push(current->right);
-		}
+		// Traverse from minCol to maxCol and collect the node values for each column
+		for (int col = minCol; col <= maxCol; col++)
+			ans.emplace_back(std::move(map[col]));
 
-		idx++;
+		return ans;
 	}
-
-	return root;
-}
-
-// Function to print traversal result
-static void printTraversal(const vector<int>& traversal){
-	cout << "Output: \n[";
-	for (size_t i = 0; i < traversal.size(); ++i){
-		cout << traversal[i];
-        if (i < traversal.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-}
+};
 
 static void solve(){
 	int n;
@@ -379,20 +321,11 @@ static void solve(){
 	for (int& val : values)
 		cin >> val;
 
-	// Print original tree values
-	cout << "Original tree values: [";
-	for (size_t i = 0; i < values.size(); ++i){
-		cout << values[i];
-        if (i < values.size() - 1)
-            cout << " ";
-	}
-	cout << "]\n";
-
-	// Build the binary tree from the input values
 	TreeNode* root = buildTree(values);
+	TreeVisualization::printTree(root);
 
 	// Approach 1: BFS + Map
-	vector<vector<int>> result1 = verticalOrder(root);
+	const vector<vector<int>> result1 = Solution::verticalOrder(root);
 	cout << "Vertical Order Traversal (BFS + Map):\n";
 	cout << "[";
 	for (size_t i = 0; i < result1.size(); ++i){
@@ -410,7 +343,7 @@ static void solve(){
 
 
 	// Approach 2: BFS + Unordered Map
-	vector<vector<int>> result2 = verticalOrderOptimal(root);
+	const vector<vector<int>> result2 = Solution::verticalOrderOptimal(root);
 	cout << "Vertical Order Traversal (BFS + Unordered Map):\n";
 	cout << "[";
 	for (size_t i = 0; i < result2.size(); ++i){
@@ -426,7 +359,6 @@ static void solve(){
 	}
 	cout << "]\n";
 }
-
 
 int main(){
 	ios::sync_with_stdio(false);

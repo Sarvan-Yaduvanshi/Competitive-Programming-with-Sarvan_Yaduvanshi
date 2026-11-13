@@ -2,44 +2,47 @@
 #include <vector>
 using namespace std;
 
-class MyLinkedList{
-private:
-	struct ListNode{
-		int val;
-		ListNode* next;
-		explicit ListNode(const int val) : val(val), next(nullptr) {}
-	};
+#include "../00_Tree_Utilities/01_BinaryTree.h"
+#include "../00_Tree_Utilities/02_Print_BinaryTree.h"
 
-	ListNode* head;
+/*
+ * Definition for a binary tree node.
+ * struct TreeNode {
+ *   int val;
+ *   TreeNode *left;
+ *   TreeNode *right;
+ *   TreeNode() : val(0), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+ *   TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+ * };
+ */
 
+class Solution {
 public:
-	MyLinkedList() : head(nullptr) {}
-
-	static ListNode* buildList(const vector<int>& a){
-		if (a.empty())
-			return nullptr;
-
-		auto* head = new ListNode(a[0]);
-		ListNode* tail = head;
-		for (int i = 1; i < a.size(); i++){
-			tail->next = new ListNode(a[i]);
-			tail = tail->next;
-		}
-
-		return head;
-	}
-
 
 };
 
-
 static void solve(){
-	int n; cin >> n;
-	vector<int> a(n);
-	for (int& x : a)
-		cin >> x;
-}
+	int n;
+	cout << "Enter number of nodes in the tree: ";
+	cin >> n;
 
+	vector<int> values(n);
+	cout << "Enter the values of the nodes (space-separated): ";
+	for (int& val : values)
+		cin >> val;
+
+	TreeNode* root = buildTree(values);
+	TreeVisualization::printTree(root);
+
+	// Approach 1: Calculate maximum width using BFS
+	const int maxWidthBFS = Solution::widthOfBinaryTreeUseBFS(root);
+	cout << "Maximum Width of Binary Tree (BFS): " << maxWidthBFS << "\n";
+
+	// Approach 2: Calculate maximum width using DFS
+	const int maxWidthDFS = Solution::widthOfBinaryTreeUseDFS(root);
+	cout << "Maximum Width of Binary Tree (DFS): " << maxWidthDFS << "\n";
+}
 
 
 int main(){
