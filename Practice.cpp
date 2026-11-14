@@ -1,7 +1,3 @@
-#include <iostream>
-#include <vector>
-using namespace std;
-
 #include "../00_Tree_Utilities/01_BinaryTree.h"
 #include "../00_Tree_Utilities/02_Print_BinaryTree.h"
 
@@ -34,14 +30,6 @@ static void solve(){
 
 	TreeNode* root = buildTree(values);
 	TreeVisualization::printTree(root);
-
-	// Approach 1: Calculate maximum width using BFS
-	const int maxWidthBFS = Solution::widthOfBinaryTreeUseBFS(root);
-	cout << "Maximum Width of Binary Tree (BFS): " << maxWidthBFS << "\n";
-
-	// Approach 2: Calculate maximum width using DFS
-	const int maxWidthDFS = Solution::widthOfBinaryTreeUseDFS(root);
-	cout << "Maximum Width of Binary Tree (DFS): " << maxWidthDFS << "\n";
 }
 
 

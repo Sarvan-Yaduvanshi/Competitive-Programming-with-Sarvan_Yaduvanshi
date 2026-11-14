@@ -124,7 +124,7 @@ public:
 		int ans = 0;
 
 		// Lambda function to calculate the height of a node and update the diameter
-		auto height = [&](auto&& self, Node* node) -> int {
+		auto height = [&](auto&& self, const Node* node) -> int {
 			// Base case: If the node is null, return height as 0
 			if (node == nullptr)
 				return 0;

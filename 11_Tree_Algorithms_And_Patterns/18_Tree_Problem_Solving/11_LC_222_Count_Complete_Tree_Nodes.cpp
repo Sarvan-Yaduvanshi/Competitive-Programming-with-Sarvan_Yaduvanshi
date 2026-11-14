@@ -195,38 +195,29 @@ public:
 	// Time Complexity: O(log(n)) for a perfect tree; O(n) in this implementation's
 	//             unequal-height fallback case
 	// Space Complexity: O(1) (constant space)
-	static int countNodesMath(const TreeNode* root){
-		// empty tree case
-		if (root == nullptr)
-			return 0;
-
-		// Helper function to count the height of the leftmost path
-		// Time Complexity: O(log(n)) where n is the number of nodes in the tree
-		auto count_left_height = [&](const TreeNode* node) -> int{
-			int height = 0;
-			while (node != nullptr){
-				height++;
-				node = node->left;
+	static int countNodesMath(const TreeNode* root) {
+		// Lambda function to count the height of the leftmost path and rightmost path
+		auto dfs = [](const TreeNode* node) -> pair<int, int> {
+			int left_height = 0;
+			const TreeNode* current = node;
+			while (current != nullptr){
+				left_height++;
+				current = current->left;
 			}
 
-			return height;
-		};
-
-		// Helper function to count the height of the rightmost path
-		// Time Complexity: O(log(n)) where n is the number of nodes in the tree
-		auto count_right_height = [&](const TreeNode* node) -> int{
-			int height = 0;
-			while (node != nullptr){
-				height++;
-				node = node->right;
+			int right_height = 0;
+			current = node;
+			while (current != nullptr){
+				right_height++;
+				current = current->right;
 			}
 
-			return height;
+			return {left_height, right_height};
 		};
 
 		// Calculate the heights of the leftmost and rightmost paths
-		const int left_height = count_left_height(root);
-		const int right_height = count_right_height(root);
+		const int left_height = dfs(root).first;
+		const int right_height = dfs(root).second;
 
 		// Case 1: If the left and right heights are equal, the tree is a perfect binary tree
 		// The number of nodes in a perfect binary tree is given by the formula: 2^height - 1

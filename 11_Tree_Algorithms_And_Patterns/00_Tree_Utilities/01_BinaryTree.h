@@ -109,7 +109,7 @@ static void printOutput(
         cout << ans[i];
 
         if (i + 1 < ans.size())
-            cout << " ";
+            cout << ", ";
     }
 
     cout << "]\n";
